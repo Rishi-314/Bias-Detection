@@ -12,23 +12,41 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --navy:     #0F1E38;
-            --gold:     #EBB255;
-            --gold-dim: rgba(235,178,85,0.12);
-            --green:    #059669;
-            --green-dim:rgba(5,150,105,0.08);
-            --amber:    #D97706;
-            --amber-dim:rgba(217,119,6,0.08);
-            --red:      #DC2626;
-            --red-dim:  rgba(220,38,38,0.08);
-            --bg:       #F8F6F2;   /* warm off-white, not cold gray */
-            --surface:  #FFFFFF;
-            --rule:     #E8E4DC;
-            --muted:    #6B7280;
-            --text:     #1C1917;
-            --serif:    'Lora', Georgia, serif;
-            --sans:     'Plus Jakarta Sans', sans-serif;
-            --mono:     'IBM Plex Mono', monospace;
+            /* ── Regulator color schema ── */
+            --navy:      #0F1E38;
+            --navy-mid:  #1A2D4E;
+            --navy-soft: #243D65;
+            --gold:      #EBB255;
+            --gold-dim:  rgba(235,178,85,0.12);
+            --gold-line: rgba(235,178,85,0.3);
+            --red:       #EF4444;
+            --red-dim:   rgba(239,68,68,0.1);
+            --amber:     #F59E0B;
+            --amber-dim: rgba(245,158,11,0.1);
+            --green:     #10B981;
+            --green-dim: rgba(16,185,129,0.1);
+            --blue:      #3B82F6;
+            --blue-dim:  rgba(59,130,246,0.1);
+            --surface:   #FFFFFF;
+            --bg:        #F1F3F8;
+            --bg2:       #E8EBF2;
+            --rule:      #DDE1EC;
+            --text:      #0F1E38;
+            --muted:     #64748B;
+            --serif:     'Lora', Georgia, serif;
+            --sans:      'Plus Jakarta Sans', sans-serif;
+            --mono:      'IBM Plex Mono', monospace;
+            --radius:    12px;
+            --shadow:    0 2px 12px rgba(15,30,56,0.07);
+            --shadow-md: 0 8px 32px rgba(15,30,56,0.10);
+            /* index.html vars */
+            --primary:   #1A2D4E;
+            --secondary: #EBB255;
+            --accent:    #4A90E2;
+            --light-bg:  #F8F9FA;
+            --light-text:#5A6169;
+            --white:     #FFFFFF;
+            --transition:all 0.3s cubic-bezier(0.25,0.8,0.25,1);
         }
 
         body {
@@ -39,38 +57,90 @@
             line-height: 1.6;
         }
 
-        /* ── NAVBAR ── */
+        /* ══════════════════════════════════════════
+           NAVBAR — from index.html
+        ══════════════════════════════════════════ */
         .navbar {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(255,255,255,0.97);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--rule);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 2.5rem; height: 60px;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.98);
+            padding: 20px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(26,45,78,0.08);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
         }
-        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .nav-logo-icon { width: 34px; height: 34px; background: var(--navy); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
-        .nav-logo-icon svg { width: 20px; height: 20px; }
-        .nav-logo-name { font-family: var(--sans); font-weight: 800; font-size: 1.0625rem; color: var(--navy); }
-        .nav-logo-name span { color: var(--gold); }
-        .nav-links { display: flex; gap: 0.25rem; }
-        .nav-links a { font-size: 0.875rem; font-weight: 600; color: var(--muted); text-decoration: none; padding: 0.375rem 0.75rem; border-radius: 7px; transition: color 0.15s, background 0.15s; }
-        .nav-links a:hover { color: var(--navy); background: #F1EDE8; }
+        .navbar.scrolled { padding: 15px 5%; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
 
-        /* ── PAGE ── */
-        .page { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+        .logo {
+            display: flex; align-items: center; gap: 16px;
+            text-decoration: none; color: var(--primary);
+        }
+        .logo-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--white); font-size: 22px; font-weight: 700;
+            box-shadow: 0 5px 15px rgba(26,45,78,0.2);
+            transition: var(--transition);
+        }
+        .logo:hover .logo-icon { transform: rotate(5deg) scale(1.05); }
+        .logo-text { font-size: 24px; font-weight: 800; line-height: 1.2; }
+        .logo-text span { color: var(--secondary); }
+        .logo-subtitle { font-size: 13px; font-weight: 500; color: var(--secondary); letter-spacing: 1px; margin-top: 4px; }
 
-        /* ── VERDICT HERO ── */
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a {
+            text-decoration: none; font-size: 17px; font-weight: 600;
+            color: var(--primary); position: relative; padding: 8px 0;
+            transition: var(--transition);
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 0; height: 3px; background: var(--secondary);
+            border-radius: 2px; transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--secondary); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--secondary); }
+        .nav-links a.active::after { width: 100%; }
+
+        .nav-actions { display: flex; gap: 16px; align-items: center; }
+        .btn-nav {
+            padding: 14px 28px; font-size: 16px; border-radius: 10px;
+            cursor: pointer; border: none; font-weight: 600;
+            transition: var(--transition);
+            background: linear-gradient(135deg, var(--secondary), #d18b1f);
+            color: var(--white); box-shadow: 0 5px 15px rgba(224,161,43,0.3);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-nav:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(224,161,43,0.4); }
+
+        .mobile-menu-btn {
+            display: none; background: none; border: none;
+            font-size: 24px; color: var(--primary); cursor: pointer;
+        }
+
+        /* ══════════════════════════════════════════
+           PAGE LAYOUT
+        ══════════════════════════════════════════ */
+        .page { max-width: 720px; margin: 0 auto; padding: 6rem 2rem 6rem; }
+
+        /* ══════════════════════════════════════════
+           VERDICT HERO  (regulator palette)
+        ══════════════════════════════════════════ */
         .verdict-hero {
-            border-radius: 20px;
-            padding: 2.5rem 2.5rem 2rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
+            border-radius: 16px; padding: 2.5rem 2.5rem 2rem;
+            margin-bottom: 2rem; position: relative; overflow: hidden;
         }
-        .verdict-hero.fair    { background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border: 1.5px solid rgba(5,150,105,0.2); }
-        .verdict-hero.partial { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1.5px solid rgba(217,119,6,0.2); }
-        .verdict-hero.concern { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); border: 1.5px solid rgba(220,38,38,0.2); }
+        .verdict-hero.fair    { background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.14) 100%); border: 1.5px solid rgba(16,185,129,0.25); }
+        .verdict-hero.partial { background: linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0.14) 100%); border: 1.5px solid rgba(245,158,11,0.25); }
+        .verdict-hero.concern { background: linear-gradient(135deg, rgba(239,68,68,0.08) 0%, rgba(239,68,68,0.14) 100%); border: 1.5px solid rgba(239,68,68,0.25); }
 
         .verdict-eyebrow {
             font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em;
@@ -82,7 +152,7 @@
         .concern .verdict-eyebrow { color: var(--red); }
 
         .verdict-icon-row { display: flex; align-items: flex-start; gap: 1.25rem; }
-        .verdict-emoji { font-size: 3rem; line-height: 1; flex-shrink: 0; margin-top: 4px; }
+        .verdict-svg-icon { width: 48px; height: 48px; flex-shrink: 0; margin-top: 4px; }
         .verdict-headline { font-family: var(--serif); font-size: 1.875rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.625rem; }
         .fair    .verdict-headline { color: #065F46; }
         .partial .verdict-headline { color: #78350F; }
@@ -102,27 +172,32 @@
         .concern .score-bar-num { color: var(--red); }
         .score-track { height: 10px; background: rgba(0,0,0,0.08); border-radius: 100px; overflow: hidden; }
         .score-fill  { height: 100%; border-radius: 100px; transition: width 1s ease; }
-        .fair    .score-fill { background: linear-gradient(90deg, #059669, #34D399); }
-        .partial .score-fill { background: linear-gradient(90deg, #D97706, #FCD34D); }
-        .concern .score-fill { background: linear-gradient(90deg, #DC2626, #F87171); }
+        .fair    .score-fill { background: linear-gradient(90deg, #10B981, #34D399); }
+        .partial .score-fill { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
+        .concern .score-fill { background: linear-gradient(90deg, #EF4444, #F87171); }
         .score-ticks { display: flex; justify-content: space-between; margin-top: 4px; }
         .score-tick  { font-size: 0.6875rem; color: var(--muted); }
 
-        /* ── PLAIN ENGLISH EXPLAINER ── */
+        /* ══════════════════════════════════════════
+           EXPLAINER BOX
+        ══════════════════════════════════════════ */
         .explainer-box {
             background: var(--surface); border-radius: 14px;
             border: 1.5px solid var(--rule); padding: 1.75rem;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.25rem; box-shadow: var(--shadow);
         }
         .box-heading {
             font-family: var(--serif); font-size: 1.125rem; font-weight: 700;
             color: var(--navy); margin-bottom: 0.25rem;
             display: flex; align-items: center; gap: 8px;
         }
-        .box-heading i { color: var(--gold); font-size: 0.9375rem; }
+        .box-heading svg { color: var(--gold); width: 18px; height: 18px; flex-shrink: 0; }
+        .box-heading i   { color: var(--gold); font-size: 0.9375rem; }
         .box-sub { font-size: 0.8125rem; color: var(--muted); margin-bottom: 1.25rem; }
 
-        /* ── CHECK LIST ── */
+        /* ══════════════════════════════════════════
+           CHECK LIST
+        ══════════════════════════════════════════ */
         .check-list { display: flex; flex-direction: column; gap: 0.75rem; }
         .check-item {
             display: flex; align-items: flex-start; gap: 1rem;
@@ -131,19 +206,20 @@
             transition: transform 0.15s, box-shadow 0.15s;
         }
         .check-item:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(15,30,56,0.07); }
-        .check-item.ok   { border-color: rgba(5,150,105,0.2); background: #FAFFFE; }
-        .check-item.warn { border-color: rgba(217,119,6,0.2); background: #FFFDF7; }
+        .check-item.ok   { border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.03); }
+        .check-item.warn { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.03); }
 
         .check-icon-wrap {
             width: 38px; height: 38px; border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.125rem; flex-shrink: 0;
+            flex-shrink: 0;
         }
-        .check-icon-wrap.ok   { background: rgba(5,150,105,0.1); color: var(--green); }
-        .check-icon-wrap.warn { background: rgba(217,119,6,0.1);  color: var(--amber); }
+        .check-icon-wrap.ok   { background: var(--green-dim); color: var(--green); }
+        .check-icon-wrap.warn { background: var(--amber-dim); color: var(--amber); }
+        .check-icon-wrap svg  { width: 18px; height: 18px; }
 
         .check-body { flex: 1; }
-        .check-name { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 3px; }
+        .check-name   { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 3px; }
         .check-detail { font-size: 0.8125rem; color: var(--muted); line-height: 1.55; }
 
         .check-badge {
@@ -151,32 +227,39 @@
             padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
             align-self: center;
         }
-        .check-badge.ok   { background: rgba(5,150,105,0.1); color: var(--green); }
-        .check-badge.warn { background: rgba(217,119,6,0.1);  color: var(--amber); }
-        .check-badge.fail { background: rgba(220,38,38,0.1);  color: var(--red); }
+        .check-badge.ok   { background: var(--green-dim); color: var(--green); }
+        .check-badge.warn { background: var(--amber-dim); color: var(--amber); }
+        .check-badge.fail { background: var(--red-dim);   color: var(--red); }
 
-        /* ── BIAS ALERT ── */
+        /* ══════════════════════════════════════════
+           BIAS ALERT
+        ══════════════════════════════════════════ */
         .bias-alert {
             border-radius: 14px; padding: 1.5rem 1.75rem;
             margin-bottom: 1.25rem;
             display: flex; gap: 1rem;
         }
-        .bias-alert.has-issues { background: #FFFBEB; border: 1.5px solid rgba(217,119,6,0.25); }
-        .bias-alert.all-clear  { background: #ECFDF5; border: 1.5px solid rgba(5,150,105,0.2); }
+        .bias-alert.has-issues { background: rgba(245,158,11,0.06); border: 1.5px solid rgba(245,158,11,0.25); }
+        .bias-alert.all-clear  { background: rgba(16,185,129,0.06); border: 1.5px solid rgba(16,185,129,0.2); }
         .bias-alert-icon {
             width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 1.125rem;
+            display: flex; align-items: center; justify-content: center;
         }
-        .has-issues .bias-alert-icon { background: rgba(217,119,6,0.12); color: var(--amber); }
-        .all-clear  .bias-alert-icon { background: rgba(5,150,105,0.1);  color: var(--green); }
+        .bias-alert-icon svg { width: 20px; height: 20px; }
+        .has-issues .bias-alert-icon { background: var(--amber-dim); color: var(--amber); }
+        .all-clear  .bias-alert-icon { background: var(--green-dim); color: var(--green); }
         .bias-alert-title { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 0.5rem; }
         .bias-issue-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-        .bias-issue-item { font-size: 0.8375rem; color: #78350F; line-height: 1.55; display: flex; gap: 8px; }
-        .bias-issue-item::before { content: '▸'; color: var(--amber); flex-shrink: 0; }
-        .all-clear .bias-issue-item { color: #047857; }
-        .all-clear .bias-issue-item::before { color: var(--green); }
+        .bias-issue-item { font-size: 0.8375rem; line-height: 1.55; display: flex; gap: 8px; }
+        .bias-issue-item::before { content: '▸'; flex-shrink: 0; }
+        .has-issues .bias-issue-item { color: #78350F; }
+        .has-issues .bias-issue-item::before { color: var(--amber); }
+        .all-clear  .bias-issue-item { color: #047857; }
+        .all-clear  .bias-issue-item::before { color: var(--green); }
 
-        /* ── WHAT THIS MEANS ── */
+        /* ══════════════════════════════════════════
+           WHAT THIS MEANS
+        ══════════════════════════════════════════ */
         .meaning-text {
             font-family: var(--serif); font-size: 1.0625rem; line-height: 1.75;
             color: #374151; margin-bottom: 1.25rem; font-style: italic;
@@ -186,12 +269,15 @@
             background: var(--bg); border: 1.5px solid var(--rule); border-radius: 10px;
             padding: 1.125rem; text-align: center; transition: transform 0.15s, box-shadow 0.15s;
         }
-        .action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(15,30,56,0.08); }
-        .action-card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .action-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .action-card-icon  { display: flex; justify-content: center; margin-bottom: 0.5rem; }
+        .action-card-icon svg { width: 28px; height: 28px; }
         .action-card-title { font-weight: 700; font-size: 0.875rem; color: var(--navy); margin-bottom: 4px; }
         .action-card-text  { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
 
-        /* ── RECOMMENDATIONS ── */
+        /* ══════════════════════════════════════════
+           RECOMMENDATIONS
+        ══════════════════════════════════════════ */
         .rec-list { display: flex; flex-direction: column; gap: 0.625rem; }
         .rec-item {
             display: flex; gap: 1rem; align-items: flex-start;
@@ -205,14 +291,15 @@
             color: white; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center; margin-top: 1px;
         }
-        .rec-icon { font-size: 1.25rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+        .rec-icon { width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px; }
+        .rec-icon svg { width: 100%; height: 100%; }
         .rec-title  { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
         .rec-detail { font-size: 0.8125rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
 
-        /* ── FAQ BOX ── */
-        .faq-item {
-            border-bottom: 1px solid var(--rule); padding: 1rem 0;
-        }
+        /* ══════════════════════════════════════════
+           FAQ BOX
+        ══════════════════════════════════════════ */
+        .faq-item { border-bottom: 1px solid var(--rule); padding: 1rem 0; }
         .faq-item:last-child { border-bottom: none; }
         .faq-q {
             font-weight: 700; font-size: 0.9375rem; color: var(--navy);
@@ -221,16 +308,13 @@
         }
         .faq-q i { color: var(--gold); font-size: 0.75rem; transition: transform 0.2s; }
         .faq-q.open i { transform: rotate(180deg); }
-        .faq-a {
-            font-size: 0.875rem; color: var(--muted); line-height: 1.65;
-            margin-top: 0.75rem; display: none;
-        }
+        .faq-a { font-size: 0.875rem; color: var(--muted); line-height: 1.65; margin-top: 0.75rem; display: none; }
         .faq-a.open { display: block; }
 
-        /* ── PRINT BUTTON ── */
-        .print-row {
-            display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;
-        }
+        /* ══════════════════════════════════════════
+           PRINT BUTTON
+        ══════════════════════════════════════════ */
+        .print-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn-print {
             display: inline-flex; align-items: center; gap: 7px;
             padding: 0.75rem 1.5rem; border-radius: 9px;
@@ -238,11 +322,13 @@
             cursor: pointer; border: none; transition: all 0.15s;
         }
         .btn-print-primary { background: var(--navy); color: white; }
-        .btn-print-primary:hover { background: #1A2D4E; }
-        .btn-print-ghost { background: transparent; border: 1.5px solid var(--rule); color: var(--muted); }
+        .btn-print-primary:hover { background: var(--navy-mid); }
+        .btn-print-ghost { background: transparent; border: 1.5px solid var(--rule); color: var(--muted); text-decoration: none; }
         .btn-print-ghost:hover { border-color: var(--navy); color: var(--navy); }
 
-        /* ── SECTION DIVIDER ── */
+        /* ══════════════════════════════════════════
+           SECTION LABEL
+        ══════════════════════════════════════════ */
         .section-label {
             font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em;
             text-transform: uppercase; color: var(--muted);
@@ -250,13 +336,17 @@
         }
         .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 
-        /* ── STATES ── */
+        /* ══════════════════════════════════════════
+           STATES
+        ══════════════════════════════════════════ */
         .state-wrap { text-align: center; padding: 5rem 2rem; }
         .state-icon  { font-size: 2.5rem; margin-bottom: 1rem; }
         .state-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
         .state-sub   { color: var(--muted); font-size: 0.9rem; }
 
-        /* ── PRINT ── */
+        /* ══════════════════════════════════════════
+           PRINT
+        ══════════════════════════════════════════ */
         @media print {
             @page { size: A4; margin: 15mm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -265,7 +355,9 @@
             .verdict-hero, .explainer-box, .check-item, .action-card, .bias-alert { break-inside: avoid; }
         }
 
-        /* ── ANIMATIONS ── */
+        /* ══════════════════════════════════════════
+           ANIMATIONS
+        ══════════════════════════════════════════ */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(16px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -278,26 +370,44 @@
         .anim-5 { animation-delay: 0.33s; }
         .anim-6 { animation-delay: 0.40s; }
         .anim-7 { animation-delay: 0.47s; }
+
+        @media (max-width: 768px) {
+            .nav-links, .nav-actions { display: none; }
+            .mobile-menu-btn { display: block; }
+            .navbar { padding: 16px 5%; }
+        }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="upload.html" class="nav-logo">
-        <div class="nav-logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 3L4 7V13C4 17.42 7.58 21.29 12 22C16.42 21.29 20 17.42 20 13V7L12 3Z" fill="white" fill-opacity="0.15"/>
-                <path d="M9 12L11.5 14.5L16 10" stroke="white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+<!-- ═══ NAVBAR — from index.html ═══════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+    <a href="index.html" class="logo">
+        <div class="logo-icon">
+            <i class="fas fa-shield-alt"></i>
         </div>
-        <span class="nav-logo-name">Fair<span>Trust</span></span>
+        <div>
+            <div class="logo-text">Fair<span>Trust</span></div>
+            <div class="logo-subtitle">ETHICAL AI</div>
+        </div>
     </a>
-    <div class="nav-links">
+
+    <div class="nav-links" id="navLinks">
         <a href="index.html">Home</a>
-        <a href="upload.html">Upload</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
         <a href="docs.html">Docs</a>
         <a href="admin.html">Admin</a>
     </div>
+
+    <!-- <div class="nav-actions">
+        <a href="login.html" class="btn-nav">
+            <i class="fas fa-play-circle"></i> Login / Sign Up
+        </a>
+    </div> -->
+
+    <button class="mobile-menu-btn" id="mobileBtn">
+        <i class="fas fa-bars"></i>
+    </button>
 </nav>
 
 <main class="page" id="app">
@@ -311,32 +421,88 @@
 <script>
 const API_BASE = 'http://127.0.0.1:5000';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+/* ── Scroll shrink navbar ────────────────────────────────────────── */
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ── SVG icon library ────────────────────────────────────────────── */
+const SVG = {
+    /* verdict status */
+    checkCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>`,
+    alertTriangle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    xCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+
+    /* check items */
+    barChart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+    users: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    trendDown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>`,
+    target: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+    shuffle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>`,
+
+    /* bias */
+    alertCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+
+    /* action cards */
+    shieldCheck: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
+    scale: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M5 6h14M5 12h14M5 18h14"/></svg>`,
+    gitBranch: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
+
+    /* recommendations */
+    fileText: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+    lightbulb: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8A6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>`,
+    wrench: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+    trendUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+
+    /* generic check/warning for badges */
+    check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    exclamation: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+};
+
+/* Map emoji/text icon hints → SVG keys */
+function iconToSvg(iconHint) {
+    const map = {
+        '📊': 'barChart', '👥': 'users', '📉': 'trendDown',
+        '🎯': 'target',   '🔄': 'shuffle', '✅': 'checkCircle',
+        '⚠️': 'alertTriangle', '🔴': 'xCircle',
+        '⚖️': 'scale',    '🔀': 'gitBranch', '📋': 'fileText',
+        '💡': 'lightbulb','🔧': 'wrench',    '📈': 'trendUp',
+    };
+    return SVG[map[iconHint] || 'fileText'] || SVG.fileText;
+}
+
+/* ── Helpers ──────────────────────────────────────────────────────── */
 function outcomeClass(score) {
     if (score >= 0.80) return 'fair';
     if (score >= 0.65) return 'partial';
     return 'concern';
 }
 
-function checkSev(ok) { return ok ? 'ok' : 'warn'; }
-
-// ── Render ────────────────────────────────────────────────────────────────────
+/* ── Render ───────────────────────────────────────────────────────── */
 function renderReport(data, evalId) {
-    const score    = data.ethical_score || 0;
-    const pct      = Math.round(score * 100);
-    const cls      = outcomeClass(score);
-    const summary  = data.overall_summary || {};
-    const factors  = data.factor_items    || [];
-    const biases   = data.bias_indicators || [];
-    const wtm      = data.what_this_means || {};
-    const recs     = data.recommendations || [];
+    const score   = data.ethical_score || 0;
+    const pct     = Math.round(score * 100);
+    const cls     = outcomeClass(score);
+    const summary = data.overall_summary || {};
+    const factors = data.factor_items    || [];
+    const biases  = data.bias_indicators || [];
+    const wtm     = data.what_this_means || {};
+    const recs    = data.recommendations || [];
 
-    // ── Verdict hero ─────────────────────────────────────────────────────
+    /* ── Verdict icon by class ── */
+    const verdictSvgMap = {
+        fair:    { svg: SVG.checkCircle,    color: '#10B981' },
+        partial: { svg: SVG.alertTriangle,  color: '#F59E0B' },
+        concern: { svg: SVG.xCircle,        color: '#EF4444' },
+    };
+    const vIcon = verdictSvgMap[cls];
+
+    /* ── Verdict hero ── */
     const heroHtml = `
     <div class="verdict-hero ${cls} anim anim-1">
         <div class="verdict-eyebrow"><i class="fas fa-shield-alt"></i> FairTrust AI · Fairness Assessment</div>
         <div class="verdict-icon-row">
-            <div class="verdict-emoji">${summary.icon || (cls === 'fair' ? '✅' : cls === 'partial' ? '⚠️' : '🔴')}</div>
+            <div class="verdict-svg-icon" style="color:${vIcon.color}">${vIcon.svg}</div>
             <div>
                 <div class="verdict-headline">${summary.verdict || 'Assessment Complete'}</div>
                 <div class="verdict-sub">${summary.sub || ''}</div>
@@ -359,20 +525,22 @@ function renderReport(data, evalId) {
         </div>
     </div>`;
 
-    // ── Checks ───────────────────────────────────────────────────────────
-    const checkItems = factors.map(f => {
-        const sev  = f.status === 'approved' ? 'ok' : 'warn';
-        const icon = f.status === 'approved' ? 'fa-check' : 'fa-exclamation';
-        const badgeLabel = f.status === 'approved' ? 'Looks Good' : 'Needs Attention';
+    /* ── Checks ── */
+    const factorIconMap = ['barChart','users','trendDown','target','shuffle'];
+    const checkItems = factors.map((f, idx) => {
+        const sev      = f.status === 'approved' ? 'ok' : 'warn';
+        const iconKey  = factorIconMap[idx % factorIconMap.length];
+        const badgeSvg = sev === 'ok' ? SVG.check : SVG.exclamation;
+        const badgeLabel = sev === 'ok' ? 'Looks Good' : 'Needs Attention';
         return `
         <div class="check-item ${sev}">
-            <div class="check-icon-wrap ${sev}"><i class="fas ${icon}"></i></div>
+            <div class="check-icon-wrap ${sev}">${SVG[iconKey]}</div>
             <div class="check-body">
                 <div class="check-name">${f.name}</div>
                 <div class="check-detail">${f.detail}</div>
             </div>
             <div class="check-badge ${sev}">
-                <i class="fas ${f.status === 'approved' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span style="width:12px;height:12px;display:inline-flex">${badgeSvg}</span>
                 ${badgeLabel}
             </div>
         </div>`;
@@ -385,32 +553,43 @@ function renderReport(data, evalId) {
         <div class="check-list">${checkItems || '<p style="color:var(--muted)">No checks available.</p>'}</div>
     </div>`;
 
-    // ── Bias alert ────────────────────────────────────────────────────────
-    const isClean = biases.length === 1 && biases[0].title.toLowerCase().includes('no major');
+    /* ── Bias alert ── */
+    const isClean  = biases.length === 1 && biases[0].title.toLowerCase().includes('no major');
     const biasClass = isClean ? 'all-clear' : 'has-issues';
-    const biasIcon  = isClean ? 'fa-check-circle' : 'fa-exclamation-triangle';
-    const biasTitle = isClean ? 'No major bias detected' : `${biases.length} bias indicator${biases.length !== 1 ? 's' : ''} found`;
-    const biasItems = biases.map(b => `
+    const biasIconSvg = isClean ? SVG.checkCircle : SVG.alertTriangle;
+    const biasTitle   = isClean ? 'No major bias detected' : `${biases.length} bias indicator${biases.length !== 1 ? 's' : ''} found`;
+    const biasItems   = biases.map(b => `
         <li class="bias-issue-item">
             <strong>${b.title}:</strong> ${b.detail}
         </li>`).join('');
 
     const biasHtml = `
     <div class="bias-alert ${biasClass} anim anim-3">
-        <div class="bias-alert-icon"><i class="fas ${biasIcon}"></i></div>
+        <div class="bias-alert-icon">${biasIconSvg}</div>
         <div>
             <div class="bias-alert-title">${biasTitle}</div>
             <ul class="bias-issue-list">${biasItems}</ul>
         </div>
     </div>`;
 
-    // ── What this means ───────────────────────────────────────────────────
-    const actionCards = (wtm.action_cards || []).map(c => `
+    /* ── Action card SVG map ── */
+    const actionIconSvgMap = {
+        '✅': { svg: SVG.shieldCheck, color: 'var(--green)' },
+        '⚠️': { svg: SVG.alertTriangle, color: 'var(--amber)' },
+        '⚖️': { svg: SVG.scale, color: 'var(--blue)' },
+        '🔀': { svg: SVG.gitBranch, color: 'var(--navy)' },
+    };
+
+    /* ── What this means ── */
+    const actionCards = (wtm.action_cards || []).map(c => {
+        const ai = actionIconSvgMap[c.icon] || { svg: SVG.shieldCheck, color: 'var(--navy)' };
+        return `
         <div class="action-card">
-            <div class="action-card-icon">${c.icon}</div>
+            <div class="action-card-icon" style="color:${ai.color}">${ai.svg}</div>
             <div class="action-card-title">${c.title}</div>
             <div class="action-card-text">${c.text}</div>
-        </div>`).join('');
+        </div>`;
+    }).join('');
 
     const meaningHtml = `
     <div class="explainer-box anim anim-4">
@@ -420,16 +599,19 @@ function renderReport(data, evalId) {
         ${actionCards ? `<div class="action-cards-grid">${actionCards}</div>` : ''}
     </div>`;
 
-    // ── Recommendations ───────────────────────────────────────────────────
-    const recItems = recs.map((r, i) => `
+    /* ── Recommendations ── */
+    const recItems = recs.map((r, i) => {
+        const ri = actionIconSvgMap[r.icon] || { svg: SVG.fileText, color: 'var(--gold)' };
+        return `
         <div class="rec-item">
             <div class="rec-num">${i + 1}</div>
-            <div class="rec-icon">${r.icon}</div>
+            <div class="rec-icon" style="color:${ri.color}">${ri.svg}</div>
             <div>
                 <div class="rec-title">${r.title}</div>
                 <div class="rec-detail">${r.detail}</div>
             </div>
-        </div>`).join('');
+        </div>`;
+    }).join('');
 
     const recsHtml = recs.length ? `
     <div class="explainer-box anim anim-5">
@@ -438,7 +620,7 @@ function renderReport(data, evalId) {
         <div class="rec-list">${recItems}</div>
     </div>` : '';
 
-    // ── FAQ ───────────────────────────────────────────────────────────────
+    /* ── FAQ ── */
     const faqs = [
         {
             q: 'What is a "fairness score" and what does mine mean?',
@@ -478,7 +660,7 @@ function renderReport(data, evalId) {
         ${faqItems}
     </div>`;
 
-    // ── Footer actions ────────────────────────────────────────────────────
+    /* ── Footer ── */
     const footerHtml = `
     <div class="anim anim-7">
         <div class="print-row">
@@ -496,7 +678,7 @@ function renderReport(data, evalId) {
         </p>
     </div>`;
 
-    // ── Assemble ──────────────────────────────────────────────────────────
+    /* ── Assemble ── */
     document.getElementById('app').innerHTML = `
         <div class="section-label">Your Fairness Report</div>
         ${heroHtml}
@@ -511,22 +693,20 @@ function renderReport(data, evalId) {
         ${footerHtml}
     `;
 
-    // Animate score bar
+    /* Animate score bar */
     setTimeout(() => {
         const fill = document.getElementById('scoreFill');
         if (fill) fill.style.width = pct + '%';
     }, 200);
 }
 
-// ── FAQ toggle ────────────────────────────────────────────────────────────────
+/* ── FAQ toggle ── */
 function toggleFaq(i) {
-    const q = document.getElementById(`faq-q-${i}`);
-    const a = document.getElementById(`faq-a-${i}`);
-    q.classList.toggle('open');
-    a.classList.toggle('open');
+    document.getElementById(`faq-q-${i}`).classList.toggle('open');
+    document.getElementById(`faq-a-${i}`).classList.toggle('open');
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+/* ── Init ── */
 (async function init() {
     const evalId = new URLSearchParams(location.search).get('eval_id')
                 || sessionStorage.getItem('eval_id');
@@ -556,9 +736,9 @@ function toggleFaq(i) {
             const cls      = outcomeClass(score);
 
             const verdicts = {
-                fair:    { verdict: 'This model is treating people fairly.', sub: 'Our automated checks found no major fairness problems.', icon: '✅', outcome: 'FAIR' },
-                partial: { verdict: 'This model has some fairness concerns.', sub: 'It works well in most cases but has specific areas that need attention.', icon: '⚠️', outcome: 'PARTIAL' },
-                concern: { verdict: 'This model has significant fairness issues.', sub: 'There are areas where the model may treat people unfairly.', icon: '🔴', outcome: 'CONCERN' },
+                fair:    { verdict: 'This model is treating people fairly.',        sub: 'Our automated checks found no major fairness problems.',                icon: '✅', outcome: 'FAIR' },
+                partial: { verdict: 'This model has some fairness concerns.',       sub: 'It works well in most cases but has specific areas that need attention.', icon: '⚠️', outcome: 'PARTIAL' },
+                concern: { verdict: 'This model has significant fairness issues.',  sub: 'There are areas where the model may treat people unfairly.',              icon: '🔴', outcome: 'CONCERN' },
             };
 
             const makeFactor = (name, icon, scoreVal, threshold, goodText, badText) => ({
