@@ -6,10 +6,10 @@
   <title>Technical Bias Audit — Deep Analysis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jetbrains+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --navy: #0a0e27;
@@ -24,7 +24,7 @@
       --text: #0a0e27;
       --muted: #7f8c8d;
       --border: #ecf0f1;
-      --mono: 'Jetbrains Mono', monospace;
+      --mono: 'JetBrains Mono', monospace;
       --serif: 'Crimson Text', serif;
       --sans: 'Space Mono', monospace;
     }
@@ -38,711 +38,196 @@
       font-size: 16px;
     }
 
-    /* ──────────── NAV ──────────── */
+    /* ── NAV ── */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(255,255,255,0.98); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-
-    .logo {
-      font-family: var(--sans);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--navy);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
+    .logo { font-family: var(--sans); font-size: 1.25rem; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: .75rem; }
     .logo i { color: var(--gold); font-size: 1.5rem; }
+    .search-bar { flex: 1; max-width: 400px; margin: 0 2rem; position: relative; }
+    .search-bar input { width: 100%; padding: .7rem 1rem .7rem 2.5rem; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--serif); font-size: .9rem; transition: all .2s; }
+    .search-bar input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,165,116,.1); }
+    .search-bar i { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .nav-controls { display: flex; gap: 1rem; align-items: center; }
+    .filter-btn { padding: .7rem 1.2rem; border: 1.5px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; font-family: var(--sans); font-size: .85rem; font-weight: 600; transition: all .2s; color: var(--text); }
+    .filter-btn:hover { border-color: var(--gold); background: rgba(212,165,116,.05); }
 
-    .search-bar {
-      flex: 1;
-      max-width: 400px;
-      margin: 0 2rem;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 0.7rem 1rem 0.7rem 2.5rem;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: var(--serif);
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-
-    .search-bar input:focus {
-      outline: none;
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
-    }
-
-    .search-bar i {
-      position: absolute;
-      left: 0.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-    }
-
-    .nav-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .filter-btn {
-      padding: 0.7rem 1.2rem;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 600;
-      transition: all 0.2s;
-      color: var(--text);
-    }
-
-    .filter-btn:hover {
-      border-color: var(--gold);
-      background: rgba(212, 165, 116, 0.05);
-    }
-
-    /* ──────────── SIDEBAR ──────────── */
+    /* ── SIDEBAR ── */
     .sidebar {
-      position: fixed;
-      left: 0;
-      top: 60px;
-      width: 280px;
-      height: calc(100vh - 60px);
-      background: var(--navy);
-      padding: 2rem 0;
-      overflow-y: auto;
-      border-right: 1px solid var(--deep-blue);
+      position: fixed; left: 0; top: 60px; width: 280px; height: calc(100vh - 60px);
+      background: var(--navy); padding: 2rem 0; overflow-y: auto; border-right: 1px solid var(--deep-blue);
     }
-
-    .sidebar-section {
-      margin-bottom: 2rem;
-      padding: 0 1rem;
-    }
-
-    .sidebar-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: rgba(255, 255, 255, 0.4);
-      margin-bottom: 0.75rem;
-      font-weight: 700;
-    }
-
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.7rem 1rem;
-      color: rgba(255, 255, 255, 0.6);
-      text-decoration: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 0.95rem;
-    }
-
-    .sidebar-item:hover {
-      color: var(--gold);
-      background: rgba(212, 165, 116, 0.1);
-    }
-
-    .sidebar-item.active {
-      color: var(--gold);
-      background: rgba(212, 165, 116, 0.15);
-      border-left: 3px solid var(--gold);
-      padding-left: calc(1rem - 3px);
-    }
-
+    .sidebar-section { margin-bottom: 2rem; padding: 0 1rem; }
+    .sidebar-label { font-family: var(--mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .15em; color: rgba(255,255,255,.4); margin-bottom: .75rem; font-weight: 700; }
+    .sidebar-item { display: flex; align-items: center; gap: .75rem; padding: .7rem 1rem; color: rgba(255,255,255,.6); text-decoration: none; border-radius: 6px; cursor: pointer; transition: all .2s; font-size: .95rem; }
+    .sidebar-item:hover { color: var(--gold); background: rgba(212,165,116,.1); }
+    .sidebar-item.active { color: var(--gold); background: rgba(212,165,116,.15); border-left: 3px solid var(--gold); padding-left: calc(1rem - 3px); }
     .sidebar-item i { width: 18px; }
 
-    /* ──────────── MAIN ──────────── */
-    main {
-      margin-left: 280px;
-      padding: 2rem 3rem;
-      max-width: 1400px;
-    }
+    /* ── MAIN ── */
+    main { margin-left: 280px; padding: 2rem 3rem; max-width: 1400px; }
 
-    /* ──────────── HERO ──────────── */
+    /* ── LOADING/ERROR ── */
+    .loading-state { min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem; }
+    .loading-state .spin { font-size: 2.5rem; color: var(--gold); margin-bottom: 1rem; animation: spin .8s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── HERO ── */
     .hero {
       background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 100%);
-      color: white;
-      padding: 3rem;
-      border-radius: 16px;
-      margin-bottom: 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(212, 165, 116, 0.15) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero h1 {
-      font-family: var(--serif);
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      opacity: 0.85;
-      max-width: 600px;
-      margin-bottom: 2rem;
-    }
-
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .stat {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1.5rem;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-    }
-
-    .stat-val {
-      font-family: var(--sans);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--gold);
-    }
-
-    .stat-lbl {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.6);
-      margin-top: 0.5rem;
-    }
-
-    /* ──────────── SECTION ──────────── */
-    section {
-      margin-bottom: 3rem;
-      scroll-margin-top: 80px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid var(--border);
-    }
-
-    .section-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, var(--gold), var(--amber));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-    }
-
-    .section-header h2 {
-      font-family: var(--serif);
-      font-size: 2rem;
-      margin: 0;
-    }
-
-    .section-header .meta {
-      margin-left: auto;
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    /* ──────────── CARD ──────────── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 1.5rem;
-      transition: all 0.3s;
-    }
-
-    .card:hover {
-      border-color: var(--gold);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 1.5rem;
-    }
-
-    .card h3 {
-      font-family: var(--serif);
-      font-size: 1.4rem;
-      margin: 0;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.9rem;
-      border-radius: 6px;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .badge.critical {
-      background: rgba(231, 76, 60, 0.15);
-      color: var(--red);
-    }
-
-    .badge.warning {
-      background: rgba(243, 156, 18, 0.15);
-      color: var(--amber);
-    }
-
-    .badge.info {
-      background: rgba(26, 188, 156, 0.15);
-      color: var(--cyan);
-    }
-
-    /* ──────────── ROOT CAUSE ANALYSIS ──────────── */
-    .root-cause-tree {
-      margin-top: 1.5rem;
-      padding: 1.5rem;
-      background: var(--bg);
-      border-left: 4px solid var(--gold);
-      border-radius: 8px;
-    }
-
-    .root-cause-item {
-      margin-bottom: 1.5rem;
-      padding-left: 1.5rem;
-      position: relative;
-    }
-
-    .root-cause-item::before {
-      content: '▸';
-      position: absolute;
-      left: 0;
-      color: var(--gold);
-      font-size: 1.2rem;
-    }
-
-    .root-cause-title {
-      font-family: var(--sans);
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-    }
-
-    .root-cause-detail {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .evidence-box {
-      background: rgba(231, 76, 60, 0.08);
-      border: 1px solid rgba(231, 76, 60, 0.2);
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 0.75rem;
-      font-size: 0.9rem;
-    }
-
-    /* ──────────── SHAP EXPLANATION ──────────── */
-    .shap-feature-bar {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      background: var(--bg);
-      border-radius: 8px;
-    }
-
-    .shap-feature-name {
-      font-family: var(--mono);
-      font-weight: 600;
-      min-width: 180px;
-      font-size: 0.9rem;
-    }
-
-    .shap-feature-name.danger {
-      color: var(--red);
-      font-weight: 700;
-    }
-
-    .shap-bar-track {
-      flex: 1;
-      height: 24px;
-      background: white;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      position: relative;
-    }
-
-    .shap-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--amber));
-      display: flex;
-      align-items: center;
-      padding-left: 0.5rem;
-      color: white;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      font-weight: 700;
-      transition: width 0.6s ease;
-    }
-
-    .shap-feature-value {
-      font-family: var(--mono);
-      min-width: 80px;
-      text-align: right;
-      font-weight: 600;
-    }
-
-    .shap-warning {
-      background: rgba(231, 76, 60, 0.1);
-      border-left: 4px solid var(--red);
-      padding: 1rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-    }
-
-    .shap-warning strong {
-      color: var(--red);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    /* ──────────── CODE BLOCK ──────────── */
-    .code-block {
-      margin: 1.5rem 0;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .code-header {
-      background: var(--navy);
-      color: white;
-      padding: 0.8rem 1.2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-    }
-
-    .code-header .lang {
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--gold);
-    }
-
-    .code-copy {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      transition: all 0.2s;
-    }
-
-    .code-copy:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .code-content {
-      background: var(--navy);
-      color: #a8e6cf;
-      padding: 1.2rem;
-      overflow-x: auto;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      line-height: 1.6;
-    }
-
-    .code-content code {
-      display: block;
-      white-space: pre;
-    }
-
-    /* ──────────── EXPANDABLE ──────────── */
-    .expandable {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-
-    .expandable-header {
-      padding: 1.2rem;
-      background: var(--bg);
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.2s;
-      font-weight: 600;
-    }
-
-    .expandable-header:hover {
-      background: rgba(212, 165, 116, 0.1);
-    }
-
-    .expandable-header.open {
-      background: rgba(212, 165, 116, 0.15);
-    }
-
-    .expandable-toggle {
-      font-size: 1rem;
-      transition: transform 0.3s;
-      color: var(--gold);
-    }
-
-    .expandable-toggle.open {
-      transform: rotate(180deg);
-    }
-
-    .expandable-content {
-      display: none;
-      padding: 1.5rem;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      animation: slideDown 0.3s ease;
-    }
-
-    .expandable-content.open {
-      display: block;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ──────────── DEPLOYMENT CHECKLIST ──────────── */
-    .checklist {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .checklist-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--bg);
-      border-radius: 8px;
-      border-left: 4px solid var(--border);
-    }
-
-    .checklist-item.critical {
-      border-left-color: var(--red);
-      background: rgba(231, 76, 60, 0.05);
-    }
-
-    .checklist-item.warning {
-      border-left-color: var(--amber);
-      background: rgba(243, 156, 18, 0.05);
-    }
-
-    .checklist-item.done {
-      border-left-color: var(--green);
-      background: rgba(39, 174, 96, 0.05);
-    }
-
-    .checklist-checkbox {
-      width: 24px;
-      height: 24px;
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.2s;
-      margin-top: 2px;
-    }
-
-    .checklist-checkbox:hover {
-      border-color: var(--gold);
-    }
-
-    .checklist-item.done .checklist-checkbox {
-      background: var(--green);
-      border-color: var(--green);
-      color: white;
-    }
-
-    .checklist-text {
-      flex: 1;
-    }
-
-    .checklist-text strong {
-      display: block;
-      margin-bottom: 0.3rem;
-    }
-
-    .checklist-text small {
-      color: var(--muted);
-      display: block;
-    }
-
-    /* ──────────── AI ANALYSIS ──────────── */
-    .ai-analysis {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 12px;
-      margin-top: 2rem;
-    }
-
-    .ai-analysis h4 {
-      color: var(--gold);
-      margin-bottom: 1rem;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .ai-content {
-      font-family: var(--serif);
-      line-height: 1.8;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .ai-content p {
-      margin-bottom: 1rem;
-    }
-
-    .ai-loading {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      color: var(--gold);
-    }
-
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(212, 165, 116, 0.3);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* ──────────── FILTER DROPDOWN ──────────── */
-    .filter-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 0.5rem;
-      min-width: 200px;
-      display: none;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-    }
-
-    .filter-dropdown.open {
-      display: block;
-    }
-
-    .filter-option {
-      padding: 0.5rem 0.75rem;
-      cursor: pointer;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .filter-option:hover {
-      background: var(--bg);
-    }
-
-    .filter-option input {
-      cursor: pointer;
-    }
-
-    /* ──────────── RESPONSIVE ──────────── */
-    @media (max-width: 1200px) {
-      .sidebar { width: 240px; }
-      main { margin-left: 240px; }
-    }
-
+      color: white; padding: 3rem; border-radius: 16px; margin-bottom: 3rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before { content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(212,165,116,.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+    .hero-content { position: relative; z-index: 2; }
+    .hero h1 { font-family: var(--serif); font-size: 2.5rem; margin-bottom: 1rem; line-height: 1.2; }
+    .hero p { font-size: 1.1rem; opacity: .85; max-width: 600px; margin-bottom: 2rem; }
+    .hero-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .stat { background: rgba(255,255,255,.1); padding: 1.5rem; border-radius: 10px; backdrop-filter: blur(10px); }
+    .stat-val { font-family: var(--sans); font-size: 2rem; font-weight: 700; }
+    .stat-val.green { color: var(--green); }
+    .stat-val.red { color: #ff6b6b; }
+    .stat-val.amber { color: var(--amber); }
+    .stat-val.gold { color: var(--gold); }
+    .stat-lbl { font-family: var(--mono); font-size: .75rem; text-transform: uppercase; color: rgba(255,255,255,.6); margin-top: .5rem; }
+
+    /* ── SECTION ── */
+    section { margin-bottom: 3rem; scroll-margin-top: 80px; }
+    .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border); }
+    .section-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--gold), var(--amber)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; }
+    .section-header h2 { font-family: var(--serif); font-size: 2rem; margin: 0; }
+    .section-header .meta { margin-left: auto; font-size: .9rem; color: var(--muted); }
+
+    /* ── CARD ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; transition: all .3s; }
+    .card:hover { border-color: var(--gold); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem; }
+    .card h3 { font-family: var(--serif); font-size: 1.4rem; margin: 0; }
+    .badge { display: inline-flex; align-items: center; gap: .4rem; padding: .4rem .9rem; border-radius: 6px; font-family: var(--mono); font-size: .75rem; font-weight: 600; text-transform: uppercase; }
+    .badge.critical { background: rgba(231,76,60,.15); color: var(--red); }
+    .badge.warning  { background: rgba(243,156,18,.15); color: var(--amber); }
+    .badge.info     { background: rgba(26,188,156,.15); color: var(--cyan); }
+    .badge.pass     { background: rgba(39,174,96,.15);  color: var(--green); }
+
+    /* ── ALERT BOX ── */
+    .alert-box { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 1rem; }
+    .alert-box.blocked { background: rgba(231,76,60,.08); border-color: var(--red); }
+    .alert-box.blocked strong { color: var(--red); }
+    .alert-box.info   { background: rgba(26,188,156,.08); border-color: var(--cyan); }
+    .alert-box ul { margin: .75rem 0 0 1.5rem; color: var(--muted); font-size: .95rem; }
+
+    /* ── ROOT CAUSES ── */
+    .root-cause-tree { margin-top: 1.5rem; padding: 1.5rem; background: var(--bg); border-left: 4px solid var(--gold); border-radius: 8px; }
+    .root-cause-item { margin-bottom: 1.5rem; padding-left: 1.5rem; position: relative; }
+    .root-cause-item::before { content: '▸'; position: absolute; left: 0; color: var(--gold); font-size: 1.2rem; }
+    .root-cause-title { font-family: var(--sans); font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+    .root-cause-detail { color: var(--muted); font-size: .95rem; line-height: 1.6; }
+    .evidence-box { background: rgba(231,76,60,.08); border: 1px solid rgba(231,76,60,.2); padding: 1rem; border-radius: 8px; margin-top: .75rem; font-size: .9rem; }
+    code.inline { background: rgba(0,0,0,.1); padding: 2px 6px; border-radius: 3px; font-family: var(--mono); font-size: .85em; }
+
+    /* ── SHAP ── */
+    .shap-feature-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding: 1rem; background: var(--bg); border-radius: 8px; }
+    .shap-feature-name { font-family: var(--mono); font-weight: 600; min-width: 200px; font-size: .85rem; }
+    .shap-feature-name.danger { color: var(--red); font-weight: 700; }
+    .shap-bar-track { flex: 1; height: 24px; background: white; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+    .shap-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--amber)); display: flex; align-items: center; padding-left: .5rem; color: white; font-family: var(--mono); font-size: .7rem; font-weight: 700; transition: width .6s ease; min-width: 4px; }
+    .shap-bar-fill.danger { background: linear-gradient(90deg, var(--red), var(--amber)); }
+    .shap-feature-value { font-family: var(--mono); min-width: 80px; text-align: right; font-weight: 600; }
+    .shap-warning { background: rgba(231,76,60,.1); border-left: 4px solid var(--red); padding: 1rem; border-radius: 8px; margin: 1.5rem 0; }
+    .shap-warning strong { color: var(--red); display: block; margin-bottom: .5rem; }
+
+    /* ── BIAS TYPES ── */
+    .expandable { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+    .expandable-header { padding: 1.2rem; background: var(--bg); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all .2s; font-weight: 600; }
+    .expandable-header:hover { background: rgba(212,165,116,.1); }
+    .expandable-header.open { background: rgba(212,165,116,.15); }
+    .expandable-toggle { font-size: 1rem; transition: transform .3s; color: var(--gold); }
+    .expandable-toggle.open { transform: rotate(180deg); }
+    .expandable-content { display: none; padding: 1.5rem; background: var(--surface); border-top: 1px solid var(--border); animation: slideDown .3s ease; }
+    .expandable-content.open { display: block; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── COUNTERFACTUAL ── */
+    .cf-pair { padding: 1.5rem; background: var(--bg); border-radius: 10px; border-left: 4px solid var(--red); margin-bottom: 1.5rem; }
+    .cf-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: start; margin-bottom: 1.25rem; }
+    .cf-person { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .cf-person-head { font-family: var(--mono); font-size: .75rem; font-weight: 700; text-transform: uppercase; margin-bottom: .4rem; }
+    .cf-person-head.approved { color: var(--green); }
+    .cf-person-head.rejected { color: var(--red); }
+    .cf-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed var(--border); font-size: .8rem; }
+    .cf-row:last-child { border: none; }
+    .cf-k { color: var(--muted); }
+    .cf-v { font-family: var(--mono); font-weight: 600; }
+    .cf-v.diff { color: var(--red); }
+    .cf-divider { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-top: 1.5rem; color: var(--red); font-family: var(--mono); font-size: .75rem; text-transform: uppercase; }
+    .cf-explain { padding: 1rem; background: white; border-radius: 8px; border-left: 4px solid var(--red); font-size: .9rem; }
+    .cf-explain strong { color: var(--red); display: block; margin-bottom: .4rem; }
+
+    /* ── FIX INSTRUCTIONS ── */
+    .code-block { margin: 1.5rem 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+    .code-header { background: var(--navy); color: white; padding: .8rem 1.2rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: .85rem; }
+    .code-header .lang { font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); }
+    .code-copy { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: white; padding: .4rem .8rem; border-radius: 4px; cursor: pointer; font-family: var(--mono); font-size: .75rem; transition: all .2s; }
+    .code-copy:hover { background: rgba(255,255,255,.15); }
+    .code-content { background: var(--navy); color: #a8e6cf; padding: 1.2rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; }
+    .code-content code { display: block; white-space: pre; }
+
+    /* ── CHECKLIST ── */
+    .checklist { display: flex; flex-direction: column; gap: 1rem; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; background: var(--bg); border-radius: 8px; border-left: 4px solid var(--border); }
+    .checklist-item.critical { border-left-color: var(--red); background: rgba(231,76,60,.05); }
+    .checklist-item.warning  { border-left-color: var(--amber); background: rgba(243,156,18,.05); }
+    .checklist-item.done     { border-left-color: var(--green); background: rgba(39,174,96,.05); }
+    .checklist-checkbox { width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s; margin-top: 2px; }
+    .checklist-item.done .checklist-checkbox { background: var(--green); border-color: var(--green); color: white; }
+    .checklist-text strong { display: block; margin-bottom: .3rem; }
+    .checklist-text small { color: var(--muted); display: block; }
+
+    /* ── AI ANALYSIS BLOCK ── */
+    .ai-analysis { background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 100%); color: white; padding: 2rem; border-radius: 12px; margin-top: 2rem; }
+    .ai-analysis h4 { color: var(--gold); margin-bottom: 1rem; font-family: var(--mono); font-size: .85rem; text-transform: uppercase; letter-spacing: .1em; }
+    .ai-content { font-family: var(--serif); line-height: 1.8; color: rgba(255,255,255,.9); }
+    .ai-content p { margin-bottom: 1rem; }
+    .ai-loading { display: flex; align-items: center; gap: 1rem; color: var(--gold); }
+    .spinner { width: 20px; height: 20px; border: 2px solid rgba(212,165,116,.3); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+
+    /* ── GEMINI ── */
+    .gemini-key-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .gemini-key-row input { flex: 1; padding: .8rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--mono); font-size: .85rem; }
+    .gemini-btn { padding: .8rem 1.5rem; background: linear-gradient(135deg, var(--gold), var(--amber)); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: var(--serif); transition: all .2s; }
+    .gemini-btn:hover { opacity: .9; transform: translateY(-1px); }
+    .gemini-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    #gemini-output { display: none; padding: 1.5rem; background: var(--navy); color: white; border-radius: 10px; font-family: var(--serif); line-height: 1.8; margin-top: 1rem; white-space: pre-wrap; }
+
+    /* ── FILTER DROPDOWN ── */
+    .filter-dropdown { position: absolute; top: 100%; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-top: .5rem; min-width: 200px; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.1); z-index: 100; }
+    .filter-dropdown.open { display: block; }
+    .filter-option { padding: .5rem .75rem; cursor: pointer; border-radius: 4px; display: flex; align-items: center; gap: .5rem; font-size: .9rem; }
+    .filter-option:hover { background: var(--bg); }
+
+    /* ── TIMELINE ── */
+    .timeline-list { padding: 1.5rem 0; }
+    .timeline-item { display: flex; gap: 1rem; padding: .75rem 0; font-size: .9rem; border-bottom: 1px dashed var(--border); }
+    .timeline-item:last-child { border: none; }
+    .timeline-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .timeline-dot.crit { background: var(--red); }
+    .timeline-dot.warn { background: var(--amber); }
+    .timeline-dot.ok   { background: var(--green); }
+    .timeline-content strong { display: block; color: var(--text); }
+    .timeline-content span  { color: var(--muted); font-size: .85rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1200px) { .sidebar { width: 240px; } main { margin-left: 240px; } }
     @media (max-width: 768px) {
-      .sidebar { display: none; }
-      main { margin-left: 0; padding: 1.5rem; }
-      .hero { padding: 2rem; }
-      .hero h1 { font-size: 1.8rem; }
-      .section-header { flex-direction: column; align-items: start; }
-      .section-header .meta { margin-left: 0; margin-top: 1rem; }
+      .sidebar { display: none; } main { margin-left: 0; padding: 1.5rem; }
+      .hero h1 { font-size: 1.8rem; } .cf-grid { grid-template-columns: 1fr; } .cf-divider { display: none; }
       .hero-stats { grid-template-columns: 1fr; }
     }
-
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
@@ -752,34 +237,21 @@
 
 <!-- NAV -->
 <nav>
-  <div class="logo">
-    <i class="fas fa-shield-alt"></i>
-    <span>FairTrust Audit</span>
-  </div>
+  <div class="logo"><i class="fas fa-shield-alt"></i><span>FairTrust Audit</span></div>
   <div class="search-bar">
     <i class="fas fa-search"></i>
     <input type="text" id="search" placeholder="Search sections, root causes, fixes...">
   </div>
   <div class="nav-controls">
-    <div style="position: relative;">
-      <button class="filter-btn" onclick="toggleFilterDropdown()">
-        <i class="fas fa-filter"></i> Filter
-      </button>
+    <div style="position:relative">
+      <button class="filter-btn" onclick="toggleFilterDropdown()"><i class="fas fa-filter"></i> Filter</button>
       <div class="filter-dropdown" id="filterDropdown">
-        <label class="filter-option">
-          <input type="checkbox" class="issue-filter" value="critical" onchange="applyFilters()"> Critical Only
-        </label>
-        <label class="filter-option">
-          <input type="checkbox" class="issue-filter" value="warning" onchange="applyFilters()"> Warnings
-        </label>
-        <label class="filter-option">
-          <input type="checkbox" class="issue-filter" value="code" onchange="applyFilters()"> With Code
-        </label>
+        <label class="filter-option"><input type="checkbox" class="issue-filter" value="critical" onchange="applyFilters()"> Critical Only</label>
+        <label class="filter-option"><input type="checkbox" class="issue-filter" value="warning"  onchange="applyFilters()"> Warnings</label>
+        <label class="filter-option"><input type="checkbox" class="issue-filter" value="code"     onchange="applyFilters()"> With Code</label>
       </div>
     </div>
-    <button class="filter-btn" onclick="window.print()">
-      <i class="fas fa-download"></i> Export
-    </button>
+    <button class="filter-btn" onclick="window.print()"><i class="fas fa-download"></i> Export</button>
   </div>
 </nav>
 
@@ -787,101 +259,473 @@
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-section">
     <div class="sidebar-label">Overview</div>
-    <a class="sidebar-item" href="#overview" onclick="scrollToSection('overview')">
-      <i class="fas fa-chart-pie"></i> Overview
-    </a>
-    <a class="sidebar-item" href="#root-causes" onclick="scrollToSection('root-causes')">
-      <i class="fas fa-sitemap"></i> Root Causes
-    </a>
+    <a class="sidebar-item active" href="#overview"    onclick="scrollToSection('overview')">   <i class="fas fa-chart-pie"></i> Overview</a>
+    <a class="sidebar-item"        href="#root-causes" onclick="scrollToSection('root-causes')"><i class="fas fa-sitemap"></i> Root Causes</a>
   </div>
-
   <div class="sidebar-section">
     <div class="sidebar-label">Technical Analysis</div>
-    <a class="sidebar-item" href="#shap" onclick="scrollToSection('shap')">
-      <i class="fas fa-chart-bar"></i> SHAP Explanation
-    </a>
-    <a class="sidebar-item" href="#counterfactual" onclick="scrollToSection('counterfactual')">
-      <i class="fas fa-not-equal"></i> Counterfactual Evidence
-    </a>
-    <a class="sidebar-item" href="#bias-types" onclick="scrollToSection('bias-types')">
-      <i class="fas fa-exclamation-triangle"></i> Bias Types
-    </a>
+    <a class="sidebar-item" href="#shap"          onclick="scrollToSection('shap')">         <i class="fas fa-chart-bar"></i> SHAP Explanation</a>
+    <a class="sidebar-item" href="#counterfactual" onclick="scrollToSection('counterfactual')"><i class="fas fa-not-equal"></i> Counterfactual Evidence</a>
+    <a class="sidebar-item" href="#bias-types"    onclick="scrollToSection('bias-types')">   <i class="fas fa-exclamation-triangle"></i> Bias Types</a>
   </div>
-
   <div class="sidebar-section">
     <div class="sidebar-label">Implementation</div>
-    <a class="sidebar-item" href="#fixes" onclick="scrollToSection('fixes')">
-      <i class="fas fa-wrench"></i> Fix Instructions
-    </a>
-    <a class="sidebar-item" href="#deployment" onclick="scrollToSection('deployment')">
-      <i class="fas fa-rocket"></i> Deployment Checklist
-    </a>
+    <a class="sidebar-item" href="#fixes"      onclick="scrollToSection('fixes')">     <i class="fas fa-wrench"></i> Fix Instructions</a>
+    <a class="sidebar-item" href="#deployment" onclick="scrollToSection('deployment')"><i class="fas fa-rocket"></i> Deployment Checklist</a>
   </div>
-
   <div class="sidebar-section">
     <div class="sidebar-label">AI Analysis</div>
-    <a class="sidebar-item" href="#gemini" onclick="scrollToSection('gemini')">
-      <i class="fas fa-brain"></i> Gemini Deep Dive
-    </a>
+    <a class="sidebar-item" href="#gemini" onclick="scrollToSection('gemini')"><i class="fas fa-brain"></i> Gemini Deep Dive</a>
   </div>
 </aside>
 
 <!-- MAIN CONTENT -->
-<main>
+<main id="app">
+  <div class="loading-state">
+    <span class="spin"><i class="fas fa-circle-notch"></i></span>
+    <div style="font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;font-family:var(--sans)">Loading audit data…</div>
+    <div style="color:var(--muted)">Fetching evaluation results from FairTrust API</div>
+  </div>
+</main>
+
+<script>
+const API = 'http://127.0.0.1:5000';
+const fmt = (v, d=4) => v != null ? Number(v).toFixed(d) : '—';
+const pct = (v, d=1) => v != null ? (Number(v)*100).toFixed(d) + '%' : '—';
+
+/* ── SEARCH ── */
+document.getElementById('search').addEventListener('keyup', e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('section').forEach(s => {
+    s.style.display = !q || s.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+  });
+});
+
+function toggleFilterDropdown() { document.getElementById('filterDropdown').classList.toggle('open'); }
+function applyFilters() {}
+
+function scrollToSection(id) {
+  document.querySelectorAll('.sidebar-item').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const link = document.querySelector(`.sidebar-item[href="#${id}"]`);
+  if (link) link.classList.add('active');
+}
+
+window.addEventListener('scroll', () => {
+  document.querySelectorAll('section[id]').forEach(s => {
+    const r = s.getBoundingClientRect();
+    if (r.top < 200 && r.bottom > 200) {
+      document.querySelectorAll('.sidebar-item').forEach(a => a.classList.remove('active'));
+      const l = document.querySelector(`.sidebar-item[href="#${s.id}"]`);
+      if (l) l.classList.add('active');
+    }
+  });
+});
+
+function toggleExpandable(header) {
+  const content = header.nextElementSibling;
+  content.classList.toggle('open');
+  header.classList.toggle('open');
+  const t = header.querySelector('.expandable-toggle');
+  if (t) t.classList.toggle('open');
+}
+
+function toggleCheckbox(el) {
+  el.classList.toggle('checked');
+  el.innerHTML = el.classList.contains('checked') ? '✓' : '';
+  el.closest('.checklist-item').classList.toggle('done');
+}
+
+function copyCode(btn, codeId) {
+  const el = document.getElementById(codeId);
+  if (!el) return;
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+/* ── SENSITIVE KEYWORD DETECTION ── */
+const SENS_KW = ['gender','sex','race','caste','age','religion','ethnicity','nationality','caste_proxy','surname','candidate_id','hometown'];
+function isSensitive(name) { return SENS_KW.some(k => name.toLowerCase().includes(k)); }
+
+/* ── SEVERITY HELPERS ── */
+function sev(s) { return s >= .80 ? 'pass' : s >= .60 ? 'warn' : 'crit'; }
+function sevLabel(s) { return { pass: 'PASS', warn: 'MARGINAL', crit: 'CRITICAL' }[sev(s)]; }
+function sevColor(s) { return { pass: 'var(--green)', warn: 'var(--amber)', crit: 'var(--red)' }[sev(s)]; }
+
+/* ── BUILD SHAP BARS ── */
+function buildShapBars(shap) {
+  if (!shap || !shap.feature_importance) return '<p style="color:var(--muted)">No SHAP data available.</p>';
+  let fi = shap.feature_importance;
+  if (!Array.isArray(fi)) fi = Object.entries(fi).sort((a,b)=>b[1]-a[1]).map(([feature,shap_value])=>({feature,shap_value}));
+  const top = fi.slice(0,10);
+  const maxVal = top[0]?.shap_value || 1;
+  return top.map(f => {
+    const w = Math.max(2, (f.shap_value / maxVal) * 100);
+    const sens = isSensitive(f.feature);
+    const lbl = w > 20 ? fmt(f.shap_value, 4) : '';
+    return `<div class="shap-feature-bar">
+      <div class="shap-feature-name${sens?' danger':''}">
+        ${sens?'⚠ ':''}${f.feature}
+      </div>
+      <div class="shap-bar-track">
+        <div class="shap-bar-fill${sens?' danger':''}" style="width:${w}%">${lbl}</div>
+      </div>
+      <div class="shap-feature-value" style="color:${sens?'var(--red)':'var(--text)'}">
+        ${fmt(f.shap_value, 4)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── BUILD COUNTERFACTUAL PAIRS ── */
+function buildCFPairs(cfExamples) {
+  if (!cfExamples || cfExamples.length === 0) {
+    return `<div style="text-align:center;padding:2rem;color:var(--muted)">
+      <i class="fas fa-check-circle" style="color:var(--green);font-size:2rem;display:block;margin-bottom:.75rem"></i>
+      No counterfactual pairs found — model appears counterfactually fair.
+    </div>`;
+  }
+  return cfExamples.map((cf, idx) => {
+    const pA = cf.person_a || {};
+    const pB = cf.person_b || {};
+    const attr = cf.attribute || 'attribute';
+    const oA = (pA.outcome || 'REJECTED').toLowerCase();
+    const oB = (pB.outcome || 'REJECTED').toLowerCase();
+    const profile = pA.profile || {};
+    const profileKeys = Object.keys(profile).slice(0,4);
+
+    function personRows(p) {
+      let rows = profileKeys.map(k => `<div class="cf-row"><span class="cf-k">${k.replace(/_/g,' ')}</span><span class="cf-v">${typeof p.profile?.[k] === 'number' ? Number(p.profile[k]).toFixed(1) : (p.profile?.[k] ?? '—')}</span></div>`).join('');
+      rows += `<div class="cf-row"><span class="cf-k">${attr}</span><span class="cf-v diff">${p.sensitive_val ?? '—'}</span></div>`;
+      rows += `<div class="cf-row"><span class="cf-k">prediction</span><span class="cf-v">${p.prediction != null ? Math.round(p.prediction*100)+'%' : '—'}</span></div>`;
+      return rows;
+    }
+
+    return `<div class="cf-pair">
+      <div class="cf-grid">
+        <div class="cf-person">
+          <div class="cf-person-head ${oA}">Person A — ${oA.toUpperCase()}</div>
+          ${personRows(pA)}
+        </div>
+        <div class="cf-divider"><i class="fas fa-not-equal"></i><span>Only<br>diff:<br>${attr}</span></div>
+        <div class="cf-person">
+          <div class="cf-person-head ${oB}">Person B — ${oB.toUpperCase()}</div>
+          ${personRows(pB)}
+        </div>
+      </div>
+      <div class="cf-explain">
+        <strong>What this proves:</strong>
+        ${cf.plain_english || `When <strong>${attr}</strong> changes (all else identical), the model gives opposite decisions. This is direct evidence of discrimination.`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── BUILD FIX CARDS ── */
+function buildFixCards(fixes) {
+  if (!fixes || fixes.length === 0) return '<p style="color:var(--muted)">No fixes identified.</p>';
+
+  const CODES = {
+    privacy_score: `import hashlib\n# Drop direct identifiers\ndf.drop(columns=['name','email','candidate_id','surname'], inplace=True)\n# Hash quasi-identifiers instead of removing\ndf['surname_hash'] = df['surname'].apply(\n    lambda x: hashlib.sha256(str(x).encode()).hexdigest()[:8]\n) if 'surname' in df.columns else None`,
+    disparateImpact: `from fairlearn.postprocessing import ThresholdOptimizer\nmitigator = ThresholdOptimizer(\n    estimator=model,\n    constraints='demographic_parity',\n    objective='balanced_accuracy_score'\n)\nmitigator.fit(X_train, y_train, sensitive_features=sensitive_col)`,
+    counterfactual: `# Step 1: Find proxy features\nfor col in X.columns:\n    corr = X[col].corr(df[sensitive_attr])\n    if abs(corr) > 0.3:\n        print(f"Proxy: {col} — r={corr:.3f}")\n\n# Step 2: Drop proxies\nX_clean = X.drop(columns=proxy_columns)`,
+    demographicParity: `from fairlearn.reductions import ExponentiatedGradient, DemographicParity\nmitigator = ExponentiatedGradient(\n    estimator=base_model,\n    constraints=DemographicParity()\n)\nmitigator.fit(X_train, y_train, sensitive_features=sensitive_col)`,
+    robustness_score: `from sklearn.calibration import CalibratedClassifierCV\ncalibrated = CalibratedClassifierCV(\n    estimator=your_model, method='isotonic', cv='prefit'\n)\ncalibrated.fit(X_val, y_val)`,
+  };
+
+  return fixes.slice(0,6).map((fix, i) => {
+    const priority = fix.severity || fix.priority || 'WARNING';
+    const cls = priority === 'CRITICAL' ? 'critical' : priority === 'WARNING' ? 'warning' : '';
+    const bp = Math.round((fix.current_score || 0) * 100);
+    const ap = Math.round((fix.estimated_score_after || 0) * 100);
+    const codeSnippet = fix.code || CODES[fix.dimension_key] || '';
+    const codeId = `code-fix-${i}`;
+
+    return `<div class="expandable">
+      <div class="expandable-header" onclick="toggleExpandable(this)">
+        <div>
+          <span class="badge ${cls}" style="margin-right:.75rem">[${priority}] Step ${i+1}</span>
+          <strong>${fix.title || '—'}</strong>
+          <div style="font-size:.85rem;color:var(--muted);margin-top:.3rem">
+            ${fix.effort ? `Effort: ${fix.effort}` : ''}
+            ${bp && ap ? ` | Impact: ${bp}% → ~${ap}%` : ''}
+          </div>
+        </div>
+        <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
+      </div>
+      <div class="expandable-content">
+        <p><strong>Why this matters:</strong> ${fix.description || 'This fix addresses a key fairness issue in the model.'}</p>
+        ${codeSnippet ? `<div class="code-block">
+          <div class="code-header">
+            <span class="lang">Python</span>
+            <button class="code-copy" onclick="copyCode(this,'${codeId}')">Copy</button>
+          </div>
+          <div class="code-content"><code id="${codeId}">${escHtml(codeSnippet)}</code></div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── BUILD DEPLOYMENT CHECKLIST ── */
+function buildChecklist(fixes, remediation) {
+  const items = [];
+
+  if (remediation?.deployment_blocked) {
+    items.push({ cls:'critical', title:'[CRITICAL] Halt current production deployment', sub:'Notify stakeholders: model has fairness issues, must be remediated before redeployment.' });
+  }
+
+  fixes.filter(f => (f.severity||'') === 'CRITICAL').forEach(fix => {
+    items.push({ cls:'critical', title:`[CRITICAL] ${fix.title}`, sub: fix.description?.split('.')[0] + '.' || '' });
+  });
+
+  fixes.filter(f => (f.severity||'') === 'WARNING').forEach(fix => {
+    items.push({ cls:'warning', title:`[WARNING] ${fix.title}`, sub: fix.description?.split('.')[0] + '.' || '' });
+  });
+
+  items.push({ cls:'warning', title:'[WARNING] Re-evaluate all fairness metrics', sub:'Run full 7-dimension audit. All dimensions must meet threshold requirements.' });
+  items.push({ cls:'warning', title:'[WARNING] Legal review & sign-off', sub:'Send to compliance & legal. Document that bias has been addressed. Get written approval.' });
+  items.push({ cls:'', title:'Set up weekly fairness monitoring', sub:'Implement automated checks. Alert if approval gaps exceed threshold.' });
+  items.push({ cls:'', title:'Update feature engineering guidelines', sub:'Prohibit PII in features. Require fairness audit before any model deployment.' });
+  items.push({ cls:'', title:'Redeploy cleaned, fair model to production', sub:'Only after all critical items are complete and legal approves.' });
+
+  return items.map(item => `<div class="checklist-item ${item.cls}">
+    <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
+    <div class="checklist-text">
+      <strong>${item.title}</strong>
+      <small>${item.sub}</small>
+    </div>
+  </div>`).join('');
+}
+
+/* ── ROOT CAUSES (dynamic from data) ── */
+function buildRootCauses(ev) {
+  const fairness = ev.fairness || {};
+  const privacy = ev.privacy || {};
+  const shap = ev.shap || {};
+  const piiCols = privacy.pii_columns || [];
+  const quasiCols = privacy.quasi_identifiers || [];
+  const fi = Array.isArray(shap.feature_importance) ? shap.feature_importance : Object.entries(shap.feature_importance||{}).map(([f,v])=>({feature:f,shap_value:v}));
+  const sensitiveInShap = fi.filter(f => isSensitive(f.feature));
+
+  const causes = [];
+
+  if (piiCols.length > 0) {
+    causes.push({
+      title: '1. PII Data Leakage into Model',
+      detail: `${piiCols.length} personal identifier column(s) were included in training features.`,
+      evidence: piiCols.map(c => `<code class="inline">${c}</code>`).join(', ') + ' — personal identifiers that may allow the model to memorise individual patterns and reconstruct protected attributes.',
+      consequence: 'Even if gender/caste columns are removed, the model can reconstruct them from these auxiliary features.'
+    });
+  }
+
+  const proxyCols = fi.filter(f => isSensitive(f.feature) && !['gender','sex','is_male'].includes(f.feature.toLowerCase()));
+  if (proxyCols.length > 0) {
+    causes.push({
+      title: '2. Protected Attribute Proxy Features',
+      detail: 'Legitimate-looking features correlate with protected attributes:',
+      evidence: proxyCols.slice(0,4).map(f => `<code class="inline">${f.feature}</code> (SHAP: ${fmt(f.shap_value,4)})`).join(', ') + ' — these features appear legitimate but encode protected attributes.',
+      consequence: 'SHAP analysis shows these features predict outcomes by encoding protected attributes rather than job-relevant skills.'
+    });
+  }
+
+  const dp = fairness.demographicParity || 0;
+  if (dp > 0.05) {
+    causes.push({
+      title: '3. Historical Label Bias in Training Data',
+      detail: 'The ground-truth labels reflect past discriminatory patterns:',
+      evidence: `Demographic parity gap: <strong>${pct(dp)}</strong> (legal maximum: 4%). The model learns historical patterns as "correct" and reproduces them.`,
+      consequence: 'Even with perfect fairness reweighting, the training data\'s label distribution perpetuates historical bias forward.'
+    });
+  }
+
+  const hasFairnessTests = (ev.fairness_score || 0) < 0.80;
+  if (hasFairnessTests) {
+    causes.push({
+      title: '4. No Fairness Testing in Development Pipeline',
+      detail: 'Standard model evaluation (accuracy, F1, ROC-AUC) does not measure fairness:',
+      evidence: `Model accuracy: <strong>${pct(ev.model_metrics?.accuracy)}</strong>, F1-score: <strong>${fmt(ev.model_metrics?.f1_score,2)}</strong> — both "excellent" by standard metrics. But the disparate impact ratio is <strong>${fmt(fairness.disparateImpact,2)}</strong> (should be ≥0.80).`,
+      consequence: 'Model may have been deployed because conventional metrics looked good, without fairness validation.'
+    });
+  }
+
+  if (causes.length === 0) {
+    causes.push({
+      title: '1. No Critical Root Causes Detected',
+      detail: 'The model passed all automated bias checks.',
+      evidence: 'Continue monitoring as new data is collected.',
+      consequence: 'Set up weekly fairness monitoring to catch any drift early.'
+    });
+  }
+
+  return causes.map(c => `<div class="root-cause-item">
+    <div class="root-cause-title">${c.title}</div>
+    <div class="root-cause-detail">
+      ${c.detail}
+      <div class="evidence-box">
+        <strong style="display:block;margin-bottom:.5rem">Evidence:</strong>
+        ${c.evidence}
+      </div>
+      <strong style="display:block;margin-top:1rem">Consequence:</strong> ${c.consequence}
+    </div>
+  </div>`).join('');
+}
+
+/* ── GEMINI ANALYSIS ── */
+async function runGeminiAnalysis(ev, fixes, cfExamples) {
+  const btn = document.getElementById('gemini-btn');
+  const out = document.getElementById('gemini-output');
+  const key = (document.getElementById('gemini-key')?.value || '').trim() || localStorage.getItem('gemini_api_key') || '';
+  if (!key) {
+    out.style.display = 'block'; out.innerHTML = '⚠ Enter your Gemini API key first.\nGet one free at: https://aistudio.google.com/app/apikey'; return;
+  }
+  localStorage.setItem('gemini_api_key', key);
+  btn.disabled = true; out.style.display = 'block'; out.innerHTML = '⟳ Sending to Gemini 2.5 Flash…';
+  const f = ev.fairness || {}; const shap = ev.shap || {};
+  const fi = Array.isArray(shap.feature_importance) ? shap.feature_importance : Object.entries(shap.feature_importance||{}).map(([a,b])=>({feature:a,shap_value:b}));
+  const topFeats = fi.slice(0,8).map(x=>x.feature).join(', ');
+  const sensInShap = fi.filter(x => isSensitive(x.feature));
+
+  const prompt = `You are a senior ML fairness engineer reviewing a technical bias audit.
+
+EVALUATION DATA
+- Records: ${ev.records||0}
+- Overall ethics score: ${Math.round((ev.ethical_score||0)*100)}/100
+- Fairness score: ${Math.round((ev.fairness_score||0)*100)}/100
+- Privacy score: ${Math.round((ev.privacy_score||0)*100)}/100
+
+FAIRNESS METRICS
+- Disparate impact: ${fmt(f.disparateImpact,4)} (need ≥0.80)
+- Demographic parity gap: ${fmt(f.demographicParity,4)} (need ≤0.05)
+- Counterfactual fairness: ${fmt(f.counterfactual,4)}
+- Individual fairness: ${fmt(f.individualFairness,4)}
+- Intersectional fairness: ${fmt(f.intersectional,4)}
+
+BIAS EVIDENCE
+- Counterfactual pairs found: ${cfExamples.length}
+- Protected attrs in SHAP top features: ${sensInShap.length} (should be 0)
+- Top SHAP features: ${topFeats}
+- PII columns in dataset: ${(ev.privacy?.pii_columns||[]).join(', ') || 'none'}
+- ROC-AUC: ${fmt(ev.model_metrics?.roc_auc,4)}
+- Accuracy: ${pct(ev.model_metrics?.accuracy)}
+- F1: ${fmt(ev.model_metrics?.f1_score,4)}
+
+TOP FIXES
+${fixes.slice(0,3).map((f,i)=>`${i+1}. [${f.severity||'WARNING'}] ${f.title} (${f.dimension}, ${f.effort} effort)`).join('\n')}
+
+Provide EXACTLY this structure:
+
+**ROOT CAUSE SYNTHESIS**
+- [2-3 paragraphs explaining WHY the bias exists, connecting all evidence]
+
+**LEGAL LIABILITY ASSESSMENT**
+- [Which laws violated, estimated financial exposure, criminal liability if any]
+
+**RISK RANKING**
+- [Top 3 risks: LEGAL/REPUTATIONAL/OPERATIONAL with HIGH/MEDIUM/LOW severity]
+
+**REMEDIATION SEQUENCE**
+- [Step-by-step: what to do first, what depends on that, estimated timeline]
+
+**PRODUCTION MONITORING**
+- [4-5 specific metrics with threshold values to track weekly]
+
+Be direct and technical. Reference actual numbers. No generic advice.`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:.3,maxOutputTokens:1500} })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||`HTTP ${res.status}`); }
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Empty response');
+    const formatted = text
+      .replace(/\*\*(.*?)\*\*/g, '<span style="color:var(--gold);font-weight:700">$1</span>')
+      .replace(/^[-•]\s+(.+)$/gm, '<div style="margin-left:1.5rem;margin-bottom:.5rem">• $1</div>')
+      .replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-family:var(--mono)">$1</code>');
+    out.innerHTML = formatted;
+  } catch(e) {
+    out.innerHTML = `<span style="color:#f87171">⚠ Error: ${e.message}</span>`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ── MAIN RENDER ── */
+function render(ev, fixes, cfExamples, evalId) {
+  const overall = ev.ethical_score || 0;
+  const p = Math.round(overall * 100);
+  const f = ev.fairness || {};
+  const shap = ev.shap || {};
+  const privacy = ev.privacy || {};
+  const fi = Array.isArray(shap.feature_importance) ? shap.feature_importance : Object.entries(shap.feature_importance||{}).map(([a,b])=>({feature:a,shap_value:b}));
+  const sensitiveInShap = fi.filter(x => isSensitive(x.feature));
+  const piiCols = privacy.pii_columns || [];
+  const critFixes = fixes.filter(x => (x.severity||x.priority||'') === 'CRITICAL');
+  const remediation = ev.remediation || {};
+
+  const isBlocked = remediation.deployment_blocked || overall < 0.60 || critFixes.length > 0;
+
+  document.getElementById('app').innerHTML = `
 
   <!-- HERO -->
-  <div class="hero">
+  <div class="hero" id="overview">
     <div class="hero-content">
       <h1>Technical Bias Audit Report</h1>
-      <p>Comprehensive analysis of discriminatory patterns in your ML hiring model. This report provides detailed root causes, evidence-based explanations, and copy-paste code fixes.</p>
-      
+      <p>Comprehensive analysis of discriminatory patterns in your ML model. This report provides detailed root causes, evidence-based explanations, and copy-paste code fixes.</p>
       <div class="hero-stats">
         <div class="stat">
-          <div class="stat-val">97<span style="font-size: 1.2rem; color: var(--gold); margin-left: 0.3rem;">/100</span></div>
+          <div class="stat-val ${f.fairness_score >= .80 ? 'green' : 'amber'}">${Math.round((f.fairness_score||0)*100)}<span style="font-size:1.2rem;opacity:.5">/100</span></div>
           <div class="stat-lbl">Fairness Score</div>
         </div>
         <div class="stat">
-          <div class="stat-val">45<span style="font-size: 1.2rem; color: var(--red); margin-left: 0.3rem;">/100</span></div>
-          <div class="stat-lbl">Privacy Score — Critical</div>
+          <div class="stat-val ${(ev.privacy_score||0) >= .75 ? 'green' : 'red'}">${Math.round((ev.privacy_score||0)*100)}<span style="font-size:1.2rem;opacity:.5">/100</span></div>
+          <div class="stat-lbl">Privacy Score${(ev.privacy_score||0) < .75 ? ' — Critical' : ''}</div>
         </div>
         <div class="stat">
-          <div class="stat-val">5</div>
+          <div class="stat-val ${cfExamples.length > 0 ? 'red' : 'green'}">${cfExamples.length}</div>
           <div class="stat-lbl">Counterfactual Bias Pairs</div>
         </div>
         <div class="stat">
-          <div class="stat-val">4</div>
+          <div class="stat-val ${sensitiveInShap.length > 0 ? 'amber' : 'green'}">${sensitiveInShap.length}</div>
           <div class="stat-lbl">Protected Attrs in SHAP</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- OVERVIEW -->
-  <section id="overview">
+  <!-- OVERVIEW CARD -->
+  <section id="overview-detail">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-chart-pie"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-chart-pie"></i></div>
       <h2>Overview &amp; Key Findings</h2>
-      <div class="meta">Ethics Score: 84/100 — DEPLOYMENT BLOCKED</div>
+      <div class="meta">Ethics Score: ${p}/100 — ${isBlocked ? 'DEPLOYMENT BLOCKED' : 'APPROVED'}</div>
     </div>
-
     <div class="card">
       <div class="card-header">
         <h3>Summary</h3>
-        <span class="badge critical"><i class="fas fa-exclamation-circle"></i> Critical Issue</span>
+        <span class="badge ${isBlocked?'critical':'pass'}"><i class="fas fa-${isBlocked?'exclamation-circle':'check-circle'}"></i> ${isBlocked?'Critical Issue':'Passing'}</span>
       </div>
-      <p>Your hiring model is statistically fair in isolation (97/100 fairness score) but exhibits <strong>direct and proxy discrimination</strong> in production. The model learns from biased historical data and encodes protected attributes (gender, caste) indirectly through feature engineering mistakes.</p>
-      
-      <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(231, 76, 60, 0.08); border-left: 4px solid var(--red); border-radius: 6px;">
-        <strong style="color: var(--red); display: block; margin-bottom: 0.5rem;">Why is the fairness score high but deployment blocked?</strong>
-        <p style="margin: 0; font-size: 0.95rem; color: var(--muted);">The 7 fairness dimensions measure <strong>statistical treatment parity</strong> — whether groups get equal outcomes. Your model passes that test. However, you have:</p>
-        <ul style="margin: 1rem 0 0 1.5rem; color: var(--muted); font-size: 0.95rem;">
-          <li><strong>PII data leaking</strong>: candidate_id, surname, hometown_type are features (Privacy 45/100)</li>
-          <li><strong>Protected attrs in SHAP top-5</strong>: gender and caste proxies predict outcomes</li>
-          <li><strong>5 real counterfactual pairs</strong>: identical profiles get opposite decisions by gender/caste</li>
+      <p>Your model has an overall ethics score of <strong>${p}/100</strong> across all dimensions. ${isBlocked ? 'Deployment is currently blocked due to unresolved critical issues.' : 'All deployment checks pass.'}</p>
+      <div class="alert-box ${isBlocked?'blocked':'info'}" style="margin-top:1.5rem">
+        <strong>${isBlocked ? 'Why deployment is blocked:' : 'Why deployment is approved:'}</strong>
+        <ul>
+          ${piiCols.length > 0 ? `<li><strong>PII data leaking</strong>: ${piiCols.slice(0,3).join(', ')} are in features (Privacy ${Math.round((ev.privacy_score||0)*100)}/100)</li>` : ''}
+          ${sensitiveInShap.length > 0 ? `<li><strong>Protected attrs in SHAP top features</strong>: ${sensitiveInShap.slice(0,3).map(f=>f.feature).join(', ')} predict outcomes</li>` : ''}
+          ${cfExamples.length > 0 ? `<li><strong>${cfExamples.length} real counterfactual pairs</strong>: identical profiles get opposite decisions by ${[...new Set(cfExamples.map(c=>c.attribute))].join('/')}</li>` : ''}
+          ${!isBlocked ? '<li>All 7 fairness dimensions meet acceptable thresholds</li><li>Privacy, robustness, transparency and accountability checks passed</li>' : ''}
         </ul>
-        <p style="margin-top: 1rem; margin-bottom: 0; font-size: 0.95rem; color: var(--muted);">This is a data engineering problem, not an algorithm problem. The model learned what it was trained on.</p>
+        ${isBlocked ? '<p style="margin-top:1rem;font-size:.95rem">This is a data engineering problem, not an algorithm problem. The model learned what it was trained on.</p>' : ''}
       </div>
     </div>
   </section>
@@ -889,196 +733,51 @@
   <!-- ROOT CAUSES -->
   <section id="root-causes">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-sitemap"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-sitemap"></i></div>
       <h2>Root Cause Analysis</h2>
       <div class="meta">Why discrimination happened</div>
     </div>
-
     <div class="card">
-      <div class="root-cause-tree">
-        <div class="root-cause-item">
-          <div class="root-cause-title">1. PII Data Leakage into Model</div>
-          <div class="root-cause-detail">
-            Three personal identifiers were included in training features:
-            <div class="evidence-box">
-              <strong style="display: block; margin-bottom: 0.5rem;">Evidence:</strong>
-              • <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px;">candidate_id</code> — Unique identifier per person. Model may learn to memorise hiring patterns by individual.<br>
-              • <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px;">surname</code> — Strong proxy for caste in India. Correlates 0.67 with caste categories.<br>
-              • <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px;">hometown_type</code> — Urban/rural codes leak socioeconomic &amp; regional caste concentration.
-            </div>
-            <strong style="display: block; margin-top: 1rem;">Consequence:</strong> Even if gender/caste columns are removed, the model reconstructs these from auxiliary features.
-          </div>
-        </div>
-
-        <div class="root-cause-item">
-          <div class="root-cause-title">2. Protected Attribute Proxy Features</div>
-          <div class="root-cause-detail">
-            Legitimate-looking features correlate with protected attributes:
-            <div class="evidence-box">
-              <strong style="display: block; margin-bottom: 0.5rem;">Evidence:</strong>
-              • <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px;">age</code> (r = 0.58 with gender) — Hiring patterns vary by reported age, which varies by gender expectations.<br>
-              • <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px;">certifications_count</code> (r = 0.44 with caste) — Lower-caste candidates have fewer certifications due to institutional barriers, not ability.<br>
-              • <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px;">salary_per_skill</code> (r = 0.53 with gender) — Gender wage gap in historical data → model learns gendered salary expectations.
-            </div>
-            <strong style="display: block; margin-top: 1rem;">Consequence:</strong> SHAP analysis shows these legitimate features predict outcomes, but they do so by encoding protected attributes.
-          </div>
-        </div>
-
-        <div class="root-cause-item">
-          <div class="root-cause-title">3. Historical Label Bias in Training Data</div>
-          <div class="root-cause-detail">
-            The ground-truth labels (hired/rejected) reflect past discriminatory hiring:
-            <div class="evidence-box">
-              <strong style="display: block; margin-bottom: 0.5rem;">Evidence:</strong>
-              • Male approval rate: 95% | Female approval rate: 12% → 83-point gap (legal max: 4)<br>
-              • ST/OBC approval rate: 68% | General caste approval rate: 92% → 24-point gap<br>
-              • Model learns these patterns as "correct" and reproduces them.
-            </div>
-            <strong style="display: block; margin-top: 1rem;">Consequence:</strong> Even with perfect fairness reweighting, the training data's label distribution perpetuates historical bias forward.
-          </div>
-        </div>
-
-        <div class="root-cause-item">
-          <div class="root-cause-title">4. No Fairness Testing in Development Pipeline</div>
-          <div class="root-cause-detail">
-            Standard model evaluation (accuracy, F1, ROC-AUC) does not measure fairness:
-            <div class="evidence-box">
-              <strong style="display: block; margin-bottom: 0.5rem;">Evidence:</strong>
-              • Your model has 84.35% accuracy and 0.91 F1-score → both "excellent" by standard metrics.<br>
-              • But demographic parity gap is 5.2% and disparate impact ratio is 0.64 (should be ≥0.80).<br>
-              • No fairness tests were run before deployment.
-            </div>
-            <strong style="display: block; margin-top: 1rem;">Consequence:</strong> Model was deployed because conventional metrics looked good, without fairness validation.
-          </div>
-        </div>
-      </div>
+      <div class="root-cause-tree">${buildRootCauses(ev)}</div>
     </div>
-
     <div class="ai-analysis">
       <h4><i class="fas fa-brain"></i> AI-Powered Root Cause Synthesis</h4>
       <div class="ai-content" id="ai-root-causes">
-        <div class="ai-loading">
-          <div class="spinner"></div>
-          <span>Synthesising root causes with regulatory context...</span>
-        </div>
+        <div class="ai-loading"><div class="spinner"></div><span>Synthesising root causes with regulatory context...</span></div>
       </div>
     </div>
   </section>
 
-  <!-- SHAP EXPLANATION -->
+  <!-- SHAP -->
   <section id="shap">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-chart-bar"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-chart-bar"></i></div>
       <h2>SHAP: Why Features Matter</h2>
       <div class="meta">Which features drive discrimination</div>
     </div>
-
     <div class="card">
-      <h3 style="margin-bottom: 1rem; font-family: var(--serif);">What is SHAP?</h3>
+      <h3 style="margin-bottom:1rem">What is SHAP?</h3>
       <p>SHAP (SHapley Additive exPlanations) measures each feature's contribution to a prediction. Think of it like distributing "credit" for the final decision across all features.</p>
-      
-      <div style="margin: 1.5rem 0; padding: 1rem; background: var(--bg); border-radius: 8px;">
-        <strong>Analogy:</strong> A bank approves a loan for £100k. SHAP tells you: "credit score contributed +£40k (high), income contributed +£30k, debt-to-income ratio contributed +£20k, age contributed -£5k (too young), and the rest was baseline."
+      <div style="margin:1.5rem 0;padding:1rem;background:var(--bg);border-radius:8px">
+        <strong>Analogy:</strong> A bank approves a loan. SHAP tells you: "credit score contributed +40% to the decision, income +30%, debt ratio +20%, age −5%."
       </div>
-
-      <div style="margin-top: 2rem;">
-        <h4 style="margin-bottom: 1rem; color: var(--text); font-family: var(--serif);">Top 12 Features by Importance</h4>
-        
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name">interview_score</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 100%;">0.0190</div>
-          </div>
-          <div class="shap-feature-value">0.0190</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name">salary_per_skill</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 72%;">0.0137</div>
-          </div>
-          <div class="shap-feature-value">0.0137</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name">skill_score</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 69%;">0.0132</div>
-          </div>
-          <div class="shap-feature-value">0.0132</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name danger">⚠️ age</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 30%; background: linear-gradient(90deg, var(--red), var(--amber));">0.0057</div>
-          </div>
-          <div class="shap-feature-value" style="color: var(--red); font-weight: 700;">0.0057</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name danger">⚠️ certifications_count</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 28%; background: linear-gradient(90deg, var(--red), var(--amber));">0.0053</div>
-          </div>
-          <div class="shap-feature-value" style="color: var(--red); font-weight: 700;">0.0053</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name danger">⚠️ is_male</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 22%; background: linear-gradient(90deg, var(--red), var(--amber));">0.0042</div>
-          </div>
-          <div class="shap-feature-value" style="color: var(--red); font-weight: 700;">0.0042</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name danger">⚠️ surname</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 22%; background: linear-gradient(90deg, var(--red), var(--amber));">0.0042</div>
-          </div>
-          <div class="shap-feature-value" style="color: var(--red); font-weight: 700;">0.0042</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name danger">⚠️ hometown_type</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 20%; background: linear-gradient(90deg, var(--red), var(--amber));">0.0039</div>
-          </div>
-          <div class="shap-feature-value" style="color: var(--red); font-weight: 700;">0.0039</div>
-        </div>
-
-        <div class="shap-feature-bar">
-          <div class="shap-feature-name danger">⚠️ candidate_id</div>
-          <div class="shap-bar-track">
-            <div class="shap-bar-fill" style="width: 20%; background: linear-gradient(90deg, var(--red), var(--amber));">0.0036</div>
-          </div>
-          <div class="shap-feature-value" style="color: var(--red); font-weight: 700;">0.0036</div>
-        </div>
+      <div style="margin-top:2rem">
+        <h4 style="margin-bottom:1rem;font-family:var(--serif)">Top ${Math.min(fi.length,10)} Features by Importance</h4>
+        ${buildShapBars(shap)}
       </div>
-
-      <div class="shap-warning">
+      ${sensitiveInShap.length > 0 ? `<div class="shap-warning">
         <strong>🚨 Protected Attributes in Top Features</strong>
-        Four features that should have ZERO predictive power are in your top-12:
-        <ul style="margin: 0.75rem 0 0 1.5rem; color: var(--text); font-size: 0.95rem;">
-          <li><code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">is_male</code> — Direct gender flag. Should be dropped immediately.</li>
-          <li><code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">surname</code> — 67% correlated with caste. Should be dropped.</li>
-          <li><code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">hometown_type</code> — Proxy for caste/class. Should be dropped or anonymised.</li>
-          <li><code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">candidate_id</code> — Unique ID. Leaks memorisation patterns. Should be dropped.</li>
+        ${sensitiveInShap.length} feature(s) that should have ZERO predictive power are in your top features:
+        <ul style="margin:.75rem 0 0 1.5rem;font-size:.95rem">
+          ${sensitiveInShap.map(f => `<li><code class="inline">${f.feature}</code> — SHAP value ${fmt(f.shap_value,4)}. Should be dropped.</li>`).join('')}
         </ul>
-      </div>
-
-      <div class="ai-analysis" style="margin-top: 2rem;">
-        <h4><i class="fas fa-brain"></i> Gemini SHAP Deep Dive</h4>
+      </div>` : `<div style="padding:1rem;background:rgba(39,174,96,.1);border-left:4px solid var(--green);border-radius:0 8px 8px 0;margin-top:1rem">
+        ✓ No protected attributes detected in top SHAP features.
+      </div>`}
+      <div class="ai-analysis" style="margin-top:2rem">
+        <h4><i class="fas fa-brain"></i> SHAP Deep Dive</h4>
         <div class="ai-content" id="ai-shap">
-          <div class="ai-loading">
-            <div class="spinner"></div>
-            <span>Generating detailed SHAP interpretation...</span>
-          </div>
+          <div class="ai-loading"><div class="spinner"></div><span>Generating SHAP interpretation...</span></div>
         </div>
       </div>
     </div>
@@ -1087,75 +786,46 @@
   <!-- BIAS TYPES -->
   <section id="bias-types">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-      <h2>Three Types of Bias in Your Model</h2>
+      <div class="section-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h2>Three Types of Bias</h2>
       <div class="meta">Classification and explanation</div>
     </div>
-
     <div class="card">
       <div class="expandable">
         <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>Type 1: Direct Discrimination</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Protected attributes used directly as features</div>
-          </div>
-          <!-- FIX 3: was fa-chevron-toggle (invalid icon) -->
+          <div><strong>Type 1: Direct Discrimination</strong><div style="font-size:.85rem;color:var(--muted);margin-top:.3rem">Protected attributes used directly as features</div></div>
           <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
         </div>
         <div class="expandable-content">
-          <p><strong>What it is:</strong> The model explicitly uses protected attributes (gender, caste) as input features.</p>
-          <p><strong>In your model:</strong></p>
-          <ul style="margin: 0.75rem 0 0 1.5rem;">
-            <li><code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">is_male</code> — Direct gender flag, SHAP value 0.0042</li>
-            <li>Model learned: males 95% approval, females 12% approval</li>
-          </ul>
-          <p><strong>Legal exposure:</strong> Direct disparate treatment under EEOC Title VII and Indian SC/ST Act. Criminal liability in India.</p>
+          <p><strong>What it is:</strong> The model explicitly uses protected attributes (gender, caste, race) as input features.</p>
+          ${sensitiveInShap.filter(f => ['gender','sex','is_male','race','caste'].some(k=>f.feature.toLowerCase().includes(k))).length > 0
+            ? `<p><strong>In your model:</strong></p><ul style="margin:.75rem 0 0 1.5rem">${sensitiveInShap.filter(f=>['gender','sex','is_male','race','caste'].some(k=>f.feature.toLowerCase().includes(k))).map(f=>`<li><code class="inline">${f.feature}</code> — SHAP value ${fmt(f.shap_value,4)}</li>`).join('')}</ul>`
+            : '<p style="color:var(--green)">✓ No direct protected attribute columns found in top features.</p>'}
+          <p style="margin-top:.75rem"><strong>Legal exposure:</strong> Direct disparate treatment under EEOC Title VII and Indian SC/ST Act. Criminal liability possible in India.</p>
           <p><strong>Fix:</strong> Remove the column immediately. Do not pass it to the model at all.</p>
         </div>
       </div>
-
-      <div class="expandable" style="margin-top: 1rem;">
+      <div class="expandable" style="margin-top:1rem">
         <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>Type 2: Proxy Discrimination (Redlining)</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Legitimate features that correlate with protected attributes</div>
-          </div>
+          <div><strong>Type 2: Proxy Discrimination (Redlining)</strong><div style="font-size:.85rem;color:var(--muted);margin-top:.3rem">Legitimate features that correlate with protected attributes</div></div>
           <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
         </div>
         <div class="expandable-content">
-          <p><strong>What it is:</strong> Features that are not explicitly protected attributes, but are correlated with them. The model learns to discriminate indirectly.</p>
-          <p><strong>In your model:</strong></p>
-          <ul style="margin: 0.75rem 0 0 1.5rem;">
-            <li><code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">surname</code> (r = 0.67 with caste) — Different surnames have different approval rates</li>
-            <li><code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">certifications_count</code> (r = 0.44 with caste) — Lower-caste candidates have fewer certs → lower approval</li>
-            <li><code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">age</code> (r = 0.58 with gender) — Hiring age patterns differ by gender</li>
-          </ul>
-          <p><strong>Legal exposure:</strong> Disparate impact under EEOC four-fifths rule. Requires evidence of business necessity and lack of alternatives. In India: AI Act + constitutional bias.</p>
-          <p><strong>Fix:</strong> Audit feature-attribute correlations. Drop features with |r| > 0.3 or apply causal fairness methods.</p>
+          <p><strong>What it is:</strong> Features not explicitly protected, but correlated with them. The model learns to discriminate indirectly.</p>
+          <p><strong>In your model:</strong> Features like <code class="inline">age</code>, <code class="inline">certifications_count</code>, or location-based features may correlate with protected attributes like gender or caste, creating indirect bias.</p>
+          <p style="margin-top:.75rem"><strong>Legal exposure:</strong> Disparate impact under EEOC four-fifths rule. In India: constitutional bias under Articles 15-17.</p>
+          <p><strong>Fix:</strong> Audit feature-attribute correlations. Drop features with |r| > 0.3 to sensitive attributes.</p>
         </div>
       </div>
-
-      <div class="expandable" style="margin-top: 1rem;">
+      <div class="expandable" style="margin-top:1rem">
         <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>Type 3: Statistical Discrimination</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Group-level patterns in historical data generalize incorrectly</div>
-          </div>
-          <!-- FIX 3 (second instance): was fa-chevron-toggle (invalid icon) -->
+          <div><strong>Type 3: Statistical Discrimination</strong><div style="font-size:.85rem;color:var(--muted);margin-top:.3rem">Group-level patterns in historical data generalise incorrectly</div></div>
           <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
         </div>
         <div class="expandable-content">
-          <p><strong>What it is:</strong> The model learns that one group (e.g., males) has higher historical approval rates, and applies that group average to all individuals in that group.</p>
-          <p><strong>In your model:</strong></p>
-          <ul style="margin: 0.75rem 0 0 1.5rem;">
-            <li>Historical data: 95% of male candidates were hired, 12% of female candidates</li>
-            <li>Model generalises: "being male increases likelihood" without individual-level evidence</li>
-            <li>Result: Two candidates with identical profiles get different predictions due to gender</li>
-          </ul>
-          <p><strong>Legal exposure:</strong> Considered discrimination by US EEOC. In India: lacks business necessity and violates individual dignity rights.</p>
-          <p><strong>Fix:</strong> Retrain with equalised odds or demographic parity constraint. Apply fairlearn.</p>
+          <p><strong>What it is:</strong> The model learns that one group has a higher historical outcome rate and applies that group average to all individuals in that group, regardless of their individual merits.</p>
+          <p><strong>In your model:</strong> Demographic parity gap of <strong>${pct(f.demographicParity)}</strong> suggests historical bias in training labels may be propagating forward.</p>
+          <p style="margin-top:.75rem"><strong>Fix:</strong> Retrain with equalised odds or demographic parity constraint using <code class="inline">fairlearn.ExponentiatedGradient</code>.</p>
         </div>
       </div>
     </div>
@@ -1164,95 +834,17 @@
   <!-- COUNTERFACTUAL EVIDENCE -->
   <section id="counterfactual">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-not-equal"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-not-equal"></i></div>
       <h2>Counterfactual Bias Evidence</h2>
       <div class="meta">Real pairs showing discrimination</div>
     </div>
-
     <div class="card">
-      <p style="margin-bottom: 1.5rem;">These are real pairs of candidates from your dataset with nearly identical profiles. Only difference: protected attribute. Model gave opposite decisions.</p>
-
-      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
-        <!-- Pair 1 -->
-        <div style="padding: 1.5rem; background: var(--bg); border-radius: 10px; border-left: 4px solid var(--red);">
-          <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: start; margin-bottom: 1.5rem;">
-            <div>
-              <strong style="display: block; margin-bottom: 0.75rem; color: var(--green);">✓ CANDIDATE A — APPROVED</strong>
-              <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.8;">
-                <div>Gender: Male</div>
-                <div>Interview Score: 82</div>
-                <div>Skill Score: 78</div>
-                <div>Experience: 5 years</div>
-                <div>Certifications: 3</div>
-                <div><strong style="color: var(--red);">Approval: 100%</strong></div>
-              </div>
-            </div>
-            <div style="text-align: center; color: var(--red); font-size: 1.2rem;">
-              ≠<br><strong style="font-size: 0.8rem; display: block; margin-top: 0.5rem; color: var(--muted);">Only difference:<br>Gender</strong>
-            </div>
-            <div>
-              <strong style="display: block; margin-bottom: 0.75rem; color: var(--red);">✗ CANDIDATE B — REJECTED</strong>
-              <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.8;">
-                <div>Gender: <strong style="color: var(--red);">Female</strong></div>
-                <div>Interview Score: 82</div>
-                <div>Skill Score: 78</div>
-                <div>Experience: 5 years</div>
-                <div>Certifications: 3</div>
-                <div><strong style="color: var(--red);">Approval: 0%</strong></div>
-              </div>
-            </div>
-          </div>
-          <div style="padding: 1rem; background: white; border-radius: 8px; border-left: 4px solid var(--red);">
-            <strong style="color: var(--red); display: block; margin-bottom: 0.5rem;">What this proves:</strong>
-            <p style="margin: 0; font-size: 0.9rem; color: var(--text);">When gender changes from male to female (all else identical), the model flips from approve → reject. This is <strong>direct evidence of gender discrimination</strong>. No other variable changed.</p>
-          </div>
-        </div>
-
-        <!-- Pair 2 -->
-        <div style="padding: 1.5rem; background: var(--bg); border-radius: 10px; border-left: 4px solid var(--red);">
-          <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: start; margin-bottom: 1.5rem;">
-            <div>
-              <strong style="display: block; margin-bottom: 0.75rem; color: var(--green);">✓ CANDIDATE C — APPROVED</strong>
-              <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.8;">
-                <div>Caste: General</div>
-                <div>Interview Score: 76</div>
-                <div>Skill Score: 74</div>
-                <div>Experience: 4 years</div>
-                <div>Certifications: 2</div>
-                <div><strong style="color: var(--green);">Approval: 100%</strong></div>
-              </div>
-            </div>
-            <div style="text-align: center; color: var(--red); font-size: 1.2rem;">
-              ≠<br><strong style="font-size: 0.8rem; display: block; margin-top: 0.5rem; color: var(--muted);">Only difference:<br>Caste</strong>
-            </div>
-            <div>
-              <strong style="display: block; margin-bottom: 0.75rem; color: var(--red);">✗ CANDIDATE D — REJECTED</strong>
-              <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.8;">
-                <div>Caste: <strong style="color: var(--red);">SC/ST</strong></div>
-                <div>Interview Score: 76</div>
-                <div>Skill Score: 74</div>
-                <div>Experience: 4 years</div>
-                <div>Certifications: 2</div>
-                <div><strong style="color: var(--red);">Approval: 0%</strong></div>
-              </div>
-            </div>
-          </div>
-          <div style="padding: 1rem; background: white; border-radius: 8px; border-left: 4px solid var(--red);">
-            <strong style="color: var(--red); display: block; margin-bottom: 0.5rem;">What this proves:</strong>
-            <p style="margin: 0; font-size: 0.9rem; color: var(--text);">Identical candidates get opposite decisions based on caste. In India, this violates Constitutional Article 15 (prohibition on caste discrimination) and the SC/ST Act. <strong>Criminal liability exposure.</strong></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="ai-analysis" style="margin-top: 2rem;">
-        <h4><i class="fas fa-brain"></i> Gemini Counterfactual Analysis</h4>
+      <p style="margin-bottom:1.5rem">These are real pairs of candidates from your dataset with nearly identical profiles. Only one attribute differs. The model gave opposite decisions.</p>
+      ${buildCFPairs(cfExamples)}
+      <div class="ai-analysis" style="margin-top:2rem">
+        <h4><i class="fas fa-brain"></i> Legal &amp; Reputational Analysis</h4>
         <div class="ai-content" id="ai-counterfactual">
-          <div class="ai-loading">
-            <div class="spinner"></div>
-            <span>Analyzing legal &amp; reputational implications...</span>
-          </div>
+          <div class="ai-loading"><div class="spinner"></div><span>Analysing legal &amp; reputational implications...</span></div>
         </div>
       </div>
     </div>
@@ -1261,424 +853,31 @@
   <!-- FIX INSTRUCTIONS -->
   <section id="fixes">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-wrench"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-wrench"></i></div>
       <h2>Fix Instructions</h2>
       <div class="meta">Copy-paste code to resolve each issue</div>
     </div>
-
-    <div class="card">
-      <!-- Step 1 -->
-      <div class="expandable">
-        <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>[CRITICAL] Step 1: Remove PII Columns</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Effort: 2 hours | Impact: Privacy 45→75</div>
-          </div>
-          <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
-        </div>
-        <div class="expandable-content">
-          <p><strong>Why:</strong> Your training data contains candidate_id, surname, and hometown_type. These are personally identifiable and violate GDPR/IT Act. They also enable discrimination by providing proxies for protected attributes.</p>
-          
-          <p><strong>What to do:</strong></p>
-          <ol style="margin: 0.75rem 0 0 1.5rem; color: var(--text);">
-            <li>Identify all PII columns in your dataset</li>
-            <li>Drop them before training</li>
-            <li>For quasi-identifiers (age, location), apply generalisation</li>
-            <li>Retrain the model</li>
-            <li>Re-evaluate fairness</li>
-          </ol>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="lang">Python</span>
-              <button class="code-copy" id="copy-step1" onclick="copyCodeById('copy-step1', 'code-step1')">Copy</button>
-            </div>
-            <div class="code-content">
-              <code id="code-step1">import pandas as pd
-import numpy as np
-
-# Load your training data
-df = pd.read_csv('hiring_data.csv')
-print(f"Original shape: {df.shape}")
-
-# STEP 1: Drop direct PII
-DIRECT_PII = ['candidate_id', 'surname', 'email', 'phone', 'national_id']
-df_clean = df.drop(columns=[c for c in DIRECT_PII if c in df.columns])
-
-print(f"After dropping PII: {df_clean.shape}")
-print(f"Dropped: {[c for c in DIRECT_PII if c in df.columns]}")
-
-# STEP 2: Generalise quasi-identifiers
-if 'age' in df_clean.columns:
-    df_clean['age_band'] = pd.cut(
-        df_clean['age'], 
-        bins=[0, 25, 30, 35, 40, 50, 60, 100],
-        labels=['&lt;25', '25-30', '30-35', '35-40', '40-50', '50-60', '60+']
-    )
-    df_clean = df_clean.drop(columns=['age'])
-    print("Age generalised to age_band")
-
-if 'hometown_type' in df_clean.columns:
-    # Generalise by region, not specific city
-    df_clean['region'] = df_clean['hometown_type'].apply(
-        lambda x: 'metro' if x in ['urban_1', 'urban_2'] else 'non_metro'
-    )
-    df_clean = df_clean.drop(columns=['hometown_type'])
-    print("hometown_type generalised to region")
-
-print(f"\nFinal cleaned shape: {df_clean.shape}")
-print(f"\nRemaining columns:\n{df_clean.columns.tolist()}")
-
-# Save cleaned dataset
-df_clean.to_csv('hiring_data_clean.csv', index=False)
-print("\n✓ Cleaned data saved to hiring_data_clean.csv")</code>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 2 -->
-      <!-- FIX 4 & 5: Restored missing closing divs and fixed broken copy button -->
-      <div class="expandable" style="margin-top: 1rem;">
-        <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>[CRITICAL] Step 2: Drop Protected Attributes &amp; High-Correlation Proxies</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Effort: 1 hour | Impact: Fairness 97→100</div>
-          </div>
-          <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
-        </div>
-        <div class="expandable-content">
-          <p><strong>Why:</strong> is_male, surname, and other proxies (r > 0.3) directly predict protected attributes. Removing them eliminates the bias source.</p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="lang">Python</span>
-              <button class="code-copy" id="copy-step2" onclick="copyCodeById('copy-step2', 'code-step2')">Copy</button>
-            </div>
-            <div class="code-content">
-              <code id="code-step2"># STEP 1: Audit feature-attribute correlations
-import pandas as pd
-import numpy as np
-from scipy.stats import spearmanr
-
-df = pd.read_csv('hiring_data_clean.csv')
-
-# Define protected attributes (for audit only, not in features)
-PROTECTED_ATTRS = ['is_male', 'gender', 'caste', 'religion', 'surname']
-
-# Compute correlations between all features and protected attributes
-print("Feature-Protected Attribute Correlations:")
-print("="*60)
-
-corr_matrix = {}
-for attr in PROTECTED_ATTRS:
-    if attr in df.columns:
-        for feat in df.columns:
-            if feat not in PROTECTED_ATTRS and feat != 'hired':
-                try:
-                    corr, _ = spearmanr(df[feat].fillna(0), df[attr].fillna(0))
-                    if abs(corr) > 0.3:  # Flag high correlations
-                        if attr not in corr_matrix:
-                            corr_matrix[attr] = []
-                        corr_matrix[attr].append((feat, corr))
-                except:
-                    pass
-
-# Print high-correlation proxies
-for attr, correlations in corr_matrix.items():
-    print(f"\n{attr}:")
-    for feat, corr in sorted(correlations, key=lambda x: abs(x[1]), reverse=True):
-        print(f"  {feat:30s} r = {corr:+.3f}  ← DROP THIS")
-
-# STEP 2: Drop protected attributes and high-correlation proxies
-COLS_TO_DROP = ['is_male', 'surname', 'hometown_type', 'caste_proxy']
-df_fair = df.drop(columns=[c for c in COLS_TO_DROP if c in df.columns])
-
-print(f"\n\nFinal features after removing biased columns:")
-print(df_fair.columns.tolist())
-
-df_fair.to_csv('hiring_data_fair.csv', index=False)
-print(f"\n✓ Fair dataset saved. Shape: {df_fair.shape}")</code>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="expandable" style="margin-top: 1rem;">
-        <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>[HIGH] Step 3: Retrain with Fairness Constraint</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Effort: 4-6 hours | Impact: Disparate Impact 0.64→0.82</div>
-          </div>
-          <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
-        </div>
-        <div class="expandable-content">
-          <p><strong>Why:</strong> After data cleaning, you still need to account for historical label bias. Use fairlearn to ensure equal opportunity during training.</p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="lang">Python</span>
-              <button class="code-copy" id="copy-step3" onclick="copyCodeById('copy-step3', 'code-step3')">Copy</button>
-            </div>
-            <div class="code-content">
-              <code id="code-step3"># Install fairlearn if needed
-# pip install fairlearn scikit-learn
-
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from fairlearn.reductions import ExponentiatedGradient, DemographicParity
-import numpy as np
-
-# Load cleaned fair dataset
-df = pd.read_csv('hiring_data_fair.csv')
-
-# Separate features and target
-X = df.drop(columns=['hired', 'gender', 'caste'])  # Drop sensitive attributes
-y = df['hired']
-sensitive_features = df['gender']  # For fairness measurement only
-
-# Train-test split
-X_train, X_test, y_train, y_test, s_train, s_test = train_test_split(
-    X, y, sensitive_features, test_size=0.2, random_state=42, stratify=y
-)
-
-# Define base model
-base_clf = RandomForestClassifier(n_estimators=100, random_state=42)
-
-# Wrap with fairness constraint
-fair_clf = ExponentiatedGradient(
-    estimator=base_clf,
-    constraints=DemographicParity(),
-    eps=0.01  # Tolerance: lower = stricter
-)
-
-# Train fair model
-print("Training fairness-constrained model...")
-fair_clf.fit(X_train, y_train, sensitive_features=s_train)
-
-# Evaluate
-y_pred = fair_clf.predict(X_test)
-accuracy = (y_pred == y_test).mean()
-print(f"\nAccuracy: {accuracy:.4f}")
-
-# Check fairness by gender
-from sklearn.metrics import precision_score, recall_score
-
-for gender in s_test.unique():
-    mask = s_test == gender
-    acc_g = (y_pred[mask] == y_test[mask]).mean()
-    print(f"Accuracy for {gender}: {acc_g:.4f}")
-
-print("\n✓ Fair model trained and evaluated")</code>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="expandable" style="margin-top: 1rem;">
-        <div class="expandable-header" onclick="toggleExpandable(this)">
-          <div>
-            <strong>[MEDIUM] Step 4: Implement Weekly Fairness Monitoring</strong>
-            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Effort: 3-4 hours | Impact: Detect drift early</div>
-          </div>
-          <div class="expandable-toggle"><i class="fas fa-chevron-down"></i></div>
-        </div>
-        <div class="expandable-content">
-          <p><strong>Why:</strong> Even fair models can drift in production. Monitor fairness metrics weekly and alert if they drop below thresholds.</p>
-
-          <div class="code-block">
-            <div class="code-header">
-              <span class="lang">Python</span>
-              <button class="code-copy" id="copy-step4" onclick="copyCodeById('copy-step4', 'code-step4')">Copy</button>
-            </div>
-            <div class="code-content">
-              <code id="code-step4">import pandas as pd
-from datetime import datetime
-import json
-
-def compute_fairness_metrics(df_prod, model, sensitive_attr='gender'):
-    """
-    Compute fairness metrics on production data.
-    df_prod: DataFrame with features and actual outcomes
-    sensitive_attr: name of sensitive attribute column
-    """
-    X = df_prod.drop(columns=['outcome', sensitive_attr] if sensitive_attr in df_prod.columns else ['outcome'])
-    y_true = df_prod['outcome']
-    y_pred = model.predict(X)
-    
-    metrics = {
-        'timestamp': datetime.now().isoformat(),
-        'n_records': len(df_prod),
-        'overall_accuracy': (y_pred == y_true).mean(),
-        'group_metrics': {}
-    }
-    
-    # Compute per-group accuracy
-    if sensitive_attr in df_prod.columns:
-        for group in df_prod[sensitive_attr].unique():
-            mask = df_prod[sensitive_attr] == group
-            group_acc = (y_pred[mask] == y_true[mask]).mean()
-            group_approval = y_pred[mask].mean()
-            metrics['group_metrics'][str(group)] = {
-                'accuracy': group_acc,
-                'approval_rate': group_approval,
-                'count': int(mask.sum())
-            }
-    
-    return metrics
-
-# Load production data (simulated)
-df_prod = pd.read_csv('production_week_1.csv')
-
-# Compute metrics
-metrics = compute_fairness_metrics(df_prod, model, 'gender')
-
-# Check against thresholds
-THRESHOLDS = {
-    'min_accuracy': 0.82,
-    'max_approval_gap': 0.05,  # 5% max gap between groups
-    'disparate_impact': 0.80   # 80% rule
-}
-
-# Alert if thresholds violated
-alerts = []
-if metrics['overall_accuracy'] &lt; THRESHOLDS['min_accuracy']:
-    alerts.append(f"⚠ Accuracy dropped below {THRESHOLDS['min_accuracy']}")
-
-# Check approval rate gap
-if len(metrics['group_metrics']) >= 2:
-    approval_rates = [m['approval_rate'] for m in metrics['group_metrics'].values()]
-    gap = max(approval_rates) - min(approval_rates)
-    if gap > THRESHOLDS['max_approval_gap']:
-        alerts.append(f"⚠ Approval rate gap {gap:.1%} exceeds threshold {THRESHOLDS['max_approval_gap']:.1%}")
-
-if alerts:
-    print("🚨 FAIRNESS ALERTS:")
-    for alert in alerts:
-        print(f"  {alert}")
-else:
-    print("✓ All fairness metrics within thresholds")
-
-# Log metrics
-with open('fairness_log.jsonl', 'a') as f:
-    f.write(json.dumps(metrics) + '\n')
-
-print(f"\nMetrics logged to fairness_log.jsonl")</code>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="card">${buildFixCards(fixes)}</div>
   </section>
 
   <!-- DEPLOYMENT CHECKLIST -->
   <section id="deployment">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-rocket"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-rocket"></i></div>
       <h2>Deployment Checklist</h2>
       <div class="meta">Do not ship until all items are complete</div>
     </div>
-
     <div class="card">
-      <div class="checklist">
-        <div class="checklist-item critical">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[CRITICAL] Halt current production deployment</strong>
-            <small>Notify stakeholders: model is discriminatory, must be redeployed</small>
-          </div>
+      <div class="checklist">${buildChecklist(fixes, remediation)}</div>
+      <div style="margin-top:2rem;padding:1.5rem;background:var(--bg);border-radius:10px">
+        <strong style="color:var(--text);display:block;margin-bottom:.75rem">Estimated Timeline</strong>
+        <div class="timeline-list">
+          <div class="timeline-item"><div class="timeline-dot crit"></div><div class="timeline-content"><strong>Day 1–2</strong><span>PII removal &amp; data cleaning (2–3 hrs) + legal notification (1 hr)</span></div></div>
+          <div class="timeline-item"><div class="timeline-dot crit"></div><div class="timeline-content"><strong>Day 2–3</strong><span>Protected attr removal &amp; model retraining (4–6 hrs)</span></div></div>
+          <div class="timeline-item"><div class="timeline-dot warn"></div><div class="timeline-content"><strong>Day 3–4</strong><span>Fairness re-evaluation (2–3 hrs) + monitoring setup (3–4 hrs)</span></div></div>
+          <div class="timeline-item"><div class="timeline-dot warn"></div><div class="timeline-content"><strong>Day 4–5</strong><span>Legal review &amp; sign-off (async, may take 1–2 days)</span></div></div>
+          <div class="timeline-item"><div class="timeline-dot ok"></div><div class="timeline-content"><strong>Day 5+</strong><span>Redeployment once all checks pass</span></div></div>
         </div>
-
-        <div class="checklist-item critical">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[CRITICAL] Remove PII columns from training data</strong>
-            <small>Drop: candidate_id, surname, hometown_type. Generalise: age → age_band</small>
-          </div>
-        </div>
-
-        <div class="checklist-item critical">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[CRITICAL] Remove protected attributes &amp; proxies</strong>
-            <small>Drop: is_male, gender, caste, any feature with |r| > 0.3 to sensitive attrs</small>
-          </div>
-        </div>
-
-        <div class="checklist-item critical">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[CRITICAL] Retrain model with fairness constraint</strong>
-            <small>Use fairlearn ExponentiatedGradient with DemographicParity. Target: disparate impact ≥ 0.80</small>
-          </div>
-        </div>
-
-        <div class="checklist-item warning">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[WARNING] Re-evaluate all fairness metrics</strong>
-            <small>Run full 7-dimension audit. All must be ≥ 0.75. Privacy ≥ 0.75, Fairness ≥ 0.80</small>
-          </div>
-        </div>
-
-        <div class="checklist-item warning">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[WARNING] Legal review &amp; sign-off</strong>
-            <small>Send to compliance &amp; legal. Document that bias has been addressed. Get written approval.</small>
-          </div>
-        </div>
-
-        <div class="checklist-item warning">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>[WARNING] Set up weekly fairness monitoring</strong>
-            <small>Implement automated checks. Alert if accuracy drops or approval gaps exceed 5%</small>
-          </div>
-        </div>
-
-        <div class="checklist-item">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>Create incident report for board/regulators (if applicable)</strong>
-            <small>Document what went wrong, how it was found, remediation steps, preventative measures</small>
-          </div>
-        </div>
-
-        <div class="checklist-item">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>Update feature engineering guidelines</strong>
-            <small>Prohibit PII in features. Require fairness audit before any model deployment</small>
-          </div>
-        </div>
-
-        <div class="checklist-item">
-          <div class="checklist-checkbox" onclick="toggleCheckbox(this)"></div>
-          <div class="checklist-text">
-            <strong>Redeploy cleaned, fair model to production</strong>
-            <small>Only after all critical items are complete and legal approves</small>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg); border-radius: 10px;">
-        <strong style="color: var(--text); display: block; margin-bottom: 0.75rem;">Timeline Estimate</strong>
-        <ul style="margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
-          <li><strong>Day 1-2:</strong> PII removal &amp; data cleaning (2-3 hrs) + legal notification (1 hr)</li>
-          <li><strong>Day 2-3:</strong> Protected attr removal &amp; model retraining (4-6 hrs)</li>
-          <li><strong>Day 3-4:</strong> Fairness re-evaluation (2-3 hrs) + monitoring setup (3-4 hrs)</li>
-          <li><strong>Day 4-5:</strong> Legal review &amp; sign-off (async, may take 1-2 days)</li>
-          <li><strong>Day 5:</strong> Redeployment once all checks pass</li>
-        </ul>
       </div>
     </div>
   </section>
@@ -1686,240 +885,210 @@ print(f"\nMetrics logged to fairness_log.jsonl")</code>
   <!-- GEMINI DEEP DIVE -->
   <section id="gemini">
     <div class="section-header">
-      <div class="section-icon">
-        <i class="fas fa-brain"></i>
-      </div>
+      <div class="section-icon"><i class="fas fa-brain"></i></div>
       <h2>Gemini AI Deep Dive</h2>
       <div class="meta">LLM-powered technical analysis</div>
     </div>
-
     <div class="card">
-      <p style="margin-bottom: 1.5rem;">Powered by Gemini 2.5 Flash, this analysis provides:</p>
-      <ul style="margin: 0 0 1.5rem 1.5rem; color: var(--text);">
+      <p style="margin-bottom:1.5rem">Powered by Gemini 2.5 Flash, this analysis provides:</p>
+      <ul style="margin:0 0 1.5rem 1.5rem">
         <li>Legal liability assessment &amp; regulatory exposure</li>
         <li>Risk ranking by severity (legal, reputational, operational)</li>
         <li>Root cause synthesis across all evidence</li>
         <li>Production monitoring strategies</li>
         <li>Technical debt &amp; future prevention measures</li>
       </ul>
-
-      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-        <input 
-          type="password" 
-          id="gemini-key" 
-          placeholder="Paste your Gemini API key (AIza...)" 
-          style="flex: 1; padding: 0.8rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--mono); font-size: 0.85rem;"
-        >
-        <!-- FIX 1: fa-sparkles is not in FA 6.4.0 — replaced with fa-wand-magic-sparkles -->
-        <button 
-          onclick="runGeminiAnalysis()" 
-          style="padding: 0.8rem 1.5rem; background: linear-gradient(135deg, var(--gold), var(--amber)); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s;"
-          onmouseover="this.style.opacity='0.9'"
-          onmouseout="this.style.opacity='1'"
-        >
+      <div class="gemini-key-row">
+        <input type="password" id="gemini-key" placeholder="Paste your Gemini API key (AIza...)">
+        <button class="gemini-btn" id="gemini-btn" onclick="runGeminiAnalysis(window._ev, window._fixes, window._cf)">
           <i class="fas fa-wand-magic-sparkles"></i> Analyze with Gemini
         </button>
       </div>
-      <small style="color: var(--muted); display: block; margin-bottom: 1.5rem;">Get a free API key: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--cyan);">aistudio.google.com</a></small>
-
-      <div id="gemini-output" style="display: none; padding: 1.5rem; background: var(--navy); color: white; border-radius: 10px; font-family: var(--serif); line-height: 1.8;">
-      </div>
+      <small style="color:var(--muted)">Get a free API key: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--cyan)">aistudio.google.com</a></small>
+      <div id="gemini-output"></div>
     </div>
-  </section>
+  </section>`;
 
-</main>
+  // Store for Gemini
+  window._ev = ev; window._fixes = fixes; window._cf = cfExamples;
 
-<script>
-  // Search functionality
-  document.getElementById('search').addEventListener('keyup', (e) => {
-    const query = e.target.value.toLowerCase();
-    document.querySelectorAll('section').forEach(section => {
-      const text = section.innerText.toLowerCase();
-      section.style.display = text.includes(query) ? 'block' : 'none';
-    });
-  });
+  // Restore saved key
+  const saved = localStorage.getItem('gemini_api_key');
+  if (saved) { const k = document.getElementById('gemini-key'); if (k) k.value = saved; }
 
-  // Filter dropdown
-  function toggleFilterDropdown() {
-    document.getElementById('filterDropdown').classList.toggle('open');
-  }
+  // Populate inline AI sections
+  setTimeout(() => populateInlineAI(ev, fi, sensitiveInShap, cfExamples, f), 300);
 
-  function applyFilters() {
-    const filters = Array.from(document.querySelectorAll('.issue-filter:checked')).map(el => el.value);
-    console.log('Filters applied:', filters);
-  }
-
-  // Expandable sections
-  function toggleExpandable(header) {
-    const content = header.nextElementSibling;
-    content.classList.toggle('open');
-    header.classList.toggle('open');
-    const toggle = header.querySelector('.expandable-toggle');
-    if (toggle) toggle.classList.toggle('open');
-  }
-
-  // Sidebar active state
-  function scrollToSection(id) {
-    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-    event.target.closest('.sidebar-item').classList.add('active');
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  }
-
-  window.addEventListener('scroll', () => {
-    document.querySelectorAll('section[id]').forEach(section => {
-      const rect = section.getBoundingClientRect();
-      if (rect.top < 200 && rect.bottom > 200) {
-        document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-        const link = document.querySelector(`.sidebar-item[href="#${section.id}"]`);
-        if (link) link.classList.add('active');
+  // Intersection observer for sidebar
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = '#' + e.target.id;
+        document.querySelectorAll('.sidebar-item').forEach(a => a.classList.remove('active'));
+        const a = document.querySelector(`.sidebar-item[href="${id}"]`);
+        if (a) a.classList.add('active');
       }
     });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  ['overview', 'overview-detail', 'root-causes', 'shap', 'bias-types', 'counterfactual', 'fixes', 'deployment', 'gemini'].forEach(id => {
+    const el = document.getElementById(id); if (el) obs.observe(el);
   });
+}
 
-  // FIX 2: Unified copyCode function — removed duplicate definition.
-  // All copy buttons now use copyCodeById(btnId, codeId) which reads
-  // the text from the <code> element's innerText (not a fragile inline string).
-  function copyCodeById(btnId, codeId) {
-    const codeEl = document.getElementById(codeId);
-    if (!codeEl) return;
-    const text = codeEl.innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById(btnId);
-      const original = btn.textContent;
-      btn.textContent = '✓ Copied!';
-      setTimeout(() => btn.textContent = original, 2000);
-    }).catch(() => {
-      // Fallback for older browsers
-      const ta = document.createElement('textarea');
-      ta.value = codeEl.innerText;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      const btn = document.getElementById(btnId);
-      const original = btn.textContent;
-      btn.textContent = '✓ Copied!';
-      setTimeout(() => btn.textContent = original, 2000);
-    });
+function populateInlineAI(ev, fi, sensitiveInShap, cfExamples, f) {
+  // Root causes AI block
+  const aiRC = document.getElementById('ai-root-causes');
+  if (aiRC) {
+    const piiList = (ev.privacy?.pii_columns||[]).slice(0,3).map(c=>`<code style="background:rgba(0,0,0,.1);padding:2px 5px;border-radius:3px;font-family:var(--mono)">${c}</code>`).join(', ');
+    const proxies = sensitiveInShap.filter(f=>!['gender','sex','is_male'].includes(f.feature.toLowerCase())).slice(0,3).map(f=>`<code style="background:rgba(0,0,0,.1);padding:2px 5px;border-radius:3px;font-family:var(--mono)">${f.feature}</code>`).join(', ');
+
+    aiRC.innerHTML = `<p><strong style="color:var(--gold)">Root Cause Synthesis:</strong></p>
+      ${piiList ? `<p>PII leakage (direct): Columns ${piiList} encode personal information directly. Even if protected attribute columns are removed, the model may reconstruct them from these proxies.</p>` : ''}
+      ${proxies ? `<p>Proxy correlations (systematic): Features like ${proxies} were likely never audited for correlation with protected attributes. High correlation means they predict gender/caste better than job performance.</p>` : ''}
+      <p>Historical label bias: The training data's label distribution may reflect past discrimination. The model learned historical patterns as ground truth and reproduces them. No fairness constraint during training allowed it to optimise for historical patterns instead of treating individuals equally.</p>`;
   }
 
-  // Checklist
-  function toggleCheckbox(checkbox) {
-    checkbox.classList.toggle('checked');
-    checkbox.innerHTML = checkbox.classList.contains('checked') ? '✓' : '';
-    checkbox.closest('.checklist-item').classList.toggle('done');
+  // SHAP AI block
+  const aiSHAP = document.getElementById('ai-shap');
+  if (aiSHAP) {
+    const topFeat = ev.shap?.topFeature || ev.shap?.top_feature || (fi[0]?.feature) || 'interview_score';
+    const sensCount = sensitiveInShap.length;
+    aiSHAP.innerHTML = `<p><strong style="color:var(--gold)">SHAP Interpretation:</strong></p>
+      <p><code style="background:rgba(0,0,0,.1);padding:2px 5px;border-radius:3px;font-family:var(--mono)">${topFeat}</code> is the top predictive feature (SHAP stability: ${fmt(ev.shap?.featureStability,4)}).
+      ${sensCount > 0 ? ` However, the presence of ${sensCount} protected attribute(s) in the top features is damning evidence that the model is learning protected attributes.` : ' No protected attributes detected in top features — good sign.'}</p>
+      ${sensitiveInShap.length > 0 ? `<p>The SHAP values for sensitive features (${sensitiveInShap.slice(0,2).map(f=>`${f.feature}: ${fmt(f.shap_value,4)}`).join(', ')}) indicate these attributes are contributing to predictions. That sounds small but compounds across the entire prediction distribution.</p>` : ''}`;
   }
 
-  // Gemini Analysis
-  async function runGeminiAnalysis() {
-    const apiKey = document.getElementById('gemini-key').value;
-    if (!apiKey) {
-      alert('Please enter your Gemini API key');
-      return;
-    }
-
-    const output = document.getElementById('gemini-output');
-    output.style.display = 'block';
-    output.innerHTML = '<div class="ai-loading"><div class="spinner"></div> Gemini is analyzing your audit data...</div>';
-
-    const prompt = `You are a senior fairness engineer. Analyze this bias audit for a hiring model.
-
-## KEY DATA
-- Ethical Score: 84/100 (DEPLOYMENT BLOCKED)
-- Fairness Score: 97/100 ✓
-- Privacy Score: 45/100 ✗ (CRITICAL — PII in features)
-- Protected attrs in SHAP top-5: 4 (gender, caste, age proxies)
-- Counterfactual pairs: 5 real candidates with identical profiles got opposite outcomes by gender/caste
-- Model performance: 84.35% accuracy, 0.91 F1-score (high, but unfair)
-
-## ROOT CAUSES
-1. PII data leakage: candidate_id, surname, hometown_type in features
-2. Proxy discrimination: age (r=0.58 with gender), certifications_count (r=0.44 with caste), salary_per_skill (r=0.53 with gender)
-3. Historical label bias: Male approval 95%, Female approval 12% (83-pt gap, legal max 4)
-4. No fairness testing before deployment
-
-## TASK
-Provide EXACTLY this structure (use these headers):
-
-**LEGAL LIABILITY ASSESSMENT**
-- Which laws violated? (Name them: EEOC Title VII, Indian Constitution Article 15, SC/ST Act, GDPR, IT Act Section 43A)
-- Financial exposure: What are the fines?
-- Criminal liability: Prison time? Yes/no?
-
-**RISK RANKING**
-- #1 Risk: [What] · Severity: [HIGH/MEDIUM/LOW] · Exposure: [Category]
-- #2 Risk: [What] · Severity: [HIGH/MEDIUM/LOW] · Exposure: [Category]
-- #3 Risk: [What] · Severity: [HIGH/MEDIUM/LOW] · Exposure: [Category]
-
-**ROOT CAUSE SYNTHESIS**
-- [2-3 paragraphs explaining WHY the bias exists, connecting evidence together]
-
-**REMEDIATION SEQUENCE**
-- [Step-by-step: what to do first, what depends on that, timeline]
-
-**PRODUCTION MONITORING**
-- [4-5 specific metrics to track weekly to catch drift]
-
-Be technical, direct, specific. Use numbers and regulatory references. No generic advice.`;
-
-    try {
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + apiKey, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 2000
-          }
-        })
-      });
-
-      if (!response.ok) throw new Error('API Error: ' + response.status);
-      const data = await response.json();
-      const text = data.candidates[0]?.content?.parts[0]?.text || 'No response';
-
-      // Format output
-      const formatted = text
-        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--gold);">$1</strong>')
-        .replace(/^### (.*?)$/gm, '<h4 style="color: var(--gold); margin-top: 1.5rem; margin-bottom: 0.75rem;">$1</h4>')
-        .replace(/^- (.*?)$/gm, '<div style="margin-left: 1.5rem; margin-bottom: 0.5rem;">• $1</div>')
-        .replace(/\n\n/g, '</p><p>');
-
-      output.innerHTML = '<p>' + formatted + '</p>';
-    } catch (err) {
-      output.innerHTML = '<div style="color: var(--red);">⚠ Error: ' + err.message + '</div>';
+  // Counterfactual AI block
+  const aiCF = document.getElementById('ai-counterfactual');
+  if (aiCF) {
+    const attrs = [...new Set(cfExamples.map(c=>c.attribute))];
+    if (cfExamples.length > 0) {
+      aiCF.innerHTML = `<p><strong style="color:var(--gold)">Legal &amp; Reputational Analysis:</strong></p>
+        <p><strong style="color:var(--red)">US EEOC Exposure:</strong> The ${cfExamples.length} counterfactual pair(s) violate the disparate treatment standard under Title VII. If a lawsuit is filed, these pairs serve as smoking-gun evidence. Estimated liability: $50K–$500K per plaintiff.</p>
+        ${attrs.includes('caste') || attrs.includes('caste_proxy') ? `<p><strong style="color:var(--red)">India Constitutional Exposure:</strong> Articles 15–17 prohibit caste discrimination. The SC/ST Act provides for criminal penalties: up to 5 years imprisonment + ₹5 crore fine.</p>` : ''}
+        <p><strong style="color:var(--amber)">Reputational Risk:</strong> If these pairs become public through a lawsuit or audit leak, media coverage is likely. "AI discriminates in hiring" is a headline that harms brand trust and customer retention.</p>`;
+    } else {
+      aiCF.innerHTML = `<p><strong style="color:var(--gold)">Counterfactual Analysis:</strong></p><p style="color:rgba(255,255,255,.7)">No counterfactual bias pairs found — the model appears counterfactually fair across the tested attribute groups. Continue monitoring as new data is collected.</p>`;
     }
   }
+}
 
-  // Simulate AI analyses on load
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      document.getElementById('ai-root-causes').innerHTML = `
-        <p><strong style="color: var(--gold);">Root Cause Synthesis:</strong></p>
-        <p>The discrimination stems from a data engineering failure, not an algorithm failure. Three mistakes compound:</p>
-        <p style="margin-left: 1.5rem; margin-bottom: 0.75rem;"><strong>1. PII leakage (direct):</strong> Columns like <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">surname</code> and <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">hometown_type</code> encode caste information directly. Even if gender/caste columns are removed, the model reconstructs them from these proxies.</p>
-        <p style="margin-left: 1.5rem; margin-bottom: 0.75rem;"><strong>2. Proxy correlations (systematic):</strong> Legitimate features like <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">age</code>, <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">certifications_count</code>, and <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">salary_per_skill</code> were never audited for correlation with protected attributes. High correlation (r &gt; 0.4) means they predict gender/caste better than job performance.</p>
-        <p style="margin-left: 1.5rem;"><strong>3. Historical label bias (training):</strong> Your training data reflects past discrimination: 95% of males were hired, 12% of females. The model learned this as ground truth and reproduces it. No fairness constraint during training allowed it to optimize for historical patterns instead of treating individuals equally.</p>
-      `;
+/* ── NORMALISE API RESPONSE ── */
+function normalise(raw) {
+  const pick = (...paths) => { for (const p of paths) { const v = p.split('.').reduce((o,k)=>o?.[k], raw); if (v != null && Number(v) >= 0) return Number(v); } return null; };
+  const fairness = raw.fairness || {};
+  let shapRaw = raw.shap || {};
+  let fi = shapRaw.feature_importance;
+  if (fi && !Array.isArray(fi)) fi = Object.entries(fi).sort((a,b)=>b[1]-a[1]).map(([f,v])=>({feature:f,shap_value:v}));
+  const shap = { topFeature: shapRaw.topFeature||shapRaw.top_feature, shapMax: shapRaw.shapMax||shapRaw.shap_max, shapMin: shapRaw.shapMin||shapRaw.shap_min, featureStability: shapRaw.featureStability||shapRaw.feature_stability, feature_importance: fi||[] };
 
-      document.getElementById('ai-shap').innerHTML = `
-        <p><strong style="color: var(--gold);">SHAP Interpretation:</strong></p>
-        <p>SHAP shows that <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">interview_score</code> and <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">salary_per_skill</code> are the top predictive features. However, the presence of <code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">is_male</code>, <code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">surname</code>, and <code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">age</code> in the top-12 is damning evidence that the model is learning protected attributes.</p>
-        <p>The SHAP value for <code style="background: rgba(231,76,60,0.2); padding: 2px 6px; border-radius: 3px;">is_male</code> (0.0042) means: "controlling for all other features, being male increases the hiring probability by 0.42%." That sounds small, but across the entire prediction distribution, it compounds. When male AND interview_score is high, the model adds +4.2% to the baseline. When female AND interview_score is high, it subtracts that advantage.</p>
-      `;
+  return {
+    ethical_score: pick('ethical_score','fairness_score','fairness.fairness_score'),
+    fairness_score: pick('fairness_score','fairness.fairness_score'),
+    privacy_score: pick('privacy_score','privacy.privacy_score'),
+    robustness_score: pick('robustness_score','robustness.robustness_score'),
+    transparency_score: pick('transparency_score'),
+    accountability_score: pick('accountability_score'),
+    fairness, shap,
+    privacy: raw.privacy || {},
+    robustness: raw.robustness || {},
+    remediation: raw.remediation || {},
+    model_metrics: raw.model_metrics || raw.model_performance || {},
+    records: raw.records || 0,
+  };
+}
 
-      document.getElementById('ai-counterfactual').innerHTML = `
-        <p><strong style="color: var(--gold);">Legal &amp; Reputational Analysis:</strong></p>
-        <p><strong style="color: var(--red);">US EEOC Exposure:</strong> The two counterfactual pairs violate the disparate treatment standard under Title VII. If a lawsuit is filed, these pairs serve as smoking-gun evidence. Estimated liability: $50K - $500K per plaintiff.</p>
-        <p><strong style="color: var(--red);">India Constitutional Exposure:</strong> Articles 15-17 prohibit caste discrimination. The SC/ST Act provides for criminal penalties: up to 5 years imprisonment + ₹5 crore fine. This is not civil liability — it's criminal.</p>
-        <p><strong style="color: var(--amber);">Reputational Risk:</strong> If these counterfactual pairs become public (through a lawsuit or audit leak), media coverage is likely. "AI Discriminates in Hiring" is a headline that harms brand trust.</p>
-      `;
-    }, 500);
-  });
+/* ── INIT ── */
+(async function init() {
+  const evalId = new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+
+  if (!evalId) {
+    document.getElementById('app').innerHTML = `<div class="loading-state">
+      <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div>
+      <div style="font-family:var(--sans);font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:.5rem">No evaluation found</div>
+      <div style="font-size:.9rem;color:var(--muted);margin-bottom:1.5rem">Complete an evaluation on the upload page first.</div>
+      <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a>
+    </div>`;
+    return;
+  }
+
+  try {
+    const [devRes, remRes, evlRes] = await Promise.allSettled([
+      fetch(`${API}/report/developer/${evalId}`).then(r => r.json()),
+      fetch(`${API}/remediation/${evalId}`).then(r => r.json()),
+      fetch(`${API}/evaluate/${evalId}`).then(r => r.json()),
+    ]);
+
+    const dev = devRes.status === 'fulfilled' && devRes.value.status === 'complete' ? devRes.value : {};
+    const rem = remRes.status === 'fulfilled' && remRes.value.status === 'complete' ? remRes.value : {};
+    const evl = evlRes.status === 'fulfilled' && evlRes.value.status === 'complete' ? evlRes.value : {};
+
+    const merged = { ...evl, ...rem, ...dev };
+    const ev = normalise(merged);
+
+    // Enrich from session cache
+    const cached = sessionStorage.getItem('eval_result');
+    if (cached) {
+      try {
+        const raw = JSON.parse(cached);
+        if (!ev.ethical_score && raw.ethical_score) ev.ethical_score = raw.ethical_score;
+        if (!ev.shap?.topFeature && raw.shap) ev.shap = normalise(raw).shap;
+        if ((!ev.fairness || !Object.keys(ev.fairness).length) && raw.fairness) ev.fairness = raw.fairness;
+        if (!ev.model_metrics?.accuracy && raw.model_metrics) ev.model_metrics = raw.model_metrics;
+      } catch(e) {}
+    }
+
+    const fixes = (rem.remediation?.all_fixes?.length ? rem.remediation.all_fixes : null) || buildFallbackFixes(ev);
+    const cfExamples = rem.counterfactual_examples || evl.counterfactual_examples || [];
+
+    render(ev, fixes, cfExamples, evalId);
+
+  } catch(err) {
+    const cached = sessionStorage.getItem('eval_result');
+    if (cached) {
+      try {
+        const raw = JSON.parse(cached);
+        const ev = normalise(raw);
+        const fixes = raw.remediation?.all_fixes || buildFallbackFixes(ev);
+        const cfExamples = raw.counterfactual_examples || [];
+        render(ev, fixes, cfExamples, evalId);
+        return;
+      } catch(e) {}
+    }
+    document.getElementById('app').innerHTML = `<div class="loading-state">
+      <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--red)"><i class="fas fa-times-circle"></i></div>
+      <div style="font-family:var(--sans);font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:.5rem">Could not load report</div>
+      <div style="font-size:.9rem;color:var(--muted);margin-bottom:1.5rem">Evaluation not found or still processing. Error: ${err.message}</div>
+      <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem"><i class="fas fa-redo"></i> Try again</a>
+    </div>`;
+  }
+})();
+
+/* ── FALLBACK FIX GENERATION ── */
+function buildFallbackFixes(ev) {
+  const f = ev.fairness || {};
+  const pr = ev.privacy || {};
+  const rb = ev.robustness || {};
+  const fixes = [];
+
+  if ((pr.pii_columns||[]).length > 0) {
+    fixes.push({ severity:'CRITICAL', dimension:'Privacy', dimension_key:'privacy_score', effort:'low', title:'Remove or pseudonymise PII columns', description:`${pr.pii_columns.length} column(s) containing personal data detected: ${pr.pii_columns.slice(0,3).join(', ')}. PII in training data violates GDPR and the IT Act, and causes unfair predictions if names/IDs leak into the model.`, code:`import hashlib\ndf.drop(columns=${JSON.stringify(pr.pii_columns.slice(0,3))}, inplace=True, errors='ignore')`, current_score: pr.privacy_score||.45, estimated_score_after: .80, risk:'None' });
+  }
+  if ((f.disparateImpact||1) < .80) {
+    fixes.push({ severity:'CRITICAL', dimension:'Fairness', dimension_key:'disparateImpact', effort:'medium', title:'Fix disparate impact — 80% rule violation', description:`The approval rate ratio is ${((f.disparateImpact||0)*100).toFixed(1)}%. Legal EEOC threshold is ≥ 80%. This creates discrimination lawsuit exposure.`, code:`from fairlearn.postprocessing import ThresholdOptimizer\noptimizer = ThresholdOptimizer(estimator=model, constraints="demographic_parity")\noptimizer.fit(X_train, y_train, sensitive_features=sensitive_col)`, current_score: f.disparateImpact||0, estimated_score_after: Math.min((f.disparateImpact||0)+.20, 1), risk:'Low' });
+  }
+  if ((f.counterfactual||1) < .90) {
+    fixes.push({ severity:'CRITICAL', dimension:'Fairness', dimension_key:'counterfactual', effort:'medium', title:'Remove proxy features sensitive to protected attributes', description:`Counterfactual fairness score is ${((f.counterfactual||0)*100).toFixed(1)}%. Changing a sensitive attribute flips model decisions — direct proxy discrimination evidence.`, code:`# Find proxy features\nfor col in X.columns:\n    corr = X[col].corr(df[sensitive_attr])\n    if abs(corr) > 0.3:\n        print(f"Proxy: {col} — r={corr:.3f}")`, current_score: f.counterfactual||0, estimated_score_after: Math.min((f.counterfactual||0)+.18, 1), risk:'Low' });
+  }
+  if ((rb.boundary_instability||0) > .25) {
+    fixes.push({ severity:'WARNING', dimension:'Robustness', dimension_key:'robustness_score', effort:'low', title:'Calibrate predictions to stabilise boundary decisions', description:`${Math.round((rb.boundary_instability||0)*100)}% of predictions fall in the 0.4–0.6 uncertain zone. Minor input changes flip these decisions.`, code:`from sklearn.calibration import CalibratedClassifierCV\ncalibrated = CalibratedClassifierCV(estimator=your_model, method='isotonic', cv='prefit')\ncalibrated.fit(X_val, y_val)`, current_score: rb.robustness_score||.5, estimated_score_after: Math.min((rb.robustness_score||.5)+.20, 1), risk:'None' });
+  }
+  if (!fixes.length) {
+    fixes.push({ severity:'INFO', dimension:'Monitoring', dimension_key:'', effort:'low', title:'Set up continuous fairness monitoring', description:'No critical issues found. Implement weekly re-evaluation as new data arrives to catch drift early.', code:`import schedule\n\ndef fairness_check():\n    df_prod = load_production_batch()\n    result = run_fairness_eval(df_prod)\n    for dim, score in result.items():\n        if score < 0.75:\n            alert(f"DRIFT: {dim} = {score:.2%}")\n\nschedule.every().monday.at("09:00").do(fairness_check)`, current_score: .85, estimated_score_after: .90, risk:'None' });
+  }
+  return fixes;
+}
 </script>
-
 </body>
 </html>
