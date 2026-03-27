@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reports — FairTrust AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy:      #0F1E38; --navy-mid:  #1A2D4E; --navy-soft: #243D65;
+            --gold:      #EBB255; --gold-dim:  rgba(235,178,85,0.12); --gold-line: rgba(235,178,85,0.3);
+            --red:       #EF4444; --red-dim:   rgba(239,68,68,0.1);
+            --amber:     #F59E0B; --amber-dim: rgba(245,158,11,0.1);
+            --green:     #10B981; --green-dim: rgba(16,185,129,0.1);
+            --blue:      #3B82F6; --blue-dim:  rgba(59,130,246,0.1);
+            --purple:    #8B5CF6; --purple-dim:rgba(139,92,246,0.1);
+            --surface:   #FFFFFF; --bg: #F1F3F8; --bg2: #E8EBF2; --rule: #DDE1EC;
+            --text:      #0F1E38; --muted: #64748B;
+            --mono:      'IBM Plex Mono', monospace; --display: 'Plus Jakarta Sans', sans-serif;
+        }
+        body { font-family: var(--display); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* NAV */
+        .navbar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; height: 60px; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo-icon { width: 34px; height: 34px; background: var(--navy); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+        .nav-logo-icon svg { width: 20px; height: 20px; }
+        .nav-logo-name { font-weight: 800; font-size: 1.0625rem; color: var(--navy); }
+        .nav-logo-name span { color: var(--gold); }
+        .nav-links { display: flex; gap: 0.25rem; }
+        .nav-links a { font-size: 0.875rem; font-weight: 600; color: var(--muted); text-decoration: none; padding: 0.375rem 0.75rem; border-radius: 7px; transition: color 0.15s, background 0.15s; }
+        .nav-links a:hover { color: var(--navy); background: var(--bg); }
+
+        /* PAGE */
+        .page { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 6rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 600; color: var(--muted); text-decoration: none; margin-bottom: 1.5rem; transition: color 0.15s; }
+        .back-link:hover { color: var(--navy); }
+        .page-header { margin-bottom: 1.75rem; }
+        .page-header h1 { font-size: 1.875rem; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; margin-bottom: 0.375rem; }
+        .page-header p { font-size: 0.9375rem; color: var(--muted); }
+
+        /* SCORE HERO */
+        .score-hero { background: linear-gradient(145deg, var(--navy) 0%, var(--navy-mid) 60%, var(--navy-soft) 100%); border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; position: relative; overflow: hidden; }
+        .score-hero::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(235,178,85,0.07) 0%, transparent 70%); pointer-events: none; }
+        .score-hero-left { display: flex; align-items: center; gap: 1.25rem; }
+        .score-ring { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+        .score-ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .score-ring-bg   { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 5; }
+        .score-ring-fill { fill: none; stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+        .score-ring-val  { position: relative; z-index: 1; font-size: 1rem; font-weight: 800; color: white; }
+        .score-hero-info h2 { font-size: 1.0625rem; font-weight: 700; color: white; margin-bottom: 3px; }
+        .score-hero-info p  { font-size: 0.8125rem; color: rgba(255,255,255,0.45); }
+        .score-status-pill  { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; margin-top: 6px; }
+        .pill-pass    { background: rgba(16,185,129,0.2); color: #34D399; }
+        .pill-warning { background: rgba(245,158,11,0.2); color: #FCD34D; }
+        .pill-fail    { background: rgba(239,68,68,0.2);  color: #F87171; }
+
+        /* Dimension pills in hero */
+        .dim-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 8px; }
+        .dim-pill { padding: 3px 10px; border-radius: 999px; font-size: 0.6875rem; font-weight: 600; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.12); }
+        .dim-pill.pass { background: rgba(16,185,129,0.15); color: #34D399; border-color: rgba(16,185,129,0.25); }
+        .dim-pill.warn { background: rgba(245,158,11,0.15); color: #FCD34D; border-color: rgba(245,158,11,0.25); }
+        .dim-pill.fail { background: rgba(239,68,68,0.15);  color: #F87171; border-color: rgba(239,68,68,0.25); }
+
+        .eval-id-chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0.5rem 0.875rem; cursor: pointer; transition: background 0.2s; }
+        .eval-id-chip:hover { background: rgba(255,255,255,0.12); }
+        .eval-id-label { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 3px; }
+        .eval-id-val   { font-family: var(--mono); font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+
+        /* REPORTS GRID — now 2 rows: 3+2 */
+        .reports-grid-top    { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.25rem; }
+        .reports-grid-bottom { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.25rem; }
+
+        .report-card { background: var(--surface); border-radius: 14px; border: 1.5px solid var(--rule); padding: 1.625rem; display: flex; flex-direction: column; box-shadow: 0 2px 12px rgba(15,30,56,0.07); transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; position: relative; overflow: hidden; }
+        .report-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-color, var(--gold)); transform: scaleX(0); transform-origin: left; transition: transform 0.22s ease; }
+        .report-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(15,30,56,0.10); }
+        .report-card:hover::after { transform: scaleX(1); }
+        .report-card:hover { border-color: var(--card-color, var(--gold)); }
+        .report-card.dev    { --card-color: var(--blue); }
+        .report-card.reg    { --card-color: var(--amber); }
+        .report-card.human  { --card-color: var(--green); }
+        .report-card.exec   { --card-color: var(--gold); }
+        .report-card.remedy { --card-color: var(--purple); }
+
+        .card-icon-wrap { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; flex-shrink: 0; }
+        .dev   .card-icon-wrap { background: var(--blue-dim); }
+        .reg   .card-icon-wrap { background: var(--amber-dim); }
+        .human .card-icon-wrap { background: var(--green-dim); }
+        .exec  .card-icon-wrap { background: var(--gold-dim); }
+        .remedy .card-icon-wrap { background: var(--purple-dim); }
+
+        .card-eyebrow { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 5px; }
+        .dev   .card-eyebrow { color: var(--blue); }
+        .reg   .card-eyebrow { color: var(--amber); }
+        .human .card-eyebrow { color: var(--green); }
+        .exec  .card-eyebrow { color: var(--gold); }
+        .remedy .card-eyebrow { color: var(--purple); }
+
+        .card-title { font-size: 1.0625rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem; }
+        .card-desc  { font-size: 0.875rem; color: var(--muted); line-height: 1.6; flex: 1; margin-bottom: 1.25rem; }
+        .card-tags  { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 1.25rem; }
+        .card-tag   { padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: var(--bg); border: 1px solid var(--rule); color: var(--muted); }
+        .card-footer { margin-top: auto; padding-top: 1.125rem; border-top: 1px solid var(--rule); display: flex; align-items: center; justify-content: space-between; }
+        .card-ready { display: flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 600; color: var(--green); }
+        .card-ready-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+        .btn-view { display: inline-flex; align-items: center; gap: 5px; padding: 0.5rem 1.125rem; border-radius: 8px; font-size: 0.875rem; font-weight: 700; cursor: pointer; border: none; font-family: var(--display); text-decoration: none; transition: opacity 0.15s, transform 0.15s; }
+        .btn-view:hover { opacity: 0.88; transform: translateX(2px); }
+        .dev   .btn-view { background: var(--blue);   color: white; }
+        .reg   .btn-view { background: var(--amber);  color: white; }
+        .human .btn-view { background: var(--green);  color: white; }
+        .exec  .btn-view { background: var(--gold);   color: var(--navy); }
+        .remedy .btn-view { background: var(--purple); color: white; }
+
+        /* DOWNLOAD STRIP */
+        .download-strip { background: var(--surface); border: 1.5px solid var(--rule); border-radius: 14px; padding: 1.25rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; box-shadow: 0 2px 12px rgba(15,30,56,0.07); }
+        .download-strip-info h3 { font-size: 0.9375rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+        .download-strip-info p  { font-size: 0.8125rem; color: var(--muted); }
+        .download-btns { display: flex; gap: 0.625rem; flex-wrap: wrap; }
+        .btn-strip { display: inline-flex; align-items: center; gap: 6px; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; font-family: var(--display); transition: all 0.15s; border: 1.5px solid var(--rule); background: var(--bg); color: var(--text); text-decoration: none; }
+        .btn-strip:hover { border-color: var(--navy); color: var(--navy); background: var(--bg2); }
+        .btn-strip-primary { background: var(--navy); color: white; border-color: var(--navy); }
+        .btn-strip-primary:hover { background: var(--navy-mid); border-color: var(--navy-mid); color: white; }
+
+        /* STATE */
+        .state-wrap { text-align: center; padding: 5rem 2rem; }
+        .state-icon  { font-size: 2.5rem; margin-bottom: 1rem; }
+        .state-title { font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+        .state-sub   { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .anim { opacity: 0; animation: fadeUp 0.4s ease forwards; }
+        .anim-1 { animation-delay: 0.05s; } .anim-2 { animation-delay: 0.12s; }
+        .anim-3 { animation-delay: 0.19s; } .anim-4 { animation-delay: 0.26s; }
+
+        @media (max-width: 860px) { .reports-grid-top, .reports-grid-bottom { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="upload.html" class="nav-logo">
+        <div class="nav-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3L4 7V13C4 17.42 7.58 21.29 12 22C16.42 21.29 20 17.42 20 13V7L12 3Z" fill="white" fill-opacity="0.15"/>
+                <path d="M9 12L11.5 14.5L16 10" stroke="white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <span class="nav-logo-name">Fair<span>Trust</span></span>
+    </a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="docs.html">Docs</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<main class="page" id="app">
+    <div class="state-wrap">
+        <div class="state-icon" style="color:var(--gold)"><i class="fas fa-spinner fa-pulse"></i></div>
+        <div class="state-title">Loading reports…</div>
+        <div class="state-sub">Fetching your evaluation results.</div>
+    </div>
+</main>
+
+<script>
+const API_BASE = 'http://127.0.0.1:5000';
+
+function getEvalId() {
+    return new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+}
+
+function statusPill(pct) {
+    if (pct >= 80) return `<span class="score-status-pill pill-pass"><i class="fas fa-check-circle"></i> CERTIFIED</span>`;
+    if (pct >= 65) return `<span class="score-status-pill pill-warning"><i class="fas fa-exclamation-circle"></i> CONDITIONAL</span>`;
+    return `<span class="score-status-pill pill-fail"><i class="fas fa-times-circle"></i> BELOW STANDARD</span>`;
+}
+
+function scoreColor(pct) {
+    if (pct >= 80) return '#34D399';
+    if (pct >= 65) return '#FCD34D';
+    return '#F87171';
+}
+
+function dimPillClass(score) {
+    if (!score) return '';
+    const p = score <= 1 ? score * 100 : score;
+    return p >= 80 ? 'pass' : p >= 65 ? 'warn' : 'fail';
+}
+
+function renderHub(evalId, data) {
+    const ethicalScore  = data.ethical_score || data.fairness?.fairness_score || 0;
+    const records       = data.records || 0;
+    const pct           = Math.round(ethicalScore * 100);
+    const color         = scoreColor(pct);
+    const C = 2 * Math.PI * 27;
+    const offset = C - (pct / 100) * C;
+
+    // Dimension pills
+    const dimScores = [
+        {label:'Fairness', val: data.fairness_score || data.fairness?.fairness_score},
+        {label:'Privacy', val: data.privacy_score},
+        {label:'Robustness', val: data.robustness_score},
+        {label:'Transparency', val: data.transparency_score},
+        {label:'Accountability', val: data.accountability_score},
+    ];
+    const dimPillsHtml = dimScores.filter(d => d.val != null).map(d =>
+        `<span class="dim-pill ${dimPillClass(d.val)}">${d.label}: ${Math.round(d.val * 100)}%</span>`
+    ).join('');
+
+    document.getElementById('app').innerHTML = `
+        <a href="upload.html" class="back-link anim anim-1">
+            <i class="fas fa-arrow-left" style="font-size:0.75rem"></i> New evaluation
+        </a>
+
+        <div class="page-header anim anim-1">
+            <h1>Evaluation Reports</h1>
+            <p>All five report formats are ready for this evaluation.</p>
+        </div>
+
+        <!-- SCORE HERO -->
+        <div class="score-hero anim anim-2">
+            <div class="score-hero-left">
+                <div class="score-ring">
+                    <svg class="score-ring-svg" viewBox="0 0 64 64">
+                        <circle class="score-ring-bg" cx="32" cy="32" r="27"/>
+                        <circle class="score-ring-fill" cx="32" cy="32" r="27"
+                            stroke="${color}" stroke-dasharray="${C}" stroke-dashoffset="${offset}"/>
+                    </svg>
+                    <span class="score-ring-val">${pct}</span>
+                </div>
+                <div class="score-hero-info">
+                    <h2>Overall Ethics Score: ${pct} / 100</h2>
+                    <p>${records ? records.toLocaleString() + ' records evaluated' : 'Evaluation complete'}</p>
+                    ${statusPill(pct)}
+                    <div class="dim-pills">${dimPillsHtml}</div>
+                </div>
+            </div>
+            <div class="eval-id-chip" onclick="copyEvalId('${evalId}')" title="Click to copy">
+                <div class="eval-id-label">Evaluation ID</div>
+                <div class="eval-id-val">${evalId.slice(0, 20)}…</div>
+            </div>
+        </div>
+
+        <!-- TOP ROW: 3 original reports -->
+        <div class="reports-grid-top anim anim-3">
+            <div class="report-card dev">
+                <div class="card-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <div class="card-eyebrow">Engineers &amp; Data Scientists</div>
+                <div class="card-title">Developer Report</div>
+                <div class="card-desc">SHAP feature importance, 7 fairness dimensions, action plan, radar chart, and copy-paste code fixes.</div>
+                <div class="card-tags"><span class="card-tag">SHAP</span><span class="card-tag">7 Dimensions</span><span class="card-tag">Code Fixes</span></div>
+                <div class="card-footer">
+                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
+                    <a href="developerReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                </div>
+            </div>
+            <div class="report-card reg">
+                <div class="card-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="card-eyebrow">Compliance &amp; Legal Teams</div>
+                <div class="card-title">Regulator Report</div>
+                <div class="card-desc">Compliance certificate, audit trail, fairness contract table, EU AI Act &amp; GDPR alignment.</div>
+                <div class="card-tags"><span class="card-tag">Certificate</span><span class="card-tag">Audit Trail</span><span class="card-tag">EU AI Act</span></div>
+                <div class="card-footer">
+                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
+                    <a href="regulatorReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                </div>
+            </div>
+            <div class="report-card human">
+                <div class="card-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div class="card-eyebrow">Affected Individuals</div>
+                <div class="card-title">Human Report</div>
+                <div class="card-desc">Plain-language explanation, visual score, fairness checks in simple language, FAQ — no jargon.</div>
+                <div class="card-tags"><span class="card-tag">Plain Language</span><span class="card-tag">Visual</span><span class="card-tag">FAQ</span></div>
+                <div class="card-footer">
+                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
+                    <a href="humanReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW: 2 new Round 3 reports -->
+        <div class="reports-grid-bottom anim anim-4">
+            <div class="report-card exec">
+                <div class="card-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EBB255" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div class="card-eyebrow">C-Suite &amp; Risk Officers — NEW</div>
+                <div class="card-title">Executive Report</div>
+                <div class="card-desc">High-level risk summary, 5-dimension profile, business impact assessment, deployment verdict, legal compliance status.</div>
+                <div class="card-tags"><span class="card-tag">Risk Level</span><span class="card-tag">5 Dimensions</span><span class="card-tag">Business Impact</span><span class="card-tag">Legal Status</span></div>
+                <div class="card-footer">
+                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
+                    <a href="executiveReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                </div>
+            </div>
+            <div class="report-card remedy">
+                <div class="card-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                </div>
+                <div class="card-eyebrow">ML Engineers — NEW</div>
+                <div class="card-title">Remediation Toolkit</div>
+                <div class="card-desc">Prioritized fix list with before/after scores, code snippets, counterfactual examples, CI/CD deployment gate.</div>
+                <div class="card-tags"><span class="card-tag">Fix List</span><span class="card-tag">Code Snippets</span><span class="card-tag">Counterfactuals</span><span class="card-tag">CI/CD Gate</span></div>
+                <div class="card-footer">
+                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
+                    <a href="remediationReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOWNLOAD STRIP -->
+        <div class="download-strip anim anim-4">
+            <div class="download-strip-info">
+                <h3>Export &amp; Share</h3>
+                <p>Download the raw data or share a link to this evaluation.</p>
+            </div>
+            <div class="download-btns">
+                <button class="btn-strip" onclick="downloadJSON()"><i class="fas fa-download"></i> Export JSON</button>
+                <button class="btn-strip" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+                <button class="btn-strip btn-strip-primary" onclick="copyShareLink()"><i class="fas fa-link"></i> Copy Share Link</button>
+            </div>
+        </div>`;
+}
+
+function copyEvalId(id) {
+    navigator.clipboard?.writeText(id).then(() => {
+        const el = document.querySelector('.eval-id-val');
+        if (el) { const orig = el.textContent; el.textContent = 'Copied!'; setTimeout(() => el.textContent = orig, 1500); }
+    });
+}
+
+function copyShareLink() {
+    navigator.clipboard?.writeText(location.href).then(() => {
+        const btn = event.currentTarget;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => btn.innerHTML = orig, 1500);
+    });
+}
+
+function downloadJSON() {
+    const cached = sessionStorage.getItem('eval_result');
+    if (!cached) { alert('No data to export.'); return; }
+    const blob = new Blob([cached], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'fairtrust_evaluation.json'; a.click();
+}
+
+(async function init() {
+    const evalId = getEvalId();
+    if (!evalId) {
+        document.getElementById('app').innerHTML = `
+        <div class="state-wrap">
+            <div class="state-icon" style="color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="state-title">No evaluation found</div>
+            <div class="state-sub">Complete an evaluation on the upload page to see your reports.</div>
+            <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a>
+        </div>`;
+        return;
+    }
+
+    try {
+        const res  = await fetch(`${API_BASE}/evaluate/${evalId}`);
+        const data = await res.json();
+        if (res.ok && data.status === 'complete') {
+            sessionStorage.setItem('eval_result', JSON.stringify(data));
+            renderHub(evalId, data);
+            return;
+        }
+        throw new Error('not complete');
+    } catch (_) {
+        const cached = sessionStorage.getItem('eval_result');
+        if (cached) { renderHub(evalId, JSON.parse(cached)); return; }
+        document.getElementById('app').innerHTML = `
+        <div class="state-wrap">
+            <div class="state-icon" style="color:var(--red)"><i class="fas fa-times-circle"></i></div>
+            <div class="state-title">Could not load reports</div>
+            <div class="state-sub">Evaluation not found or still processing.</div>
+            <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:1.5rem;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-redo"></i> Try again</a>
+        </div>`;
+    }
+})();
+</script>
+</body>
+</html>

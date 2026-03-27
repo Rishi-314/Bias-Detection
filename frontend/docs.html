@@ -1,0 +1,1595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation — Ethical AI Framework</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #0d0f14;
+      --ink-2: #1e2330;
+      --ink-3: #2e3445;
+      --muted: #6b7385;
+      --muted-2: #9aa0b0;
+      --surface: #f5f6f8;
+      --surface-2: #eceef2;
+      --white: #ffffff;
+      --accent: #2563eb;
+      --accent-2: #1d4ed8;
+      --accent-glow: rgba(37,99,235,0.12);
+      --green: #059669;
+      --green-bg: #ecfdf5;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --border: #e2e5ec;
+      --border-2: #c8cdd9;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Instrument Sans', sans-serif;
+      --display: 'Syne', sans-serif;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    nav {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--ink); text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .nav-links { display: flex; gap: 0.25rem; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--muted);
+      font-size: 0.875rem; font-weight: 500;
+      padding: 0.4rem 0.75rem; border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .nav-links a:hover { color: var(--ink); background: var(--surface); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-glow); }
+
+    /* ── Layout ── */
+    .layout {
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 240px 1fr;
+      gap: 0; min-height: calc(100vh - 60px);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1.25rem;
+      position: sticky; top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
+
+    .sb-group { margin-bottom: 2rem; }
+    .sb-group-label {
+      font-family: var(--display);
+      font-size: 0.6875rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted-2); padding: 0 0.5rem;
+      margin-bottom: 0.5rem; display: block;
+    }
+    .sb-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none; color: var(--muted);
+      font-size: 0.8125rem; font-weight: 500;
+      padding: 0.45rem 0.5rem; border-radius: 6px;
+      transition: all 0.15s; margin-bottom: 1px;
+    }
+    .sb-link:hover { color: var(--ink); background: var(--surface); }
+    .sb-link.active { color: var(--accent); background: var(--accent-glow); }
+    .sb-method {
+      font-family: var(--mono); font-size: 0.6rem; font-weight: 500;
+      padding: 1px 5px; border-radius: 3px; flex-shrink: 0;
+    }
+    .m-get { background: #dbeafe; color: #1d4ed8; }
+    .m-post { background: #dcfce7; color: #15803d; }
+    .m-put { background: #fef3c7; color: #b45309; }
+
+    /* ── Content ── */
+    .content {
+      padding: 3rem 3rem 6rem;
+      max-width: 860px;
+    }
+
+    /* ── Sections ── */
+    .doc-section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 80px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--mono); font-size: 0.75rem; font-weight: 500;
+      color: var(--accent); letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-eyebrow::before {
+      content: ''; display: block;
+      width: 20px; height: 1px; background: var(--accent);
+    }
+
+    .doc-section h2 {
+      font-family: var(--display);
+      font-size: 1.75rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .doc-section > p {
+      color: var(--muted); font-size: 0.9375rem;
+      max-width: 600px; margin-bottom: 1.5rem;
+    }
+    .doc-section h3 {
+      font-family: var(--display);
+      font-size: 1rem; font-weight: 700;
+      margin: 1.75rem 0 0.75rem;
+      color: var(--ink-2);
+    }
+
+    /* ── Base URL box ── */
+    .base-url {
+      background: var(--ink);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .base-url-label {
+      font-family: var(--mono); font-size: 0.75rem;
+      color: var(--muted-2); flex-shrink: 0;
+    }
+    .base-url-val {
+      font-family: var(--mono); font-size: 0.875rem;
+      color: #93c5fd; flex: 1;
+    }
+    .copy-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted-2); font-family: var(--mono); font-size: 0.75rem;
+      padding: 0.3rem 0.6rem; border-radius: 4px;
+      cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ── Rate limit table ── */
+    .rate-table {
+      width: 100%; border-collapse: collapse;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; margin-bottom: 1rem;
+    }
+    .rate-table th {
+      background: var(--surface-2); font-family: var(--display);
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted); padding: 0.65rem 1rem; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .rate-table td {
+      padding: 0.7rem 1rem; font-size: 0.875rem;
+      border-bottom: 1px solid var(--border); color: var(--ink-2);
+    }
+    .rate-table tr:last-child td { border-bottom: none; }
+    .tier-badge {
+      font-family: var(--mono); font-size: 0.7rem; font-weight: 500;
+      padding: 2px 8px; border-radius: 99px;
+    }
+    .tier-free { background: var(--surface-2); color: var(--muted); }
+    .tier-pro { background: #dbeafe; color: var(--accent-2); }
+    .tier-ent { background: #f5f3ff; color: #6d28d9; }
+
+    /* ── API Card ── */
+    .api-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s;
+    }
+    .api-card:hover { box-shadow: var(--shadow-md); }
+
+    .api-card-head {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .method-pill {
+      font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
+      padding: 0.3rem 0.6rem; border-radius: 5px;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .pill-get { background: #dbeafe; color: #1d4ed8; }
+    .pill-post { background: #dcfce7; color: #15803d; }
+    .pill-put { background: #fef3c7; color: #b45309; }
+
+    .endpoint-path {
+      font-family: var(--mono); font-size: 1rem; font-weight: 500;
+      color: var(--ink); flex: 1;
+    }
+    .endpoint-path .path-param { color: var(--accent); }
+
+    .api-card-body { padding: 1.25rem 1.5rem; }
+    .api-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-label {
+      font-family: var(--display); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted-2); margin-bottom: 0.5rem;
+    }
+
+    /* ── Code ── */
+    .code-block {
+      background: #0f1117;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: var(--mono); font-size: 0.78rem;
+      line-height: 1.65; color: #e2e8f0;
+      overflow-x: auto; position: relative;
+    }
+    .code-block .k { color: #7dd3fc; } /* key */
+    .code-block .s { color: #86efac; } /* string */
+    .code-block .n { color: #fb923c; } /* number */
+    .code-block .b { color: #a78bfa; } /* boolean */
+    .code-block .cm { color: #4b5563; } /* comment */
+
+    /* ── Params table ── */
+    .params-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .params-table th {
+      background: var(--surface); font-family: var(--display);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border); text-align: left;
+    }
+    .params-table td {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border); vertical-align: top;
+    }
+    .param-name { font-family: var(--mono); color: var(--accent); font-size: 0.8rem; }
+    .param-type { font-family: var(--mono); color: var(--amber); font-size: 0.75rem; }
+    .param-req {
+      font-family: var(--mono); font-size: 0.65rem; font-weight: 600;
+      padding: 1px 6px; border-radius: 3px;
+      background: #fef2f2; color: var(--red);
+    }
+    .param-opt {
+      font-family: var(--mono); font-size: 0.65rem; font-weight: 600;
+      padding: 1px 6px; border-radius: 3px;
+      background: var(--surface); color: var(--muted);
+    }
+    .param-desc { color: var(--muted); font-size: 0.8rem; }
+
+    /* ── Response badge ── */
+    .resp-codes { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .resp-code {
+      font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
+      padding: 0.2rem 0.6rem; border-radius: 4px;
+    }
+    .code-2xx { background: var(--green-bg); color: var(--green); }
+    .code-4xx { background: var(--amber-bg); color: var(--amber); }
+    .code-5xx { background: var(--red-bg); color: var(--red); }
+
+    /* ── Divider ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    /* ── Enum chips ── */
+    .enum-list { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.3rem; }
+    .enum-chip {
+      font-family: var(--mono); font-size: 0.7rem;
+      padding: 2px 8px; border-radius: 4px;
+      background: var(--surface-2); color: var(--ink-2);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Schema section ── */
+    .schema-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .schema-title {
+      font-family: var(--display); font-size: 1rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 0.25rem;
+    }
+    .schema-subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }
+
+    /* ── Alert box ── */
+    .alert-box {
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      padding: 0.875rem 1rem; border-radius: 8px;
+      margin-bottom: 1rem; font-size: 0.875rem;
+    }
+    .alert-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
+    .alert-warn { background: var(--amber-bg); border: 1px solid #fde68a; color: #92400e; }
+    .alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── SDK tabs ── */
+    .tab-bar {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .tab-btn {
+      font-family: var(--display); font-size: 0.8125rem; font-weight: 600;
+      padding: 0.65rem 1.25rem; border: none; background: none;
+      color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px; transition: all 0.15s;
+    }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── FAQ ── */
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      background: var(--white);
+    }
+    .faq-q {
+      padding: 1rem 1.25rem;
+      font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center;
+      gap: 1rem; transition: background 0.15s;
+      user-select: none;
+    }
+    .faq-q:hover { background: var(--surface); }
+    .faq-arrow {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--surface-2); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+      transition: transform 0.2s; font-size: 0.625rem; color: var(--muted);
+    }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-a {
+      padding: 0 1.25rem; max-height: 0; overflow: hidden;
+      transition: all 0.3s ease; color: var(--muted); font-size: 0.875rem;
+    }
+    .faq-item.open .faq-a {
+      max-height: 300px; padding: 0 1.25rem 1rem;
+    }
+
+    /* ── Changelog ── */
+    .changelog-entry {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: 1.5rem; position: relative; margin-bottom: 0;
+      padding-bottom: 2rem;
+    }
+    .changelog-entry::after {
+      content: ''; position: absolute;
+      left: 124px; top: 10px; bottom: 0;
+      width: 1px; background: var(--border);
+    }
+    .changelog-entry:last-child::after { display: none; }
+    .changelog-entry:last-child { padding-bottom: 0; }
+
+    .cl-meta { text-align: right; }
+    .cl-version {
+      font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
+      color: var(--accent);
+    }
+    .cl-date { font-size: 0.75rem; color: var(--muted-2); margin-top: 2px; }
+
+    .cl-body { padding-left: 1.5rem; position: relative; }
+    .cl-body::before {
+      content: ''; position: absolute;
+      left: -5px; top: 8px;
+      width: 10px; height: 10px;
+      border-radius: 50%; background: var(--white);
+      border: 2px solid var(--accent);
+      z-index: 1;
+    }
+    .cl-body h4 {
+      font-family: var(--display); font-size: 0.9375rem; font-weight: 700;
+      margin-bottom: 0.5rem; color: var(--ink);
+    }
+    .cl-body ul { list-style: none; }
+    .cl-body ul li {
+      font-size: 0.8375rem; color: var(--muted);
+      padding: 0.2rem 0; display: flex; gap: 0.5rem; align-items: flex-start;
+    }
+    .cl-body ul li::before { content: '—'; color: var(--border-2); flex-shrink: 0; }
+
+    .cl-tag {
+      font-family: var(--mono); font-size: 0.65rem; font-weight: 600;
+      padding: 1px 6px; border-radius: 3px; margin-right: 4px;
+    }
+    .tag-new { background: #dcfce7; color: #15803d; }
+    .tag-fix { background: #fef2f2; color: #dc2626; }
+    .tag-imp { background: #dbeafe; color: #1d4ed8; }
+
+    /* ── Inline code ── */
+    code {
+      font-family: var(--mono); font-size: 0.8em;
+      background: var(--surface-2); color: var(--accent);
+      padding: 1px 5px; border-radius: 4px;
+    }
+
+    /* ── Scroll active ── */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content { padding: 2rem 1.5rem 4rem; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .changelog-entry { grid-template-columns: 1fr; gap: 0.5rem; }
+      .changelog-entry::after { display: none; }
+      .cl-body { padding-left: 0; }
+      .cl-body::before { display: none; }
+      .cl-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">
+      <span class="logo-dot"></span>
+      Ethical AI Framework
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="docs.html" class="active">Docs</a>
+      <a href="aboutUs.html">Where AI Goes Wrong</a>
+      <a href="admin.html">Admin</a>
+    </div>
+  </nav>
+</header>
+
+<div class="layout">
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sb-group">
+      <span class="sb-group-label">Getting Started</span>
+      <a href="#introduction" class="sb-link active">Introduction</a>
+      <a href="#authentication" class="sb-link">Authentication</a>
+      <a href="#rate-limits" class="sb-link">Rate Limits</a>
+      <a href="#errors" class="sb-link">Error Handling</a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Datasets & Models</span>
+      <a href="#api-datasets" class="sb-link">
+        <span class="sb-method m-post">POST</span> /datasets
+      </a>
+      <a href="#api-predictions" class="sb-link">
+        <span class="sb-method m-post">POST</span> /predictions
+      </a>
+      <a href="#api-models" class="sb-link">
+        <span class="sb-method m-post">POST</span> /models
+      </a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Evaluations</span>
+      <a href="#api-evaluate-post" class="sb-link">
+        <span class="sb-method m-post">POST</span> /evaluate
+      </a>
+      <a href="#api-evaluate-get" class="sb-link">
+        <span class="sb-method m-get">GET</span> /evaluate/{id}
+      </a>
+      <a href="#api-evaluate-list" class="sb-link">
+        <span class="sb-method m-get">GET</span> /evaluate
+      </a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Dashboard</span>
+      <a href="#api-dashboard-id" class="sb-link">
+        <span class="sb-method m-get">GET</span> /dashboard/{id}
+      </a>
+      <a href="#api-dashboard-list" class="sb-link">
+        <span class="sb-method m-get">GET</span> /dashboard
+      </a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Reports</span>
+      <a href="#api-report-dev" class="sb-link">
+        <span class="sb-method m-get">GET</span> /report/developer/{id}
+      </a>
+      <a href="#api-report-reg" class="sb-link">
+        <span class="sb-method m-get">GET</span> /report/regulator/{id}
+      </a>
+      <a href="#api-report-end" class="sb-link">
+        <span class="sb-method m-get">GET</span> /report/enduser/{id}
+      </a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Comparison</span>
+      <a href="#api-compare-list" class="sb-link">
+        <span class="sb-method m-get">GET</span> /compare/list
+      </a>
+      <a href="#api-compare" class="sb-link">
+        <span class="sb-method m-get">GET</span> /compare
+      </a>
+      <a href="#api-compare-history" class="sb-link">
+        <span class="sb-method m-get">GET</span> /compare/history
+      </a>
+      <a href="#api-compare-alerts" class="sb-link">
+        <span class="sb-method m-get">GET</span> /compare/alerts
+      </a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Admin</span>
+      <a href="#api-admin-health" class="sb-link">
+        <span class="sb-method m-get">GET</span> /admin/health
+      </a>
+      <a href="#api-admin-alerts" class="sb-link">
+        <span class="sb-method m-get">GET</span> /admin/alerts
+      </a>
+      <a href="#api-admin-stats" class="sb-link">
+        <span class="sb-method m-get">GET</span> /admin/stats
+      </a>
+      <a href="#api-admin-models" class="sb-link">
+        <span class="sb-method m-get">GET</span> /admin/models
+      </a>
+      <a href="#api-admin-users" class="sb-link">
+        <span class="sb-method m-get">GET</span> /admin/users
+      </a>
+      <a href="#api-admin-settings" class="sb-link">
+        <span class="sb-method m-get">GET</span> /admin/settings
+      </a>
+    </div>
+
+    <div class="sb-group">
+      <span class="sb-group-label">Reference</span>
+      <a href="#data-models" class="sb-link">Data Models</a>
+      <a href="#faq" class="sb-link">FAQ</a>
+      <a href="#changelog" class="sb-link">Changelog</a>
+    </div>
+  </aside>
+
+  <!-- ── Content ── -->
+  <main class="content">
+
+    <!-- ═══ Introduction ═══ -->
+    <section id="introduction" class="doc-section">
+      <div class="section-eyebrow">Overview</div>
+      <h2>Ethical AI Framework API</h2>
+      <p>A REST API for testing, certifying, and monitoring AI models across 7 fairness dimensions — from individual consistency to intersectional group parity.</p>
+
+      <h3>Base URL</h3>
+      <div class="base-url">
+        <span class="base-url-label">BASE URL</span>
+        <span class="base-url-val">http://127.0.0.1:5000</span>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('http://127.0.0.1:5000');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+      </div>
+
+      <div class="alert-box alert-info">
+        <span class="alert-icon">ℹ</span>
+        <span>All API responses are JSON. File uploads use <code>multipart/form-data</code>. Authentication is via API key header. CORS is enabled for all origins.</span>
+      </div>
+
+      <h3>Evaluation Flow</h3>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;">The typical workflow follows these steps in sequence:</p>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <div style="background:var(--accent-glow);border:1px solid #bfdbfe;color:var(--accent);font-family:var(--mono);font-size:0.75rem;padding:0.35rem 0.75rem;border-radius:99px">1. POST /datasets</div>
+        <span style="color:var(--muted)">→</span>
+        <div style="background:var(--accent-glow);border:1px solid #bfdbfe;color:var(--accent);font-family:var(--mono);font-size:0.75rem;padding:0.35rem 0.75rem;border-radius:99px">2. POST /predictions</div>
+        <span style="color:var(--muted)">→</span>
+        <div style="background:var(--accent-glow);border:1px solid #bfdbfe;color:var(--accent);font-family:var(--mono);font-size:0.75rem;padding:0.35rem 0.75rem;border-radius:99px">3. POST /models</div>
+        <span style="color:var(--muted)">→</span>
+        <div style="background:var(--accent-glow);border:1px solid #bfdbfe;color:var(--accent);font-family:var(--mono);font-size:0.75rem;padding:0.35rem 0.75rem;border-radius:99px">4. POST /evaluate</div>
+        <span style="color:var(--muted)">→</span>
+        <div style="background:var(--accent-glow);border:1px solid #bfdbfe;color:var(--accent);font-family:var(--mono);font-size:0.75rem;padding:0.35rem 0.75rem;border-radius:99px">5. Poll GET /evaluate/{id}</div>
+      </div>
+    </section>
+
+    <!-- ═══ Authentication ═══ -->
+    <section id="authentication" class="doc-section">
+      <div class="section-eyebrow">Security</div>
+      <h2>Authentication</h2>
+      <p>Pass your API key in the request header. Keys are tied to user accounts and tier limits.</p>
+      <div class="code-block">
+        <span class="cm"># All authenticated requests</span><br>
+        curl -H <span class="s">"X-API-Key: your_api_key_here"</span> \<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; https://api.ethical-ai.dev/v1/dashboard
+      </div>
+      <div class="alert-box alert-warn">
+        <span class="alert-icon">⚠</span>
+        <span>Never expose your API key in frontend code. Use environment variables or a backend proxy. Admins can reset keys via <code>POST /admin/users/{id}/reset-key</code>.</span>
+      </div>
+    </section>
+
+    <!-- ═══ Rate Limits ═══ -->
+    <section id="rate-limits" class="doc-section">
+      <div class="section-eyebrow">Limits</div>
+      <h2>Rate Limits</h2>
+      <table class="rate-table">
+        <thead>
+          <tr><th>Tier</th><th>Evaluations / day</th><th>API calls / hour</th><th>Max file size</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tier-badge tier-free">FREE</span></td>
+            <td>10</td><td>100</td><td>10 MB</td>
+          </tr>
+          <tr>
+            <td><span class="tier-badge tier-pro">PRO</span></td>
+            <td>500</td><td>10,000</td><td>500 MB</td>
+          </tr>
+          <tr>
+            <td><span class="tier-badge tier-ent">ENTERPRISE</span></td>
+            <td>Unlimited</td><td>Custom</td><td>5 GB</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══ Errors ═══ -->
+    <section id="errors" class="doc-section">
+      <div class="section-eyebrow">Error Handling</div>
+      <h2>Errors</h2>
+      <p>All errors follow a consistent JSON shape. Use <code>error</code> for the message and <code>details</code> for field-level validation failures.</p>
+      <div class="code-block">
+<span class="cm">// 400 – Validation failure</span><br>
+{<br>
+&nbsp;&nbsp;<span class="k">"error"</span>: <span class="s">"Missing required fields: dataset_id, prediction_id"</span>,<br>
+&nbsp;&nbsp;<span class="k">"tip"</span>: <span class="s">"Call POST /models first to get a model_id if you don't have one."</span><br>
+}<br><br>
+<span class="cm">// 404 – Not found</span><br>
+{ <span class="k">"error"</span>: <span class="s">"Evaluation 'abc-123' not found"</span> }<br><br>
+<span class="cm">// 409 – Conflict</span><br>
+{ <span class="k">"error"</span>: <span class="s">"User with that email already exists"</span> }
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════════════════ DATASETS & MODELS ═══════════════════════════════ -->
+
+    <section id="api-datasets" class="doc-section">
+      <div class="section-eyebrow">Datasets & Models</div>
+      <h2>Upload Dataset</h2>
+
+      <!-- POST /datasets -->
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-post">POST</span>
+          <span class="endpoint-path">/datasets</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Upload a dataset file for fairness evaluation. Accepts CSV, XLSX/XLS, or JSON. Returns a <code>dataset_id</code> and column list for the frontend to let users pick a target variable.</p>
+
+          <div class="grid-label">Request — <code>multipart/form-data</code></div>
+          <table class="params-table" style="margin-bottom:1rem">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="param-name">file</td>
+                <td class="param-type">File</td>
+                <td><span class="param-req">required</span></td>
+                <td class="param-desc">Dataset file (.csv, .xlsx, .xls, .json)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="resp-codes">
+            <span class="resp-code code-2xx">201 Created</span>
+            <span class="resp-code code-4xx">400 Bad Request</span>
+          </div>
+          <div class="grid-2">
+            <div>
+              <div class="grid-label">Request</div>
+              <div class="code-block">curl -X POST /datasets \<br>
+&nbsp;&nbsp;-F <span class="s">"file=@loan_data.csv"</span></div>
+            </div>
+            <div>
+              <div class="grid-label">Response 201</div>
+              <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"dataset_id"</span>: <span class="s">"9f3ab..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"file_path"</span>: <span class="s">"uploads/9f3ab_loan.csv"</span>,<br>
+&nbsp;&nbsp;<span class="k">"records"</span>: <span class="n">15342</span>,<br>
+&nbsp;&nbsp;<span class="k">"columns"</span>: [<span class="s">"age"</span>, <span class="s">"income"</span>, <span class="s">"approved"</span>],<br>
+&nbsp;&nbsp;<span class="k">"message"</span>: <span class="s">"Dataset uploaded successfully"</span><br>
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-predictions" class="doc-section">
+      <h2>Upload Predictions</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-post">POST</span>
+          <span class="endpoint-path">/predictions</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Upload a predictions file to pair with a dataset during evaluation. The file must contain a recognisable prediction column: <code>prediction</code>, <code>prediction_score</code>, <code>score</code>, <code>label</code>, <code>output</code>, or <code>pred</code>. Falls back to the first numeric column.</p>
+
+          <div class="resp-codes">
+            <span class="resp-code code-2xx">201 Created</span>
+            <span class="resp-code code-4xx">400 Bad Request</span>
+          </div>
+          <div class="grid-2">
+            <div>
+              <div class="grid-label">Request</div>
+              <div class="code-block">curl -X POST /predictions \<br>
+&nbsp;&nbsp;-F <span class="s">"file=@model_preds.csv"</span></div>
+            </div>
+            <div>
+              <div class="grid-label">Response 201</div>
+              <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"prediction_id"</span>: <span class="s">"c7d12..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"file_path"</span>: <span class="s">"uploads/c7d12_preds.csv"</span>,<br>
+&nbsp;&nbsp;<span class="k">"rows"</span>: <span class="n">15342</span>,<br>
+&nbsp;&nbsp;<span class="k">"columns"</span>: [<span class="s">"prediction_score"</span>],<br>
+&nbsp;&nbsp;<span class="k">"message"</span>: <span class="s">"Predictions uploaded successfully"</span><br>
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-models" class="doc-section">
+      <h2>Register Model</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-post">POST</span>
+          <span class="endpoint-path">/models</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Register a model record before starting an evaluation. Returns a <code>model_id</code> to pass into <code>POST /evaluate</code>.</p>
+
+          <div class="grid-label">Request Body — <code>application/json</code></div>
+          <table class="params-table" style="margin-bottom:1rem">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="param-name">name</td><td class="param-type">string</td>
+                <td><span class="param-opt">optional</span></td>
+                <td class="param-desc">Human-readable model name. Defaults to "Unnamed Model".</td>
+              </tr>
+              <tr>
+                <td class="param-name">version</td><td class="param-type">string</td>
+                <td><span class="param-opt">optional</span></td>
+                <td class="param-desc">Semantic version string. Defaults to "1.0.0".</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="resp-codes">
+            <span class="resp-code code-2xx">201 Created</span>
+          </div>
+          <div class="grid-2">
+            <div>
+              <div class="grid-label">Request</div>
+              <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"Loan Approval v2"</span>,<br>
+&nbsp;&nbsp;<span class="k">"version"</span>: <span class="s">"2.0.0"</span><br>
+}</div>
+            </div>
+            <div>
+              <div class="grid-label">Response 201</div>
+              <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"model_id"</span>: <span class="s">"a1b2c3..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"Loan Approval v2"</span>,<br>
+&nbsp;&nbsp;<span class="k">"version"</span>: <span class="s">"2.0.0"</span>,<br>
+&nbsp;&nbsp;<span class="k">"status"</span>: <span class="s">"ACTIVE"</span>,<br>
+&nbsp;&nbsp;<span class="k">"message"</span>: <span class="s">"Model registered"</span><br>
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════════════════ EVALUATIONS ═══════════════════════════════ -->
+
+    <section id="api-evaluate-post" class="doc-section">
+      <div class="section-eyebrow">Evaluations</div>
+      <h2>Start Evaluation</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-post">POST</span>
+          <span class="endpoint-path">/evaluate</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Start an asynchronous 7-step fairness evaluation. Returns immediately with an <code>evaluation_id</code>. Poll <code>GET /evaluate/{id}</code> for progress. The evaluation runs fairness analysis across all 7 dimensions and SHAP explainability.</p>
+
+          <div class="alert-box alert-info">
+            <span class="alert-icon">ℹ</span>
+            <span>If <code>target_variable</code> is not provided or not found, the system auto-detects the first binary/low-cardinality column. Sensitive attributes not present in the dataset are silently dropped.</span>
+          </div>
+
+          <div class="grid-label">Request Body — <code>application/json</code></div>
+          <table class="params-table" style="margin-bottom:1rem">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="param-name">dataset_id</td><td class="param-type">string</td>
+                <td><span class="param-req">required</span></td>
+                <td class="param-desc">UUID from <code>POST /datasets</code></td>
+              </tr>
+              <tr>
+                <td class="param-name">prediction_id</td><td class="param-type">string</td>
+                <td><span class="param-req">required</span></td>
+                <td class="param-desc">UUID from <code>POST /predictions</code></td>
+              </tr>
+              <tr>
+                <td class="param-name">model_id</td><td class="param-type">string</td>
+                <td><span class="param-req">required</span></td>
+                <td class="param-desc">UUID from <code>POST /models</code></td>
+              </tr>
+              <tr>
+                <td class="param-name">report_type</td><td class="param-type">enum</td>
+                <td><span class="param-req">required</span></td>
+                <td class="param-desc">
+                  Controls which report is generated.
+                  <div class="enum-list">
+                    <span class="enum-chip">developer</span>
+                    <span class="enum-chip">regulator</span>
+                    <span class="enum-chip">enduser</span>
+                    <span class="enum-chip">all</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="param-name">target_variable</td><td class="param-type">string</td>
+                <td><span class="param-opt">optional</span></td>
+                <td class="param-desc">Column name of the ground-truth label in the dataset. Auto-detected if omitted.</td>
+              </tr>
+              <tr>
+                <td class="param-name">sensitive_attributes</td><td class="param-type">string[]</td>
+                <td><span class="param-opt">optional</span></td>
+                <td class="param-desc">Column names to analyse for per-group fairness (e.g. <code>["gender","age"]</code>).</td>
+              </tr>
+              <tr>
+                <td class="param-name">fairness_weights</td><td class="param-type">object</td>
+                <td><span class="param-opt">optional</span></td>
+                <td class="param-desc">Custom weights per fairness dimension (e.g. <code>{"disparateImpact": 2}</code>). Stored in <code>FairnessWeight</code> records.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="resp-codes">
+            <span class="resp-code code-2xx">202 Accepted</span>
+            <span class="resp-code code-4xx">400 Bad Request</span>
+            <span class="resp-code code-4xx">404 Not Found</span>
+          </div>
+          <div class="grid-2">
+            <div>
+              <div class="grid-label">Request</div>
+              <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"dataset_id"</span>: <span class="s">"9f3ab..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"prediction_id"</span>: <span class="s">"c7d12..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"model_id"</span>: <span class="s">"a1b2c3..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"report_type"</span>: <span class="s">"developer"</span>,<br>
+&nbsp;&nbsp;<span class="k">"target_variable"</span>: <span class="s">"approved"</span>,<br>
+&nbsp;&nbsp;<span class="k">"sensitive_attributes"</span>: [<span class="s">"gender"</span>, <span class="s">"age"</span>],<br>
+&nbsp;&nbsp;<span class="k">"fairness_weights"</span>: { <span class="k">"disparateImpact"</span>: <span class="n">2</span> }<br>
+}</div>
+            </div>
+            <div>
+              <div class="grid-label">Response 202</div>
+              <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"evaluation_id"</span>: <span class="s">"eval-abc..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"status"</span>: <span class="s">"queued"</span>,<br>
+&nbsp;&nbsp;<span class="k">"estimated_time"</span>: <span class="s">"2-3 minutes"</span>,<br>
+&nbsp;&nbsp;<span class="k">"poll_url"</span>: <span class="s">"/evaluate/eval-abc..."</span><br>
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-evaluate-get" class="doc-section">
+      <h2>Get Evaluation</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/evaluate/<span class="path-param">{eval_id}</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Poll evaluation progress. When <code>status</code> is <code>complete</code>, the full result is returned including all 7 FairnessMetrics, SHAP explanation, and model performance scores.</p>
+
+          <div class="grid-label">Evaluation Steps</div>
+          <table class="params-table" style="margin-bottom:1rem">
+            <thead><tr><th>Step</th><th>Name</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="param-name">1</td><td>Data Validation</td><td class="param-desc">Parse and validate dataset + predictions files</td></tr>
+              <tr><td class="param-name">2</td><td>EDA & Bias Detection</td><td class="param-desc">Detect target column, exploratory analysis</td></tr>
+              <tr><td class="param-name">3</td><td>Feature Engineering</td><td class="param-desc">Resolve sensitive attributes, encode categoricals</td></tr>
+              <tr><td class="param-name">4</td><td>Fairness Analysis</td><td class="param-desc">Compute all 7 FairnessMetrics dimensions</td></tr>
+              <tr><td class="param-name">5</td><td>Model Evaluation</td><td class="param-desc">Accuracy, F1, ROC-AUC</td></tr>
+              <tr><td class="param-name">6</td><td>SHAP Explanation</td><td class="param-desc">RandomForest SHAP — top feature, stability</td></tr>
+              <tr><td class="param-name">7</td><td>Report Generation</td><td class="param-desc">Assemble final payload, mark complete</td></tr>
+            </tbody>
+          </table>
+
+          <div class="resp-codes">
+            <span class="resp-code code-2xx">200 OK</span>
+            <span class="resp-code code-4xx">404 Not Found</span>
+          </div>
+          <div class="code-block">
+<span class="cm">// While running</span><br>
+{ <span class="k">"evaluation_id"</span>: <span class="s">"eval-abc"</span>, <span class="k">"status"</span>: <span class="s">"running"</span>, <span class="k">"current_step"</span>: <span class="n">4</span>, <span class="k">"records"</span>: <span class="n">15342</span> }<br><br>
+<span class="cm">// On complete</span><br>
+{<br>
+&nbsp;&nbsp;<span class="k">"evaluation_id"</span>: <span class="s">"eval-abc"</span>, <span class="k">"status"</span>: <span class="s">"complete"</span>, <span class="k">"ethical_score"</span>: <span class="n">0.87</span>,<br>
+&nbsp;&nbsp;<span class="k">"report_type"</span>: <span class="s">"DEVELOPER"</span>, <span class="k">"model_id"</span>: <span class="s">"a1b2c3"</span>, <span class="k">"records"</span>: <span class="n">15342</span>,<br>
+&nbsp;&nbsp;<span class="k">"fairness"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"individualFairness"</span>: <span class="n">0.9214</span>, <span class="k">"groupFairness"</span>: <span class="n">0.8831</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"demographicParity"</span>: <span class="n">0.0412</span>, <span class="k">"disparateImpact"</span>: <span class="n">0.8263</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"calibrationError"</span>: <span class="n">0.0231</span>, <span class="k">"counterfactual"</span>: <span class="n">0.8942</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"intersectional"</span>: <span class="n">0.8611</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"per_attribute"</span>: { <span class="s">"gender"</span>: { <span class="k">"fairness_score"</span>: <span class="n">0.9134</span>, ... } }<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="k">"shap"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"topFeature"</span>: <span class="s">"income"</span>, <span class="k">"shapMax"</span>: <span class="n">0.4512</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"shapMin"</span>: <span class="n">0.0031</span>, <span class="k">"featureStability"</span>: <span class="n">0.9851</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"feature_importance"</span>: { <span class="s">"income"</span>: <span class="n">0.451</span>, <span class="s">"age"</span>: <span class="n">0.134</span>, ... }<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="k">"model_metrics"</span>: { <span class="k">"accuracy"</span>: <span class="n">0.892</span>, <span class="k">"f1_score"</span>: <span class="n">0.876</span>, <span class="k">"roc_auc"</span>: <span class="n">0.941</span> }<br>
+}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-evaluate-list" class="doc-section">
+      <h2>List Evaluations</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/evaluate</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns a summary list of all evaluations (all statuses). Use for history views and version-picker dropdowns.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"evaluations"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="k">"evaluation_id"</span>: <span class="s">"eval-abc"</span>, <span class="k">"status"</span>: <span class="s">"complete"</span>, <span class="k">"ethical_score"</span>: <span class="n">0.87</span>, <span class="k">"report_type"</span>: <span class="s">"DEVELOPER"</span>, <span class="k">"current_step"</span>: <span class="n">7</span> }<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="k">"count"</span>: <span class="n">1</span><br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <section id="api-dashboard-id" class="doc-section">
+      <div class="section-eyebrow">Dashboard</div>
+      <h2>Get Dashboard</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/dashboard/<span class="path-param">{eval_id}</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns the full structured payload for the evaluation dashboard — 7 dimension cards, 4-layer fairness pyramid, quick insights, SHAP data, and raw fairness metrics for developer view.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">404 Not Found</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"evaluation_id"</span>: <span class="s">"eval-abc"</span>, <span class="k">"status"</span>: <span class="s">"complete"</span>,<br>
+&nbsp;&nbsp;<span class="k">"ethical_score"</span>: <span class="n">0.87</span>, <span class="k">"overall_status"</span>: <span class="s">"PASS"</span>,<br>
+&nbsp;&nbsp;<span class="k">"dimensions"</span>: [ { <span class="k">"id"</span>:<span class="n">1</span>, <span class="k">"title"</span>:<span class="s">"Individual Fairness"</span>, <span class="k">"score"</span>:<span class="n">0.92</span>, <span class="k">"status"</span>:<span class="s">"PASS"</span>, ... }, ... ],<br>
+&nbsp;&nbsp;<span class="k">"layers"</span>: [ { <span class="k">"layer"</span>:<span class="n">4</span>, <span class="k">"title"</span>:<span class="s">"Layer 4: Individual"</span>, <span class="k">"score"</span>:<span class="n">0.92</span>, ... }, ... ],<br>
+&nbsp;&nbsp;<span class="k">"insights"</span>: { <span class="k">"strengths"</span>: [...], <span class="k">"concerns"</span>: [...], <span class="k">"recommendations"</span>: [...] },<br>
+&nbsp;&nbsp;<span class="k">"shap"</span>: { <span class="k">"topFeature"</span>: <span class="s">"income"</span>, <span class="k">"shapMax"</span>: <span class="n">0.45</span>, ... },<br>
+&nbsp;&nbsp;<span class="k">"model_metrics"</span>: { <span class="k">"accuracy"</span>: <span class="n">0.892</span>, <span class="k">"f1_score"</span>: <span class="n">0.876</span>, <span class="k">"roc_auc"</span>: <span class="n">0.941</span> },<br>
+&nbsp;&nbsp;<span class="k">"fairness_raw"</span>: { <span class="k">"individualFairness"</span>: <span class="n">0.92</span>, ... }<br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-dashboard-list" class="doc-section">
+      <h2>List Dashboards</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/dashboard</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Lists all completed evaluations with summary data — overall status, ethical score, model ID, and record count. Useful for history/list views.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ REPORTS ═══ -->
+    <section id="api-report-dev" class="doc-section">
+      <div class="section-eyebrow">Reports</div>
+      <h2>Developer Report</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/report/developer/<span class="path-param">{eval_id}</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Full technical report for ML engineers — all 7 dimensions with methodology notes, per-attribute breakdowns, confusion matrix, SHAP beeswarm data, and raw fairness metrics.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">404 Not Found</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"evaluation_id"</span>: <span class="s">"eval-abc"</span>, <span class="k">"ethical_score"</span>: <span class="n">0.87</span>,<br>
+&nbsp;&nbsp;<span class="k">"shap"</span>: { <span class="k">"feature_importance"</span>: [{ <span class="k">"feature"</span>:<span class="s">"income"</span>, <span class="k">"shap_value"</span>:<span class="n">0.451</span> }, ...] },<br>
+&nbsp;&nbsp;<span class="k">"dimensions"</span>: [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"id"</span>:<span class="n">1</span>, <span class="k">"title"</span>:<span class="s">"Individual Fairness"</span>, <span class="k">"score"</span>:<span class="n">0.92</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"methodology"</span>: <span class="s">"KNN consistency check (k=5 nearest neighbours)"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"violation_rate"</span>: <span class="n">7.86</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"detail"</span>: { <span class="k">"description"</span>: <span class="s">"..."</span>, <span class="k">"consistency_pct"</span>: <span class="n">92.1</span> }<br>
+&nbsp;&nbsp;}],<br>
+&nbsp;&nbsp;<span class="k">"model_performance"</span>: { <span class="k">"accuracy"</span>:<span class="n">0.892</span>, <span class="k">"f1_score"</span>:<span class="n">0.876</span>, <span class="k">"roc_auc"</span>:<span class="n">0.941</span> },<br>
+&nbsp;&nbsp;<span class="k">"per_attribute"</span>: { <span class="s">"gender"</span>: { <span class="k">"demographic_parity_difference"</span>:<span class="n">-0.041</span>, ... } },<br>
+&nbsp;&nbsp;<span class="k">"sensitive_attributes"</span>: [{ <span class="k">"name"</span>:<span class="s">"gender"</span> }],<br>
+&nbsp;&nbsp;<span class="k">"fairness_weights"</span>: [{ <span class="k">"dimension"</span>:<span class="s">"disparateImpact"</span>, <span class="k">"weight"</span>:<span class="n">2</span> }]<br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-report-reg" class="doc-section">
+      <h2>Regulator Report</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/report/regulator/<span class="path-param">{eval_id}</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Compliance-focused report for regulators — legal threshold checks (80% rule, parity gaps), structured risk assessment, and audit trail data. Suitable for GDPR/EU AI Act compliance submissions.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">404 Not Found</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-report-end" class="doc-section">
+      <h2>End-User Report</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/report/enduser/<span class="path-param">{eval_id}</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Plain-language, non-technical fairness summary for end users. Includes a verdict, factor checklist, bias indicators, and recommended next steps — all without technical jargon.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">404 Not Found</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"overall_summary"</span>: { <span class="k">"verdict"</span>:<span class="s">"This model is performing fairly."</span>, <span class="k">"icon"</span>:<span class="s">"✅"</span>, <span class="k">"outcome"</span>:<span class="s">"FAIR"</span> },<br>
+&nbsp;&nbsp;<span class="k">"factor_items"</span>: [{ <span class="k">"name"</span>:<span class="s">"Similar people are treated similarly"</span>, <span class="k">"status"</span>:<span class="s">"approved"</span>, ... }],<br>
+&nbsp;&nbsp;<span class="k">"bias_indicators"</span>: [{ <span class="k">"title"</span>:<span class="s">"No Major Bias Indicators Found"</span>, <span class="k">"detail"</span>:<span class="s">"..."</span> }],<br>
+&nbsp;&nbsp;<span class="k">"what_this_means"</span>: { <span class="k">"summary"</span>:<span class="s">"..."</span>, <span class="k">"action_cards"</span>:[...] },<br>
+&nbsp;&nbsp;<span class="k">"recommendations"</span>: [{ <span class="k">"icon"</span>:<span class="s">"✅"</span>, <span class="k">"title"</span>:<span class="s">"Continue monitoring"</span>, <span class="k">"detail"</span>:<span class="s">"..."</span> }]<br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ COMPARISON ═══ -->
+    <section id="api-compare-list" class="doc-section">
+      <div class="section-eyebrow">Comparison & Monitoring</div>
+      <h2>List Evaluations for Comparison</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/compare/list</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns all completed evaluations as summary cards — suitable for populating version-selector dropdowns on comparison screens.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-compare" class="doc-section">
+      <h2>Compare Two Evaluations</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/compare?eval_a=<span class="path-param">{id}</span>&amp;eval_b=<span class="path-param">{id}</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Side-by-side comparison of two completed evaluations. Returns per-dimension deltas, improvement/regression labels, an overall delta, and a plain-language verdict.</p>
+          <table class="params-table" style="margin-bottom:1rem">
+            <thead><tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="param-name">eval_a</td><td class="param-type">string</td><td><span class="param-req">required</span></td><td class="param-desc">Baseline evaluation ID</td></tr>
+              <tr><td class="param-name">eval_b</td><td class="param-type">string</td><td><span class="param-req">required</span></td><td class="param-desc">Comparison evaluation ID</td></tr>
+            </tbody>
+          </table>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">400 Bad Request</span><span class="resp-code code-4xx">404 Not Found</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"delta"</span>: [{ <span class="k">"dimension"</span>:<span class="s">"Disparate Impact"</span>, <span class="k">"score_a"</span>:<span class="n">0.74</span>, <span class="k">"score_b"</span>:<span class="n">0.83</span>, <span class="k">"delta"</span>:<span class="n">0.09</span>, <span class="k">"delta_class"</span>:<span class="s">"improvement"</span> }],<br>
+&nbsp;&nbsp;<span class="k">"verdict"</span>: { <span class="k">"icon"</span>:<span class="s">"🏆"</span>, <span class="k">"title"</span>:<span class="s">"Evaluation B is recommended"</span>, <span class="k">"winner"</span>:<span class="s">"eval-b-id"</span> },<br>
+&nbsp;&nbsp;<span class="k">"overall_delta"</span>: <span class="n">0.0532</span><br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-compare-history" class="doc-section">
+      <h2>Retraining History</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/compare/history</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Chronological list of all completed evaluations for the retraining timeline. Includes improvement deltas vs previous run and a sparkline-ready <code>trend</code> array.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"history"</span>: [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"evaluation_id"</span>:<span class="s">"eval-abc"</span>, <span class="k">"ethical_score"</span>:<span class="n">0.87</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"trigger"</span>:<span class="s">"Re-evaluation / Scheduled"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"improvement"</span>:<span class="n">0.04</span>, <span class="k">"improvement_pct"</span>:<span class="n">4.0</span><br>
+&nbsp;&nbsp;}],<br>
+&nbsp;&nbsp;<span class="k">"trend"</span>: [<span class="n">0.78</span>, <span class="n">0.82</span>, <span class="n">0.87</span>]<br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-compare-alerts" class="doc-section">
+      <h2>Monitoring Alerts</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/compare/alerts</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Aggregated fairness alerts across all completed evaluations. Alerts are derived from threshold violations: disparate impact &lt; 0.80, demographic parity gap &gt; 5%, intersectional &lt; 0.80, counterfactual &lt; 0.80.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"alerts"</span>: [{ <span class="k">"id"</span>:<span class="s">"abc-di"</span>, <span class="k">"message"</span>:<span class="s">"Disparate impact ratio 0.74 below threshold"</span>, <span class="k">"severity"</span>:<span class="s">"CRITICAL"</span>, <span class="k">"resolved"</span>:<span class="b">false</span> }],<br>
+&nbsp;&nbsp;<span class="k">"summary"</span>: { <span class="k">"critical"</span>:<span class="n">1</span>, <span class="k">"warning"</span>:<span class="n">2</span>, <span class="k">"info"</span>:<span class="n">0</span>, <span class="k">"resolved"</span>:<span class="n">1</span>, <span class="k">"total"</span>:<span class="n">4</span> }<br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ ADMIN ═══ -->
+    <section id="api-admin-health" class="doc-section">
+      <div class="section-eyebrow">Admin</div>
+      <h2>System Health</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/admin/health</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns system health cards: API uptime, evaluation queue size, average processing time, and number of deployed models.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-admin-alerts" class="doc-section">
+      <h2>Admin Alerts</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/admin/alerts</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Active system and fairness alerts. Filterable by severity and resolved status. Also auto-generates alerts from live evaluation results (disparate impact, low ethical scores).</p>
+          <table class="params-table" style="margin-bottom:1rem">
+            <thead><tr><th>Query Param</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="param-name">severity</td><td class="param-type">enum</td><td><em style="color:var(--muted)">none</em></td><td class="param-desc"><span class="enum-chip">CRITICAL</span> <span class="enum-chip">WARNING</span></td></tr>
+              <tr><td class="param-name">resolved</td><td class="param-type">boolean</td><td><code>false</code></td><td class="param-desc">Include resolved alerts</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Acknowledge -->
+      <div class="api-card" style="margin-top:0.5rem">
+        <div class="api-card-head">
+          <span class="method-pill pill-post">POST</span>
+          <span class="endpoint-path">/admin/alerts/<span class="path-param">{alert_id}</span>/acknowledge</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Mark an alert as acknowledged without resolving it.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">404 Not Found</span></div>
+        </div>
+      </div>
+      <!-- Resolve -->
+      <div class="api-card" style="margin-top:0.5rem">
+        <div class="api-card-head">
+          <span class="method-pill pill-post">POST</span>
+          <span class="endpoint-path">/admin/alerts/<span class="path-param">{alert_id}</span>/resolve</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Mark an alert as resolved (also sets acknowledged). Resolved alerts are hidden from the default view.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span><span class="resp-code code-4xx">404 Not Found</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-admin-stats" class="doc-section">
+      <h2>Usage Statistics</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/admin/stats?range=<span class="path-param">7d|30d|24h</span></span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns chart-ready evaluation counts, total/daily counters, and user breakdown by tier.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"chart"</span>: { <span class="k">"labels"</span>: [<span class="s">"Mon"</span>,...], <span class="k">"values"</span>: [<span class="n">65</span>,...], <span class="k">"max"</span>: <span class="n">102</span> },<br>
+&nbsp;&nbsp;<span class="k">"counters"</span>: { <span class="k">"evaluations_today"</span>:<span class="n">1234</span>, <span class="k">"certificates_issued"</span>:<span class="n">567</span>, <span class="k">"total_evaluations"</span>:<span class="n">1234</span> },<br>
+&nbsp;&nbsp;<span class="k">"users"</span>: { <span class="k">"total"</span>:<span class="n">2</span>, <span class="k">"by_tier"</span>: { <span class="k">"FREE"</span>:<span class="n">0</span>, <span class="k">"PRO"</span>:<span class="n">1</span>, <span class="k">"ENTERPRISE"</span>:<span class="n">1</span> } }<br>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-admin-models" class="doc-section">
+      <h2>Model Management</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/admin/models</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Lists all registered model versions with ethical scores, status, and available actions.</p>
+          <div class="resp-codes"><span class="resp-code code-2xx">200 OK</span></div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:0.5rem;gap:0.5rem">
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/models/<span class="path-param">{id}</span>/retrain</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Trigger model retraining. Returns a <code>job_id</code>.</p></div>
+        </div>
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/models/<span class="path-param">{id}</span>/rollback</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Roll back to the previous model version.</p></div>
+        </div>
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/models/<span class="path-param">{id}</span>/archive</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Archive a model version (sets status to ARCHIVED).</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-admin-users" class="doc-section">
+      <h2>User Management</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/admin/users</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Filterable user list.</p>
+          <table class="params-table" style="margin-bottom:0">
+            <thead><tr><th>Param</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="param-name">search</td><td class="param-type">string</td><td class="param-desc">Filter by name or email</td></tr>
+              <tr><td class="param-name">role</td><td class="param-type">enum</td><td class="param-desc"><span class="enum-chip">ADMIN</span><span class="enum-chip">DEVELOPER</span><span class="enum-chip">VIEWER</span></td></tr>
+              <tr><td class="param-name">tier</td><td class="param-type">enum</td><td class="param-desc"><span class="enum-chip">FREE</span><span class="enum-chip">PRO</span><span class="enum-chip">ENTERPRISE</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:0.5rem;gap:0.5rem">
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/users/invite</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Invite a new user. Body: <code>{ name, email, role, tier }</code>. Returns generated API key.</p></div>
+        </div>
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-put">PUT</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/users/<span class="path-param">{id}</span></span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Edit user fields. Accepts <code>name</code>, <code>email</code>, <code>role</code>, <code>tier</code>.</p></div>
+        </div>
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/users/<span class="path-param">{id}</span>/reset-key</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Regenerate API key. Returns new raw key and masked hint.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-admin-settings" class="doc-section">
+      <h2>System Settings</h2>
+      <div class="api-card">
+        <div class="api-card-head">
+          <span class="method-pill pill-get">GET</span>
+          <span class="endpoint-path">/admin/settings</span>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns current thresholds and alert rules. Maps to the <code>SystemSetting</code> schema.</p>
+          <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="k">"fairness_thresholds"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"min_ethical_score"</span>: <span class="n">0.75</span>, <span class="k">"individual_fairness_min"</span>: <span class="n">0.80</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"disparate_impact_threshold"</span>: <span class="n">0.80</span>, <span class="k">"group_fairness_threshold"</span>: <span class="n">0.80</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"calibration_error_max"</span>: <span class="n">0.05</span><br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="k">"alert_rules"</span>: { <span class="k">"email_notifications"</span>: <span class="b">true</span>, <span class="k">"slack_integration"</span>: <span class="b">false</span> }<br>
+}</div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:0.5rem;gap:0.5rem">
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/settings</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Save updated settings. All numeric values must be in range 0–1. Returns saved settings.</p></div>
+        </div>
+        <div class="api-card" style="margin-bottom:0">
+          <div class="api-card-head">
+            <span class="method-pill pill-post">POST</span>
+            <span class="endpoint-path" style="font-size:0.85rem">/admin/settings/reset</span>
+          </div>
+          <div class="api-card-body"><p class="api-desc" style="margin:0">Restore all settings to built-in defaults.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ DATA MODELS ═══ -->
+    <section id="data-models" class="doc-section">
+      <div class="section-eyebrow">Reference</div>
+      <h2>Data Models</h2>
+      <p>Core Prisma schema entities and their API-facing fields.</p>
+
+      <div class="schema-card">
+        <div class="schema-title">FairnessMetrics</div>
+        <div class="schema-subtitle">7 dimensions computed per evaluation. All scores are 0–1 (higher = fairer), except <code>demographicParity</code> and <code>calibrationError</code> (lower = better).</div>
+        <table class="params-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Better when</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="param-name">individualFairness</td><td class="param-type">float</td><td>Higher</td><td class="param-desc">KNN consistency score. Proportion of k-neighbours with same prediction.</td></tr>
+            <tr><td class="param-name">groupFairness</td><td class="param-type">float</td><td>Higher</td><td class="param-desc">Average 1−|EOD| across sensitive attributes.</td></tr>
+            <tr><td class="param-name">demographicParity</td><td class="param-type">float</td><td>Lower</td><td class="param-desc">Mean |demographic parity difference| across groups.</td></tr>
+            <tr><td class="param-name">disparateImpact</td><td class="param-type">float</td><td>Higher (≥0.80)</td><td class="param-desc">80% rule: min(group rate) / max(group rate).</td></tr>
+            <tr><td class="param-name">calibrationError</td><td class="param-type">float</td><td>Lower</td><td class="param-desc">Mean Brier score across sensitive groups.</td></tr>
+            <tr><td class="param-name">counterfactual</td><td class="param-type">float</td><td>Higher</td><td class="param-desc">1 − std(group prediction rates). Proxy for counterfactual stability.</td></tr>
+            <tr><td class="param-name">intersectional</td><td class="param-type">float</td><td>Higher</td><td class="param-desc">1 − worst-case parity gap across pairwise attribute intersections.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="schema-card">
+        <div class="schema-title">SHAPExplanation</div>
+        <div class="schema-subtitle">SHAP values computed via a RandomForest trained on the dataset (max 2000 rows, 50 estimators).</div>
+        <table class="params-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="param-name">topFeature</td><td class="param-type">string</td><td class="param-desc">Feature with highest mean |SHAP| value</td></tr>
+            <tr><td class="param-name">shapMax</td><td class="param-type">float</td><td class="param-desc">Highest mean |SHAP| value</td></tr>
+            <tr><td class="param-name">shapMin</td><td class="param-type">float</td><td class="param-desc">Lowest mean |SHAP| value</td></tr>
+            <tr><td class="param-name">featureStability</td><td class="param-type">float</td><td class="param-desc">1 − (std / mean) of top-5 SHAP values. Near 1.0 = stable.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="schema-card">
+        <div class="schema-title">Evaluation.ethicalScore</div>
+        <div class="schema-subtitle">Weighted average of the 7 fairness dimensions, all clamped to [0, 1]. Thresholds: PASS ≥ 0.80, WARNING ≥ 0.60, FAIL &lt; 0.60.</div>
+        <div class="code-block">
+ethical_score = mean([<br>
+&nbsp;&nbsp;individualFairness,<br>
+&nbsp;&nbsp;groupFairness,<br>
+&nbsp;&nbsp;1.0 − demographicParity,<br>
+&nbsp;&nbsp;disparateImpact,<br>
+&nbsp;&nbsp;1.0 − calibrationError,<br>
+&nbsp;&nbsp;counterfactual,<br>
+&nbsp;&nbsp;intersectional<br>
+])
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ FAQ ═══ -->
+    <section id="faq" class="doc-section">
+      <div class="section-eyebrow">Support</div>
+      <h2>FAQ</h2>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What file formats are supported for datasets and predictions?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">CSV, Excel (.xlsx / .xls), and JSON are supported. The prediction file must contain a numeric column named <code>prediction</code>, <code>prediction_score</code>, <code>score</code>, <code>label</code>, <code>output</code>, or <code>pred</code>. If none of these are found, the first numeric column is used.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How is the target variable determined if I don't specify one?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">The evaluation engine scans columns in order and picks the first one with 5 or fewer unique values that isn't an object/string type. For best results, always pass <code>target_variable</code> explicitly in the evaluate request.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How long does an evaluation take?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">Typical evaluation takes 2–3 minutes for datasets up to 100k rows. The SHAP step caps at 2,000 rows for speed. Fairness metrics use the full dataset. Evaluations run asynchronously — poll <code>GET /evaluate/{id}</code> and check <code>current_step</code> (1–7) for progress.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What happens if a sensitive attribute isn't in the dataset?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">Attributes not present in the dataset are silently dropped. If no valid sensitive attributes remain after filtering, the system falls back to the first categorical (object-type) column that isn't the target variable.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What does a disparate impact score below 0.80 mean?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">The 0.80 (80%) rule is a legal standard derived from the US EEOC guidelines. A score below 0.80 means the least-favoured group receives positive outcomes at less than 80% the rate of the most-favoured group, which may indicate adverse impact under anti-discrimination law.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How do I reset system-wide fairness thresholds?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">Call <code>POST /admin/settings/reset</code> with no body. This restores all thresholds to their defaults: ethical score minimum 0.75, individual fairness minimum 0.80, disparate impact threshold 0.80, calibration error maximum 0.05.</div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ CHANGELOG ═══ -->
+    <section id="changelog" class="doc-section">
+      <div class="section-eyebrow">History</div>
+      <h2>Changelog</h2>
+
+      <div class="changelog-entry">
+        <div class="cl-meta">
+          <div class="cl-version">v2.0.0</div>
+          <div class="cl-date">Mar 2024</div>
+        </div>
+        <div class="cl-body">
+          <h4>Major Release</h4>
+          <ul>
+            <li><span class="cl-tag tag-new">NEW</span> Intersectional fairness analysis — pairwise attribute intersections</li>
+            <li><span class="cl-tag tag-new">NEW</span> Counterfactual fairness dimension with group-rate variance proxy</li>
+            <li><span class="cl-tag tag-new">NEW</span> Three-audience report system (developer / regulator / enduser)</li>
+            <li><span class="cl-tag tag-new">NEW</span> Comparison API — side-by-side dimension deltas, verdict engine</li>
+            <li><span class="cl-tag tag-new">NEW</span> Admin dashboard — health, alerts, user management, settings</li>
+            <li><span class="cl-tag tag-imp">IMP</span> SHAP handles multi-class, list, and 3D array outputs</li>
+            <li><span class="cl-tag tag-imp">IMP</span> Evaluation now runs in background thread — returns 202 immediately</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="cl-meta">
+          <div class="cl-version">v1.5.0</div>
+          <div class="cl-date">Feb 2024</div>
+        </div>
+        <div class="cl-body">
+          <h4>Fairness Expansion</h4>
+          <ul>
+            <li><span class="cl-tag tag-new">NEW</span> Per-attribute demographic parity and equalized odds breakdown</li>
+            <li><span class="cl-tag tag-new">NEW</span> Calibration error (Brier score) per sensitive group</li>
+            <li><span class="cl-tag tag-new">NEW</span> Model performance metrics: accuracy, F1, ROC-AUC</li>
+            <li><span class="cl-tag tag-new">NEW</span> SHAP TreeExplainer with feature stability score</li>
+            <li><span class="cl-tag tag-imp">IMP</span> Auto-detection of target and prediction columns</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="cl-meta">
+          <div class="cl-version">v1.0.0</div>
+          <div class="cl-date">Jan 2024</div>
+        </div>
+        <div class="cl-body">
+          <h4>Initial Release</h4>
+          <ul>
+            <li><span class="cl-tag tag-new">NEW</span> Core evaluation pipeline: individual, group, demographic parity, disparate impact</li>
+            <li><span class="cl-tag tag-new">NEW</span> Dataset and prediction file upload endpoints</li>
+            <li><span class="cl-tag tag-new">NEW</span> Basic dashboard endpoint</li>
+            <li><span class="cl-tag tag-new">NEW</span> Flask REST API with CORS</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ── FAQ toggle ──
+  function toggleFaq(el) {
+    const item = el.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // ── Active sidebar highlight on scroll ──
+  const sections = document.querySelectorAll('.doc-section[id]');
+  const sbLinks  = document.querySelectorAll('.sb-link');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        sbLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.sb-link[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-60px 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>

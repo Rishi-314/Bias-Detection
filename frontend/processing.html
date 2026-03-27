@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing – FairTrust AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+        
+        :root {
+            --primary: #1A2D4E;
+            --primary-light: #2A3F66;
+            --primary-soft: #E9ECF3;
+            --secondary: #EBB255;
+            --accent: #4A90E2;
+            --success: #059669;
+            --success-soft: #ECFDF5;
+            --danger: #DC2626;
+            --danger-soft: #FEF2F2;
+            --warning: #D97706;
+            --text: #1A2D4E;
+            --text-light: #5A6169;
+            --muted: #6B7594;
+            --bg: #F5F6FA;
+            --surface: #FFFFFF;
+            --border: #E4E7F0;
+            --shadow: 0 10px 30px rgba(26, 45, 78, 0.08);
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem 1rem; 
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+        
+        .card { 
+            max-width: 560px; 
+            width: 100%; 
+            background: var(--surface); 
+            border: 2px solid rgba(26, 45, 78, 0.08);
+            border-radius: var(--radius); 
+            padding: 2.5rem; 
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .card:hover {
+            border-color: rgba(26, 45, 78, 0.15);
+            box-shadow: 0 15px 35px rgba(26, 45, 78, 0.12);
+        }
+        
+        .head { 
+            text-align: center; 
+            margin-bottom: 1.75rem; 
+        }
+        
+        .ring-container {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .ring {
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--primary-soft);
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 0.85s linear infinite;
+            transition: var(--transition);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .ring.done { 
+            border-color: var(--success); 
+            border-top-color: var(--success); 
+            animation: none; 
+        }
+        
+        .ring.error { 
+            border-color: #FECACA; 
+            border-top-color: var(--danger); 
+            animation: none; 
+        }
+        
+        .ring-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            color: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .ring.done + .ring-icon { opacity: 1; color: var(--success); }
+        .ring.error + .ring-icon { opacity: 1; color: var(--danger); }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .head h1 { 
+            font-size: 1.75rem; 
+            font-weight: 800; 
+            color: var(--primary);
+            letter-spacing: -0.02em; 
+            margin-bottom: 0.3rem; 
+        }
+        
+        .head p { color: var(--muted); font-size: 0.9375rem; }
+        
+        .eval-id { 
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            background: var(--primary-soft); 
+            border: 1px solid rgba(26, 45, 78, 0.15); 
+            border-radius: 6px; 
+            padding: 0.35rem 0.875rem; 
+            font-size: 0.75rem; 
+            font-family: 'SF Mono', monospace; 
+            color: var(--primary); 
+            margin-top: 0.75rem; 
+            word-break: break-all; 
+            cursor: pointer; 
+            transition: var(--transition);
+        }
+        
+        .eval-id:hover { 
+            border-color: var(--secondary); 
+            color: var(--secondary); 
+            background: rgba(235, 178, 85, 0.05);
+        }
+        
+        .eval-id i { font-size: 0.7rem; color: var(--secondary); }
+        
+        .prog-track { 
+            height: 6px; 
+            background: var(--primary-soft); 
+            border-radius: 999px; 
+            margin-bottom: 2rem; 
+            overflow: hidden; 
+        }
+        
+        .prog-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            border-radius: 999px; 
+            width: 0%; 
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+        
+        .steps { margin-bottom: 2rem; }
+        
+        .step { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.875rem; 
+            padding: 0.875rem 1rem; 
+            border-radius: 10px; 
+            margin-bottom: 0.5rem; 
+            opacity: 0.4; 
+            transition: var(--transition); 
+            border: 2px solid transparent;
+        }
+        
+        .step.active { opacity: 1; background: var(--primary-soft); border-color: rgba(26, 45, 78, 0.15); }
+        .step.done   { opacity: 1; }
+        .step.fail   { opacity: 1; background: var(--danger-soft); border-color: rgba(220, 38, 38, 0.15); }
+        
+        .sdot { 
+            width: 32px; height: 32px; border-radius: 50%; 
+            background: rgba(26, 45, 78, 0.15); color: var(--muted); 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 0.875rem; font-weight: 700; flex-shrink: 0; transition: var(--transition); 
+        }
+        
+        .step.active .sdot { background: var(--primary); color: white; animation: pulse 1.4s ease-in-out infinite; }
+        .step.done   .sdot { background: var(--success); color: white; }
+        .step.fail   .sdot { background: var(--danger);  color: white; }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        
+        .sbody { flex: 1; }
+        .stitle { font-size: 0.9375rem; font-weight: 600; color: var(--text); }
+        .ssub   { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+        
+        .sbadge { 
+            font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.75rem; 
+            border-radius: 999px; white-space: nowrap; transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 0.25rem;
+        }
+        
+        .step.active .sbadge { background: rgba(26, 45, 78, 0.1); color: var(--primary); }
+        .step.done   .sbadge { background: var(--success-soft); color: var(--success); }
+        .step.fail   .sbadge { background: var(--danger-soft);  color: var(--danger); }
+        
+        .metrics { 
+            display: grid; grid-template-columns: repeat(4, 1fr); 
+            gap: 1rem; margin-bottom: 2rem; 
+        }
+        
+        @media (max-width: 480px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+        
+        .metric { 
+            background: var(--bg); border: 1px solid rgba(26, 45, 78, 0.1); 
+            border-radius: 10px; padding: 1rem 0.5rem; text-align: center; transition: var(--transition);
+        }
+        
+        .metric:hover { border-color: var(--secondary); background: white; transform: translateY(-2px); }
+        
+        .mlabel { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.4rem; }
+        .mval   { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+        
+        .quote { 
+            background: var(--primary-soft); border-left: 4px solid var(--secondary); 
+            border-radius: 0 10px 10px 0; padding: 1.25rem; text-align: center; margin-bottom: 2rem; 
+        }
+        
+        .qtext { font-size: 0.875rem; color: var(--text); font-style: italic; transition: opacity 0.4s; line-height: 1.6; }
+        
+        .errbox { 
+            display: none; background: var(--danger-soft); border-left: 4px solid var(--danger); 
+            border-radius: 0 10px 10px 0; padding: 1.25rem; margin-bottom: 1.5rem; 
+            font-size: 0.875rem; color: var(--danger); 
+        }
+        
+        .errbox i { margin-right: 0.5rem; }
+        .errbox a { color: var(--danger); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.5rem; }
+        .errbox a:hover { text-decoration: underline; }
+        
+        .donebox { 
+            display: none; background: var(--success-soft); border-left: 4px solid var(--success); 
+            border-radius: 0 10px 10px 0; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; 
+        }
+        
+        .dscore { font-size: 3rem; font-weight: 800; color: var(--success); letter-spacing: -0.03em; margin-bottom: 0.25rem; }
+        .dlabel { font-size: 0.875rem; color: var(--text-light); }
+        
+        .actions { text-align: center; }
+        
+        .btn-view { 
+            width: 100%; padding: 1rem; 
+            background: linear-gradient(135deg, var(--primary), #2c3e50); 
+            color: white; border: none; border-radius: 10px; 
+            font-size: 1rem; font-weight: 700; font-family: inherit; cursor: pointer; 
+            margin-bottom: 0.875rem; transition: var(--transition); 
+            box-shadow: 0 4px 20px rgba(26, 45, 78, 0.2);
+            display: none;
+            align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        
+        .btn-view:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26, 45, 78, 0.3); }
+        
+        .cancel { 
+            font-size: 0.875rem; color: var(--muted); text-decoration: none; 
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 0.375rem;
+        }
+        
+        .cancel:hover { color: var(--primary); }
+
+        .debug-wrap { max-width: 560px; width: 100%; margin-top: 1.5rem; }
+        
+        .debug-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        
+        .debug-title { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; gap: 0.25rem; }
+        .debug-title i { color: var(--secondary); }
+        
+        .debug-clear { font-size: 0.7rem; color: var(--muted); background: none; border: 1px solid rgba(26, 45, 78, 0.15); border-radius: 5px; padding: 0.2rem 0.6rem; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.25rem; }
+        .debug-clear:hover { border-color: var(--secondary); color: var(--secondary); background: rgba(235, 178, 85, 0.05); }
+        
+        #debugPanel { background: #0F1A2A; border-radius: 10px; padding: 1rem; font-family: 'SF Mono', monospace; font-size: 0.7rem; max-height: 220px; overflow-y: auto; border: 1px solid rgba(235, 178, 85, 0.15); }
+        
+        .dlog { padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); line-height: 1.5; display: flex; align-items: center; gap: 0.25rem; }
+        .dlog.ok  { color: #34D399; }
+        .dlog.err { color: #F87171; }
+        .dlog.inf { color: #93C5FD; }
+        .dlog.wrn { color: #FCD34D; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:580px;">
+
+<div class="card">
+    <div class="head">
+        <div class="ring-container">
+            <div class="ring" id="ring"></div>
+            <div class="ring-icon" id="ringIcon"></div>
+        </div>
+        <h1 id="hTitle">Analyzing your model</h1>
+        <p id="hSub">Evaluating fairness across all dimensions…</p>
+        <div class="eval-id" id="evalBadge" title="Click to copy" onclick="copyEvalId()">
+            <i class="fas fa-copy"></i>
+            <span>Loading…</span>
+        </div>
+    </div>
+
+    <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
+
+    <div class="steps" id="steps">
+        <div class="step" id="s1">
+            <div class="sdot">1</div>
+            <div class="sbody"><div class="stitle">Data validation</div><div class="ssub">Checking formats &amp; structure</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+        <div class="step" id="s2">
+            <div class="sdot">2</div>
+            <div class="sbody"><div class="stitle">EDA &amp; bias detection</div><div class="ssub">Analysing distributions</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+        <div class="step" id="s3">
+            <div class="sdot">3</div>
+            <div class="sbody"><div class="stitle">Feature engineering</div><div class="ssub">Preparing features</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+        <div class="step" id="s4">
+            <div class="sdot">4</div>
+            <div class="sbody"><div class="stitle">Fairness analysis</div><div class="ssub">Demographic parity, equalized odds…</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+        <div class="step" id="s5">
+            <div class="sdot">5</div>
+            <div class="sbody"><div class="stitle">Model evaluation</div><div class="ssub">Accuracy, F1, ROC-AUC</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+        <div class="step" id="s6">
+            <div class="sdot">6</div>
+            <div class="sbody"><div class="stitle">SHAP explanation</div><div class="ssub">Feature importance scores</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+        <div class="step" id="s7">
+            <div class="sdot">7</div>
+            <div class="sbody"><div class="stitle">Report generation</div><div class="ssub">Building fairness certificate</div></div>
+            <span class="sbadge">Pending</span>
+        </div>
+    </div>
+
+    <div class="metrics">
+        <div class="metric"><div class="mlabel">Records</div><div class="mval" id="mRec">—</div></div>
+        <div class="metric"><div class="mlabel">Dimensions</div><div class="mval">7</div></div>
+        <div class="metric"><div class="mlabel">Fairness</div><div class="mval" id="mScore">—</div></div>
+        <div class="metric"><div class="mlabel">Status</div><div class="mval" id="mStatus" style="font-size:0.85rem">Queued</div></div>
+    </div>
+
+    <div class="quote">
+        <div class="qtext" id="quote">"Fairness cannot be assumed — it must be proven."</div>
+    </div>
+
+    <div class="errbox" id="errBox">
+        <i class="fas fa-exclamation-circle"></i>
+        <strong>Evaluation failed:</strong> <span id="errMsg"></span><br>
+        <a href="upload.html"><i class="fas fa-arrow-left"></i> Try again</a>
+    </div>
+
+    <div class="donebox" id="doneBox">
+        <div class="dscore" id="dScore">—</div>
+        <div class="dlabel" id="dLabel">Fairness Score — redirecting to your report…</div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-view" id="btnView" onclick="goDash()">
+            <i class="fas fa-chart-line"></i> View Results
+        </button>
+        <a href="upload.html" class="cancel" id="cancelLink">
+            <i class="fas fa-times"></i> Cancel analysis
+        </a>
+    </div>
+</div>
+
+<!-- Debug panel -->
+<div class="debug-wrap">
+    <div class="debug-header">
+        <span class="debug-title"><i class="fas fa-bug"></i> Debug log</span>
+        <button type="button" class="debug-clear" onclick="clearLog()">
+            <i class="fas fa-trash-alt"></i> Clear
+        </button>
+    </div>
+    <div id="debugPanel"></div>
+</div>
+
+</div>
+
+<script>
+    const API_BASE  = 'http://127.0.0.1:5000';
+    const POLL_MS   = 2500;
+    const MAX_POLLS = 240;
+
+    let evalId        = null;
+    let pollTimer     = null;
+    let pollCount     = 0;
+    let completedSteps = new Set();
+    let redirectTimer = null;
+
+    // ── Read URL params once at startup ──────────────────────────────────────
+    const _urlParams = new URLSearchParams(window.location.search);
+
+    // dest = 'allReports' when user chose "Generate all reports" on upload.html
+    // Falls back to sessionStorage key set by upload.html, then defaults to null
+    const _dest = _urlParams.get('dest') || sessionStorage.getItem('eval_dest') || null;
+
+    const STEP_PROGRESS = { 1: 10, 2: 25, 3: 38, 4: 60, 5: 75, 6: 88, 7: 100 };
+
+    const QUOTES = [
+        '"Fairness cannot be assumed — it must be proven."',
+        '"Bias in, bias out — the model reflects the data."',
+        '"Equitable AI starts with honest measurement."',
+        '"Transparency is the foundation of trustworthy AI."',
+        '"Disparate impact is a choice, not an inevitability."',
+        '"Fair models serve everyone — not just the majority."',
+    ];
+    let quoteIdx = 0;
+
+    function log(msg, type = 'inf') {
+        const panel = document.getElementById('debugPanel');
+        const ts    = new Date().toLocaleTimeString();
+        const div   = document.createElement('div');
+        div.className = `dlog ${type}`;
+        div.innerHTML = `<i class="fas fa-circle" style="font-size:0.3rem;color:currentColor;opacity:0.5;margin-right:4px;"></i>[${ts}] ${msg}`;
+        panel.appendChild(div);
+        panel.scrollTop = panel.scrollHeight;
+    }
+
+    function clearLog() {
+        document.getElementById('debugPanel').innerHTML = '';
+        log('Debug log cleared', 'inf');
+    }
+
+    function getEvalId() {
+        return _urlParams.get('eval_id') || sessionStorage.getItem('eval_id');
+    }
+
+    function copyEvalId() {
+        if (!evalId) return;
+        navigator.clipboard.writeText(evalId).then(() => {
+            const badge = document.getElementById('evalBadge');
+            badge.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => { badge.innerHTML = '<i class="fas fa-copy"></i> ' + evalId; }, 1500);
+        });
+    }
+
+    function setStep(n, state) {
+        const el = document.getElementById(`s${n}`);
+        if (!el) return;
+        el.className = `step ${state}`;
+        const badge = el.querySelector('.sbadge');
+        if (state === 'active') badge.innerHTML = 'Running… <i class="fas fa-spinner fa-pulse" style="margin-left:4px;"></i>';
+        else if (state === 'done') badge.innerHTML = 'Done <i class="fas fa-check-circle" style="margin-left:4px;"></i>';
+        else if (state === 'fail') badge.innerHTML = 'Error <i class="fas fa-exclamation-circle" style="margin-left:4px;"></i>';
+        else badge.textContent = 'Pending';
+    }
+
+    function renderSteps(currentStep, isFailed) {
+        for (let i = 1; i <= 7; i++) {
+            if (isFailed && i === currentStep) setStep(i, 'fail');
+            else if (i < currentStep)          setStep(i, 'done');
+            else if (i === currentStep)        setStep(i, 'active');
+            else                               setStep(i, '');
+        }
+    }
+
+    async function poll() {
+        if (!evalId) return;
+        pollCount++;
+
+        if (pollCount > MAX_POLLS) {
+            clearInterval(pollTimer);
+            showError('Analysis timed out. Please try again.');
+            log('Polling timed out after ' + MAX_POLLS + ' attempts', 'err');
+            return;
+        }
+
+        try {
+            const res  = await fetch(`${API_BASE}/evaluate/${evalId}`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                log(`API error ${res.status}: ${data.error || 'unknown'}`, 'err');
+                if (res.status === 404) { clearInterval(pollTimer); showError(`Evaluation '${evalId}' not found on server.`); }
+                return;
+            }
+
+            log(`Poll #${pollCount} → status=${data.status} step=${data.current_step ?? '?'} records=${data.records ?? '?'}`, 'inf');
+
+            const status  = data.status;
+            const step    = data.current_step || 0;
+            const records = data.records || 0;
+
+            if (records > 0) document.getElementById('mRec').textContent = records.toLocaleString();
+            document.getElementById('mStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+            quoteIdx = (quoteIdx + 1) % QUOTES.length;
+            const qel = document.getElementById('quote');
+            qel.style.opacity = '0';
+            setTimeout(() => { qel.textContent = QUOTES[quoteIdx]; qel.style.opacity = '1'; }, 200);
+
+            const pct = step > 0 ? (STEP_PROGRESS[step] || Math.min(step * 14, 95)) : 5;
+            document.getElementById('prog').style.width = pct + '%';
+
+            renderSteps(step, status === 'error');
+
+            if (status === 'complete') { clearInterval(pollTimer); onComplete(data); return; }
+            if (status === 'error')    { clearInterval(pollTimer); onError(data.error || 'Unknown error'); return; }
+
+        } catch (err) {
+            log(`Fetch error: ${err.message}`, 'err');
+        }
+    }
+
+    function onComplete(data) {
+        renderSteps(8, false);
+        document.getElementById('prog').style.width = '100%';
+
+        const ring = document.getElementById('ring');
+        ring.classList.add('done');
+        document.getElementById('ringIcon').innerHTML = '<i class="fas fa-check-circle"></i>';
+
+        document.getElementById('hTitle').textContent = 'Analysis complete!';
+        document.getElementById('hSub').textContent   = 'Your fairness report is ready.';
+
+        const score    = data.ethical_score ?? data.fairness?.fairness_score;
+        const scorePct = score != null ? Math.round(score * 100) + '%' : '—';
+
+        document.getElementById('mScore').textContent  = scorePct;
+        document.getElementById('mStatus').textContent = 'Done ✓';
+        document.getElementById('dScore').textContent  = scorePct;
+        document.getElementById('doneBox').style.display = 'block';
+
+        // ── Update button label based on destination ──────────────────────────
+        const reportType = sessionStorage.getItem('report_type') || 'developer';
+        const isAllReports = (_dest === 'allReports' || reportType === 'all');
+
+        const LABEL_MAP = {
+            developer: '<i class="fas fa-code"></i> View Developer Report',
+            regulator: '<i class="fas fa-gavel"></i> View Regulator Report',
+            enduser:   '<i class="fas fa-users"></i> View Human Report',
+        };
+
+        const btnLabel = isAllReports
+            ? '<i class="fas fa-layer-group"></i> View All Reports'
+            : (LABEL_MAP[reportType] || '<i class="fas fa-chart-line"></i> View Report');
+
+        document.getElementById('btnView').innerHTML = btnLabel;
+        document.getElementById('btnView').style.display = 'inline-flex';
+        document.getElementById('cancelLink').innerHTML = '<i class="fas fa-arrow-left"></i> Back to upload';
+
+        if (isAllReports) {
+            document.getElementById('dLabel').textContent = 'Fairness Score — redirecting to all reports…';
+        }
+
+        sessionStorage.setItem('eval_result', JSON.stringify(data));
+        sessionStorage.setItem('eval_id', evalId);
+
+        log(`✅ Complete! Fairness score = ${scorePct}`, 'ok');
+        log(`   dest=${_dest || 'none'} reportType=${reportType} → routing to ${isAllReports ? 'allReports.html' : 'individual report'}`, 'ok');
+        if (data.shap)    log(`   topFeature=${data.shap?.topFeature}  stability=${data.shap?.featureStability}`, 'ok');
+        if (data.fairness) log(`   indFairness=${data.fairness?.individualFairness}  groupFairness=${data.fairness?.groupFairness}`, 'ok');
+
+        // Auto-redirect after 3 seconds
+        redirectTimer = setTimeout(goDash, 3000);
+    }
+
+    // ── KEY FIX: goDash now routes to allReports.html when dest=allReports ──
+    function goDash() {
+        if (redirectTimer) clearTimeout(redirectTimer);
+
+        const reportType   = sessionStorage.getItem('report_type') || 'developer';
+        const isAllReports = (_dest === 'allReports' || reportType === 'all');
+
+        if (isAllReports) {
+            // User chose "Generate all reports" → go to the hub page
+            window.location.href = `allReports.html?eval_id=${evalId}`;
+            return;
+        }
+
+        // Single report type → go directly to that report page
+        const PAGE_MAP = {
+            developer: 'developerReport.html',
+            regulator: 'regulatorReport.html',
+            enduser:   'humanReport.html',
+        };
+        const page = PAGE_MAP[reportType] || 'developerReport.html';
+        window.location.href = `${page}?eval_id=${evalId}`;
+    }
+
+    function onError(msg) {
+        document.getElementById('ring').classList.add('error');
+        document.getElementById('ringIcon').innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+        document.getElementById('hTitle').textContent = 'Analysis failed';
+        document.getElementById('hSub').textContent   = 'Something went wrong during evaluation.';
+        document.getElementById('mStatus').textContent = 'Error';
+        showError(msg);
+        log(`❌ Error: ${msg}`, 'err');
+    }
+
+    function showError(msg) {
+        document.getElementById('errMsg').textContent = msg;
+        document.getElementById('errBox').style.display = 'block';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        evalId = getEvalId();
+
+        if (!evalId) {
+            log('No eval_id found in URL or sessionStorage', 'wrn');
+            document.getElementById('hTitle').textContent = 'No evaluation found';
+            document.getElementById('hSub').textContent   = 'Please start from the upload page.';
+            document.getElementById('evalBadge').innerHTML = '<i class="fas fa-exclamation-triangle"></i> missing';
+            document.getElementById('errBox').style.display = 'block';
+            document.getElementById('errMsg').textContent = 'No evaluation ID provided. Please go back and submit a new analysis.';
+            return;
+        }
+
+        log(`dest param = "${_dest || 'none'}"`, 'inf');
+        document.getElementById('evalBadge').innerHTML = '<i class="fas fa-copy"></i> ' + evalId;
+        log(`Starting poll for eval_id=${evalId}`, 'inf');
+
+        poll();
+        pollTimer = setInterval(poll, POLL_MS);
+
+        setInterval(() => {
+            quoteIdx = (quoteIdx + 1) % QUOTES.length;
+            const qel = document.getElementById('quote');
+            qel.style.opacity = '0';
+            setTimeout(() => { qel.textContent = QUOTES[quoteIdx]; qel.style.opacity = '1'; }, 200);
+        }, 8000);
+    });
+
+    window.copyEvalId = copyEvalId;
+    window.clearLog   = clearLog;
+    window.goDash     = goDash;
+</script>
+</body>
+</html>

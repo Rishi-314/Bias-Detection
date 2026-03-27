@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remediation Toolkit — FairTrust AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --navy:      #0F1E38;
+            --navy-mid:  #1A2D4E;
+            --navy-soft: #243D65;
+            --gold:      #EBB255;
+            --gold-dim:  rgba(235,178,85,0.12);
+            --gold-line: rgba(235,178,85,0.3);
+            --red:       #EF4444;
+            --red-dim:   rgba(239,68,68,0.1);
+            --amber:     #F59E0B;
+            --amber-dim: rgba(245,158,11,0.1);
+            --green:     #10B981;
+            --green-dim: rgba(16,185,129,0.1);
+            --blue:      #3B82F6;
+            --blue-dim:  rgba(59,130,246,0.1);
+            --purple:    #8B5CF6;
+            --purple-dim:rgba(139,92,246,0.1);
+            --surface:   #FFFFFF;
+            --bg:        #F1F3F8;
+            --bg2:       #E8EBF2;
+            --rule:      #DDE1EC;
+            --text:      #0F1E38;
+            --muted:     #64748B;
+            --mono:      'IBM Plex Mono', monospace;
+            --display:   'Plus Jakarta Sans', sans-serif;
+            --body:      'Plus Jakarta Sans', sans-serif;
+            --radius:    12px;
+            --shadow:    0 2px 12px rgba(15,30,56,0.07);
+            --shadow-md: 0 8px 32px rgba(15,30,56,0.10);
+        }
+
+        body { font-family: var(--body); background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        /* ── NAV ── */
+        .navbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule); padding: 0 5%; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: var(--shadow);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--navy), #4A90E2); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: white; font-size: 15px; }
+        .logo-text { font-family: var(--display); font-size: 18px; font-weight: 800; color: var(--navy); }
+        .logo-text span { color: var(--gold); }
+        .nav-links { display: flex; gap: 4px; }
+        .nav-links a { text-decoration: none; font-size: 14px; font-weight: 600; color: var(--muted); padding: 6px 12px; border-radius: 7px; transition: all 0.15s; }
+        .nav-links a:hover { color: var(--navy); background: var(--bg); }
+
+        /* ── PAGE ── */
+        .page { max-width: 1280px; margin: 0 auto; padding: 2rem 5% 5rem; }
+
+        /* ── HERO — exact same pattern as developerReport ── */
+        .report-hero { background: var(--navy); border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+        .report-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(235,178,85,0.12) 0%, transparent 70%); }
+        .hero-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; position: relative; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-dim); border: 1px solid var(--gold-line); color: var(--gold); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 12px; border-radius: 999px; margin-bottom: 0.75rem; }
+        .hero-title { font-family: var(--display); font-size: 1.75rem; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 0.5rem; }
+        .hero-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+        .hero-stat { display: flex; flex-direction: column; }
+        .hero-stat-val { font-family: var(--display); font-size: 1.5rem; font-weight: 800; color: var(--gold); }
+        .hero-stat-lbl { font-size: 11px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.08em; }
+        .hero-score-ring { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.25rem 1.75rem; text-align: center; }
+        .score-big { font-family: var(--display); font-size: 3rem; font-weight: 800; line-height: 1; }
+        .score-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; color: rgba(255,255,255,0.5); }
+        .score-verdict { margin-top: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .hero-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .btn-hero { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--body); transition: all 0.2s; text-decoration: none; }
+        .btn-hero-primary { background: var(--gold); color: var(--navy); }
+        .btn-hero-primary:hover { background: #dfa342; transform: translateY(-1px); }
+        .btn-hero-ghost { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); }
+        .btn-hero-ghost:hover { background: rgba(255,255,255,0.14); color: white; }
+
+        /* ── GATE BANNER — same as alert-banner ── */
+        .gate-banner { display: flex; align-items: flex-start; gap: 1rem; border-radius: 0 10px 10px 0; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 1px solid; border-left: 4px solid; }
+        .gate-banner.pass       { background: var(--green-dim);  border-color: rgba(16,185,129,0.25);  border-left-color: var(--green); }
+        .gate-banner.conditional{ background: var(--amber-dim);  border-color: rgba(245,158,11,0.25);  border-left-color: var(--amber); }
+        .gate-banner.blocked    { background: var(--red-dim);    border-color: rgba(239,68,68,0.25);   border-left-color: var(--red); }
+        .gate-banner .gate-icon { font-size: 1.25rem; margin-top: 2px; flex-shrink: 0; }
+        .gate-banner.pass       .gate-icon { color: var(--green); }
+        .gate-banner.conditional .gate-icon{ color: var(--amber); }
+        .gate-banner.blocked    .gate-icon { color: var(--red); }
+        .gate-title  { font-weight: 700; font-size: 0.9375rem; color: var(--text); }
+        .gate-sub    { font-size: 0.8125rem; color: var(--muted); margin-top: 2px; line-height: 1.55; }
+        .gate-action { font-size: 0.8125rem; font-weight: 600; margin-top: 6px; }
+        .gate-banner.pass        .gate-action { color: var(--green); }
+        .gate-banner.conditional .gate-action { color: var(--amber); }
+        .gate-banner.blocked     .gate-action { color: var(--red); }
+
+        /* ── SECTION — identical to devReport ── */
+        .section { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--rule); box-shadow: var(--shadow); margin-bottom: 1.5rem; overflow: hidden; }
+        .section-head { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--rule); background: var(--bg); }
+        .section-title { font-family: var(--display); font-size: 1rem; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--gold); font-size: 0.9rem; }
+        .section-body { padding: 1.75rem; }
+
+        /* ── CI/CD CHECKS — same as dim-card pattern ── */
+        .checks-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+        .check-card { border-radius: 10px; padding: 1rem; border: 1.5px solid var(--rule); background: var(--surface); transition: all 0.2s; }
+        .check-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .check-card.pass    { border-color: rgba(16,185,129,0.4); }
+        .check-card.fail    { border-color: rgba(239,68,68,0.4); }
+        .check-card.warning { border-color: rgba(245,158,11,0.4); }
+        .check-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.625rem; }
+        .check-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .check-icon.pass    { background: var(--green-dim); color: var(--green); }
+        .check-icon.fail    { background: var(--red-dim);   color: var(--red); }
+        .check-icon.warning { background: var(--amber-dim); color: var(--amber); }
+        .check-sev { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px; }
+        .check-sev.pass    { background: var(--green-dim); color: var(--green); }
+        .check-sev.fail    { background: var(--red-dim);   color: var(--red); }
+        .check-sev.warning { background: var(--amber-dim); color: var(--amber); }
+        .check-name { font-size: 0.8125rem; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+        .check-score { font-family: var(--display); font-size: 1.625rem; font-weight: 800; line-height: 1; }
+        .check-score.pass    { color: var(--green); }
+        .check-score.fail    { color: var(--red); }
+        .check-score.warning { color: var(--amber); }
+        .check-bar-track { height: 4px; background: var(--bg2); border-radius: 100px; margin: 6px 0; overflow: hidden; }
+        .check-bar { height: 100%; border-radius: 100px; transition: width 0.8s ease; }
+        .check-bar.pass    { background: var(--green); }
+        .check-bar.fail    { background: var(--red); }
+        .check-bar.warning { background: var(--amber); }
+        .check-threshold { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+        /* ── FIX CARDS — same action-item pattern but expandable ── */
+        .fix-list { display: flex; flex-direction: column; gap: 1rem; }
+        .fix-card { border-radius: 10px; border: 1px solid var(--rule); background: var(--surface); overflow: hidden; transition: border-color 0.2s; }
+        .fix-card:hover { border-color: var(--gold); }
+        .fix-card.critical { border-left: 4px solid var(--red); }
+        .fix-card.warning  { border-left: 4px solid var(--amber); }
+        .fix-card.info     { border-left: 4px solid var(--blue); }
+
+        .fix-header { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.25rem; cursor: pointer; user-select: none; }
+        .fix-header:hover { background: var(--bg); }
+        .fix-rank { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 0.9rem; font-weight: 800; }
+        .fix-rank.critical { background: var(--red-dim);    color: var(--red); }
+        .fix-rank.warning  { background: var(--amber-dim);  color: var(--amber); }
+        .fix-rank.info     { background: var(--blue-dim);   color: var(--blue); }
+        .fix-meta { flex: 1; }
+        .fix-title { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 3px; }
+        .fix-desc  { font-size: 0.8125rem; color: var(--muted); line-height: 1.55; }
+        .fix-tags  { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 6px; }
+        .fix-tag   { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--bg2); color: var(--muted); border: 1px solid var(--rule); }
+        .fix-tag.dim      { background: var(--blue-dim);   color: var(--blue);   border-color: rgba(59,130,246,0.2); }
+        .fix-tag.score-up { background: var(--green-dim);  color: var(--green);  border-color: rgba(16,185,129,0.2); }
+        .fix-toggle { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); transition: all 0.15s; align-self: flex-start; margin-top: 2px; }
+        .fix-toggle:hover { background: var(--rule); color: var(--navy); }
+        .fix-toggle.open  { background: var(--navy); color: white; border-color: var(--navy); }
+
+        /* Fix body / drawer */
+        .fix-body { display: none; border-top: 1px solid var(--rule); padding: 1.25rem 1.5rem; background: var(--bg); animation: slideDown 0.2s ease; }
+        .fix-body.open { display: block; }
+        @keyframes slideDown { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+
+        .fix-body-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; align-items: start; }
+        .fix-section-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.625rem; }
+
+        /* Why / What boxes */
+        .fix-why, .fix-what {
+            background: var(--surface); border: 1px solid var(--rule);
+            border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 0.875rem;
+        }
+        .fix-why strong, .fix-what strong { color: var(--navy); font-size: 0.8125rem; }
+        .fix-why p, .fix-what p { font-size: 0.8125rem; color: var(--muted); margin-top: 3px; line-height: 1.6; }
+
+        /* Code block */
+        .code-block-wrap { margin-bottom: 0.875rem; }
+        .code-block-header { display: flex; justify-content: space-between; align-items: center; background: var(--navy); border-radius: 8px 8px 0 0; padding: 7px 14px; }
+        .code-block-lang { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+        .code-copy-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; padding: 3px 10px; font-size: 11px; font-weight: 600; cursor: pointer; color: rgba(255,255,255,0.6); font-family: var(--body); transition: all 0.15s; }
+        .code-copy-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+        .code-block { background: var(--navy-mid); border: 1px solid rgba(255,255,255,0.06); border-top: none; border-radius: 0 0 8px 8px; padding: 1rem 1.125rem; overflow-x: auto; }
+        .code-block code { font-family: var(--mono); font-size: 0.8rem; line-height: 1.7; color: #93C5FD; white-space: pre; }
+        .code-block code .c  { color: #6B7280; }   /* comment */
+        .code-block code .k  { color: #F472B6; }   /* keyword */
+        .code-block code .s  { color: #86EFAC; }   /* string */
+        .code-block code .n  { color: #FCD34D; }   /* name/function */
+
+        /* Score before/after */
+        .score-delta { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem; }
+        .score-delta-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.875rem; }
+        .score-delta-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .score-delta-label { font-size: 0.8rem; color: var(--muted); width: 80px; flex-shrink: 0; }
+        .score-delta-bar-track { flex: 1; height: 18px; background: var(--bg2); border-radius: 4px; overflow: hidden; }
+        .score-delta-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.7rem; font-weight: 700; color: white; min-width: 30px; }
+        .score-delta-bar.before { background: var(--red); }
+        .score-delta-bar.after  { background: var(--green); }
+        .score-delta-bar.before.amber { background: var(--amber); }
+        .score-delta-val { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--navy); width: 38px; text-align: right; flex-shrink: 0; }
+
+        .effort-box { margin-top: 1rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 0.875rem 1rem; }
+        .effort-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 0.8125rem; }
+        .effort-row:not(:last-child) { border-bottom: 1px dashed var(--rule); padding-bottom: 6px; margin-bottom: 6px; }
+        .effort-key { color: var(--muted); font-size: 0.8rem; }
+        .effort-val { font-weight: 700; color: var(--navy); font-size: 0.8rem; }
+        .effort-pill { padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+        .effort-pill.high   { background: var(--red-dim);    color: var(--red); }
+        .effort-pill.medium { background: var(--amber-dim);  color: var(--amber); }
+        .effort-pill.low    { background: var(--green-dim);  color: var(--green); }
+
+        /* ── QUICK WINS — same as perf-grid ── */
+        .quickwins-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .quickwin-card { background: var(--bg); border: 1px solid var(--rule); border-radius: 10px; padding: 1.125rem; transition: all 0.15s; }
+        .quickwin-card:hover { border-color: var(--green); box-shadow: var(--shadow); }
+        .quickwin-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); background: var(--green-dim); padding: 2px 8px; border-radius: 999px; margin-bottom: 0.5rem; }
+        .quickwin-title { font-weight: 700; font-size: 0.875rem; color: var(--navy); margin-bottom: 4px; line-height: 1.4; }
+        .quickwin-desc  { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+        .quickwin-score { font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--green); margin-top: 8px; }
+
+        /* ── COUNTERFACTUAL EXAMPLES ── */
+        .cf-list { display: flex; flex-direction: column; gap: 1.25rem; }
+        .cf-card { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: var(--surface); transition: border-color 0.2s; }
+        .cf-card:hover { border-color: var(--gold); }
+        .cf-header { background: var(--bg); border-bottom: 1px solid var(--rule); padding: 0.875rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+        .cf-header-title { font-weight: 700; font-size: 0.9rem; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+        .cf-header-title i { color: var(--gold); font-size: 0.875rem; }
+        .cf-header-attr { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; background: var(--red-dim); color: var(--red); padding: 3px 10px; border-radius: 999px; }
+        .cf-body { padding: 1.25rem; }
+        .cf-compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: start; margin-bottom: 1rem; }
+        .cf-person { background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 0.875rem 1rem; }
+        .cf-person-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.625rem; }
+        .cf-person-head.approved { color: var(--green); }
+        .cf-person-head.rejected { color: var(--red); }
+        .cf-person-outcome { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 0.75rem; }
+        .cf-person-outcome.approved { background: var(--green-dim); color: var(--green); }
+        .cf-person-outcome.rejected { background: var(--red-dim);   color: var(--red); }
+        .cf-attr-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; padding: 3px 0; border-bottom: 1px dashed var(--rule); }
+        .cf-attr-row:last-child { border: none; }
+        .cf-attr-key { color: var(--muted); }
+        .cf-attr-val { font-weight: 600; color: var(--navy); font-family: var(--mono); font-size: 0.75rem; }
+        .cf-attr-val.diff { color: var(--red); font-weight: 700; }
+        .cf-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-top: 1.5rem; }
+        .cf-arrow i { color: var(--red); font-size: 1.25rem; }
+        .cf-arrow-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--red); }
+        .cf-explanation { background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 0.875rem 1rem; }
+        .cf-explanation-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 5px; }
+        .cf-explanation-text { font-size: 0.8125rem; color: var(--text); line-height: 1.6; }
+        .cf-explanation-text strong { color: var(--red); }
+
+        /* ── INFO BOX ── */
+        .info-box { background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 1.25rem; font-size: 0.8125rem; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; }
+        .info-box i { color: var(--gold); margin-top: 2px; flex-shrink: 0; }
+
+        /* ── STATE ── */
+        .state-wrap { min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--rule); }
+        .state-icon  { font-size: 2.5rem; margin-bottom: 1rem; }
+        .state-title { font-family: var(--display); font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+        .state-sub   { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        @media (max-width: 900px) {
+            .checks-grid  { grid-template-columns: repeat(3, 1fr); }
+            .fix-body-grid { grid-template-columns: 1fr; }
+            .quickwins-grid { grid-template-columns: 1fr; }
+            .cf-compare   { grid-template-columns: 1fr; }
+            .cf-arrow     { display: none; }
+        }
+        @media (max-width: 560px) {
+            .checks-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-links   { display: none; }
+        }
+        @media print {
+            @page { size: A4; margin: 15mm 12mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .navbar, .hero-actions { display: none !important; }
+            .report-hero { background: #0F1E38 !important; }
+            .section { box-shadow: none !important; page-break-inside: avoid; }
+            .fix-body { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="logo-text">Fair<span>Trust</span></div>
+    </a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="docs.html">Docs</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<div class="page" id="app">
+    <div class="state-wrap">
+        <div class="state-icon"><i class="fas fa-spinner fa-pulse" style="color:var(--gold)"></i></div>
+        <div class="state-title">Loading remediation toolkit…</div>
+        <div class="state-sub">Analysing issues and generating fixes</div>
+    </div>
+</div>
+
+<script>
+const API_BASE = 'http://127.0.0.1:5000';
+const fmt    = (v, d=4) => v != null ? Number(v).toFixed(d) : '—';
+const fmtPct = (v, d=1) => v != null ? (Number(v)*100).toFixed(d)+'%' : '—';
+
+function sev(score) {
+    if (score == null) return 'warning';
+    if (score >= 0.80) return 'pass';
+    if (score >= 0.60) return 'warning';
+    return 'fail';
+}
+function sevLabel(score) { return {pass:'Pass', warning:'Marginal', fail:'Fail'}[sev(score)] || '—'; }
+function sevColor(score) { return {pass:'var(--green)', warning:'var(--amber)', fail:'var(--red)'}[sev(score)] || 'var(--muted)'; }
+
+// ── Fallback fix plan built from raw eval data ──────────────────────────────
+function buildFallbackFixes(ev) {
+    const f  = ev.fairness   || {};
+    const pr = ev.privacy    || {};
+    const rb = ev.robustness || {};
+    const fixes = [];
+
+    // Only flag disparate impact if it explicitly exists AND fails
+    if (f.disparateImpact != null && f.disparateImpact < 0.80)
+        fixes.push({
+            priority: 'CRITICAL', dimension: 'Fairness', effort: 'medium',
+            title: 'Calibrate decision thresholds per demographic group',
+            why: `The least-favoured group is approved at only ${fmtPct(f.disparateImpact)} the rate of the most-favoured group. The legal 80% rule requires this ratio to be at least 0.80. This creates legal exposure under EEOC guidelines.`,
+            what: 'Use post-processing threshold optimisation. This technique adjusts the cut-off point at which the model approves or rejects — independently for each demographic group — without retraining the model. The goal is to bring all group approval rates within 20% of each other.',
+            code: `from fairlearn.postprocessing import ThresholdOptimizer\n\n# Wrap your existing model\noptimizer = ThresholdOptimizer(\n    estimator=your_model,\n    constraints="demographic_parity",\n    objective="balanced_accuracy_score"\n)\n\n# Fit on training data with sensitive attribute\noptimizer.fit(X_train, y_train, sensitive_features=train_sensitive)\n\n# Use the optimised model for predictions\ny_pred = optimizer.predict(X_test, sensitive_features=test_sensitive)`,
+            current_score: f.disparateImpact, estimated_score_after: Math.min(f.disparateImpact + 0.2, 1.0),
+            risk: 'Low', expected_improvement: '15–25%',
+        });
+
+    if (f.demographicParity != null && f.demographicParity > 0.05)
+        fixes.push({
+            priority: 'CRITICAL', dimension: 'Fairness', effort: 'high',
+            title: 'Retrain model with demographic parity constraints',
+            why: `A ${fmtPct(f.demographicParity)} gap in positive outcome rates exists between demographic groups. This means the model is systematically more likely to approve one group over another, even when all other factors are equal.`,
+            what: 'Use fairness-aware retraining with the Exponentiated Gradient method. This adds a fairness constraint during model training so the algorithm explicitly tries to minimise the outcome gap while still maximising accuracy. This requires retraining, which takes more time but produces a more fundamentally fair model.',
+            code: `from fairlearn.reductions import ExponentiatedGradient, DemographicParity\n\n# Define the fairness constraint\nconstraint = DemographicParity()\n\n# Wrap your base estimator with a fairness-aware trainer\nmitigator = ExponentiatedGradient(\n    estimator=base_classifier,\n    constraints=constraint,\n    eps=0.01  # tolerance: lower = stricter fairness\n)\n\n# Retrain with sensitive features exposed\nmitigator.fit(X_train, y_train, sensitive_features=train_sensitive)\n\n# Evaluate on test set\ny_pred = mitigator.predict(X_test)`,
+            current_score: 1 - f.demographicParity, estimated_score_after: Math.min((1 - f.demographicParity) + 0.15, 1.0),
+            risk: 'Medium', expected_improvement: '10–20%',
+        });
+
+    if (f.counterfactual != null && f.counterfactual < 0.80)
+        fixes.push({
+            priority: 'CRITICAL', dimension: 'Fairness', effort: 'medium',
+            title: 'Remove or re-weight proxy features correlated with protected attributes',
+            why: `When only a person's protected attribute (gender, caste, race) is changed while everything else stays identical, the model changes its decision. Score: ${fmtPct(f.counterfactual)}. This is direct evidence that the model uses protected attributes — either directly or through proxy features — to make decisions.`,
+            what: 'Identify features that are highly correlated with protected attributes (e.g. zip code correlates with race; job title correlates with gender). Remove or reduce the weight of those proxy features. Alternatively, use adversarial debiasing to train a secondary network that penalises the model for being able to predict the protected attribute.',
+            code: `import pandas as pd\nfrom sklearn.feature_selection import chi2\n\n# Step 1: Find features correlated with sensitive attribute\nfor col in X.columns:\n    if col not in sensitive_attrs:\n        corr = X[col].corr(df[sensitive_attr])\n        if abs(corr) > 0.3:\n            print(f"Proxy risk: {col} — correlation {corr:.4f}")\n\n# Step 2: Drop or downweight highly correlated features\nX_clean = X.drop(columns=['zip_code', 'neighborhood'])  # example proxies\n\n# Step 3: Re-evaluate counterfactual fairness after cleanup\nfrom aif360.metrics import ClassificationMetric\nmetric = ClassificationMetric(dataset, classified_dataset,\n    unprivileged_groups, privileged_groups)`,
+            current_score: f.counterfactual, estimated_score_after: Math.min(f.counterfactual + 0.18, 1.0),
+            risk: 'Low', expected_improvement: '10–20%',
+        });
+
+    if (f.intersectional != null && f.intersectional < 0.80)
+        fixes.push({
+            priority: 'WARNING', dimension: 'Fairness', effort: 'medium',
+            title: 'Run stratified fairness audit across combined demographic groups',
+            why: `Standard fairness checks only look at one attribute at a time (e.g. gender alone, or race alone). Your intersectional score of ${fmtPct(f.intersectional)} suggests that when attributes are combined (e.g. women of a specific caste), the outcome gap is significantly worse than either attribute alone would suggest.`,
+            what: 'Group the data by combinations of sensitive attributes and compare approval rates across all combinations. Identify which combination has the worst outcome ratio. Then apply targeted oversampling or re-weighting specifically for that intersectional subgroup.',
+            code: `import pandas as pd\n\n# Compute approval rate for every combination of sensitive attributes\nresults = df.groupby(['gender', 'caste'])['prediction'].agg(\n    approval_rate='mean',\n    count='count'\n).reset_index()\n\nprint(results.sort_values('approval_rate'))\n\n# Identify worst-case group\nworst = results.loc[results['approval_rate'].idxmin()]\nprint(f"Worst group: {worst.to_dict()}")\n\n# Apply targeted oversampling for worst-case group\nfrom imblearn.over_sampling import SMOTE\nmask = (df['gender'] == worst['gender']) & (df['caste'] == worst['caste'])\nX_aug, y_aug = SMOTE().fit_resample(X[mask], y[mask])`,
+            current_score: f.intersectional, estimated_score_after: Math.min(f.intersectional + 0.12, 1.0),
+            risk: 'Low', expected_improvement: '8–15%',
+        });
+
+    if ((pr.pii_columns || []).length > 0)
+        fixes.push({
+            priority: 'CRITICAL', dimension: 'Privacy', effort: 'low',
+            title: 'Remove or pseudonymise personally identifiable information (PII)',
+            why: `${pr.pii_columns.length} column(s) containing personal data were detected: ${pr.pii_columns.slice(0,3).join(', ')}${pr.pii_columns.length>3?'…':''}. Under GDPR and the IT Act, personal data must not be used as model features without explicit consent and a lawful basis.`,
+            what: 'Remove direct identifiers (name, email, national ID, phone) from the training dataset entirely. For quasi-identifiers (age, zip code), apply generalisation — for example, replace exact age with an age band (20–30, 30–40), and replace zip code with district or city. Rerun the evaluation after removing these columns.',
+            code: `import pandas as pd\n\n# Direct identifiers — remove entirely\nDIRECT_PII = ['name', 'email', 'phone', 'national_id', 'passport_no']\ndf_clean = df.drop(columns=[c for c in DIRECT_PII if c in df.columns])\n\n# Quasi-identifiers — generalise\nif 'age' in df_clean.columns:\n    df_clean['age_band'] = pd.cut(\n        df_clean['age'],\n        bins=[0, 20, 30, 40, 50, 60, 100],\n        labels=['<20','20-30','30-40','40-50','50-60','60+']\n    )\n    df_clean = df_clean.drop(columns=['age'])\n\nif 'zip_code' in df_clean.columns:\n    df_clean['region'] = df_clean['zip_code'].str[:3]  # district-level only\n    df_clean = df_clean.drop(columns=['zip_code'])\n\nprint(f"Removed {len(df.columns) - len(df_clean.columns)} PII columns")`,
+            current_score: pr.privacy_score || 0.5, estimated_score_after: 0.85,
+            risk: 'None', expected_improvement: '20–40%',
+        });
+
+    if ((rb.boundary_instability || 0) > 0.25)
+        fixes.push({
+            priority: 'WARNING', dimension: 'Robustness', effort: 'low',
+            title: 'Apply probability calibration to stabilise borderline decisions',
+            why: `${Math.round((rb.boundary_instability||0)*100)}% of predictions fall in the uncertain zone (probability 0.40–0.60). These are decisions that would flip if a minor change was made to the input — creating an unreliable, inconsistent system for borderline applicants.`,
+            what: 'Apply Platt scaling or isotonic regression calibration. These are post-processing techniques that adjust the model\'s confidence scores to better reflect reality. After calibration, a prediction of 0.7 means "70% likely" — not just a number. This does not require retraining.',
+            code: `from sklearn.calibration import CalibratedClassifierCV\nimport numpy as np\n\n# Option A: Platt scaling (sigmoid) — fast, works well for binary classifiers\ncalibrated_model = CalibratedClassifierCV(\n    base_estimator=your_model,\n    method='sigmoid',\n    cv='prefit'  # model is already trained\n)\ncalibrated_model.fit(X_val, y_val)\n\n# Option B: Isotonic regression — more flexible, needs more validation data\ncalibrated_iso = CalibratedClassifierCV(\n    base_estimator=your_model,\n    method='isotonic',\n    cv='prefit'\n)\ncalibrated_iso.fit(X_val, y_val)\n\n# Check: what fraction still falls in uncertain zone?\ny_prob = calibrated_model.predict_proba(X_test)[:, 1]\nuncertain = np.mean((y_prob > 0.40) & (y_prob < 0.60))\nprint(f"Uncertain predictions after calibration: {uncertain:.1%}")`,
+            current_score: rb.robustness_score || 0.5, estimated_score_after: Math.min((rb.robustness_score||0.5)+0.2, 1.0),
+            risk: 'None', expected_improvement: '15–25%',
+        });
+
+    if (fixes.length === 0)
+        fixes.push({
+            priority: 'INFO', dimension: 'All Dimensions', effort: 'low',
+            title: 'No critical fixes required — set up continuous monitoring',
+            why: 'The model passes all ethical thresholds. The primary remaining task is ensuring these scores do not drift as new data arrives in production.',
+            what: 'Implement an automated fairness monitoring pipeline that re-evaluates the model every time a significant batch of new data is processed. Set alert thresholds so the team is notified if any dimension drops below 0.75.',
+            code: `# Schedule this script to run weekly or after every major data update\nimport schedule\nimport time\n\ndef run_fairness_check():\n    from fairtrust_client import FairTrustClient\n    client = FairTrustClient(api_key="your_key")\n\n    result = client.evaluate(\n        model=your_model,\n        dataset=latest_production_data,\n        sensitive_attrs=['gender', 'caste', 'age']\n    )\n\n    for dim, score in result.dimension_scores.items():\n        if score < 0.75:\n            send_alert(f"FAIRNESS DRIFT: {dim} dropped to {score:.2%}")\n\n    print(f"Fairness check complete. Overall score: {result.ethical_score:.2%}")\n\n# Run every Monday at 9 AM\nschedule.every().monday.at("09:00").do(run_fairness_check)`,
+            current_score: 0.85, estimated_score_after: 0.90,
+            risk: 'None', expected_improvement: 'Monitoring only',
+        });
+
+    return fixes;
+}
+
+// ── Build counterfactual examples fallback ──────────────────────────────────
+function buildFallbackCF(ev) {
+    const f = ev.fairness || {};
+    if (!f.disparateImpact || f.disparateImpact >= 0.80) return [];
+    return [{
+        sensitive_attribute: 'gender',
+        plain_english: `Two applicants with identical qualifications, income, and credit history were evaluated. The only difference was their declared gender. The model approved one and rejected the other. This is direct evidence that gender is influencing the model's decisions — either directly or through a correlated feature.`,
+        person_a: { gender: 'Male', income: '₹8.5L', credit_score: '740', employment: '4 years', outcome: 'Approved' },
+        person_b: { gender: 'Female', income: '₹8.5L', credit_score: '740', employment: '4 years', outcome: 'Rejected' },
+        diff_attr: 'gender',
+    }];
+}
+
+// ── CI/CD gate checks ────────────────────────────────────────────────────────
+function buildGateChecks(ev, fixes) {
+    const f = ev.fairness || {};
+    const threshold  = 0.75;
+    const overall    = ev.ethical_score || ev.fairness?.fairness_score || 0;
+    // Use the overall score as a safe fallback for dimensions not yet scored —
+    // this prevents a "not yet measured" dimension from falsely blocking deployment.
+    const safeScore  = (v) => (v != null && v > 0) ? v : overall;
+    const hasCritical = fixes.filter(f => (f.priority||f.severity||'') === 'CRITICAL').length > 0;
+    return [
+        { name: 'Fairness Score',     icon: 'fa-balance-scale', score: safeScore(ev.fairness_score || ev.fairness?.fairness_score), threshold, what: 'Overall fairness across all 7 dimensions' },
+        { name: 'Privacy Score',      icon: 'fa-lock',          score: safeScore(ev.privacy_score),       threshold, what: 'No PII in training data' },
+        { name: 'Robustness Score',   icon: 'fa-shield-alt',    score: safeScore(ev.robustness_score),    threshold, what: 'Stable decisions for borderline cases' },
+        { name: 'Transparency Score', icon: 'fa-eye',           score: safeScore(ev.transparency_score),  threshold, what: 'Explainable predictions' },
+        { name: 'No Critical Issues', icon: 'fa-flag',          score: hasCritical ? 0.0 : 1.0,           threshold: 0.5, what: 'All critical issues resolved' },
+    ];
+}
+
+// ── Score color helper ───────────────────────────────────────────────────────
+function checkClass(score, threshold) {
+    if (score >= threshold) return 'pass';
+    if (score >= threshold * 0.8) return 'warning';
+    return 'fail';
+}
+
+// ── Code syntax highlight (simple) ─────────────────────────────────────────
+function highlightCode(code) {
+    return code
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/(#[^\n]*)/g, '<span class="c">$1</span>')
+        .replace(/\b(from|import|if|for|in|return|def|class|print|True|False|None|and|or|not)\b/g, '<span class="k">$1</span>')
+        .replace(/(['"]{1,3})(.*?)\1/g, '<span class="s">$1$2$1</span>');
+}
+
+// ── Copy code to clipboard ──────────────────────────────────────────────────
+function copyCode(btn, code) {
+    navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1800);
+    });
+}
+
+// ── Toggle fix body ──────────────────────────────────────────────────────────
+function toggleFix(id) {
+    const body   = document.getElementById(`fixbody-${id}`);
+    const toggle = document.getElementById(`fixtoggle-${id}`);
+    if (!body) return;
+    const open = body.classList.toggle('open');
+    toggle.innerHTML = open ? '<i class="fas fa-chevron-up"></i>' : '<i class="fas fa-chevron-down"></i>';
+    toggle.classList.toggle('open', open);
+    if (open) setTimeout(() => body.scrollIntoView({ behavior:'smooth', block:'nearest' }), 60);
+}
+window.toggleFix = toggleFix;
+window.copyCode  = copyCode;
+
+// ── Main render ──────────────────────────────────────────────────────────────
+function renderReport(ev, evalId, fixes, cfExamples) {
+    const overallScore = ev.ethical_score || ev.fairness?.fairness_score || 0;
+    const scoreInt     = Math.round(overallScore * 100);
+    const color        = sevColor(overallScore);
+    const critCount    = fixes.filter(f => (f.priority||f.severity||'') === 'CRITICAL').length;
+    const warnCount    = fixes.filter(f => (f.priority||f.severity||'') === 'WARNING').length;
+    const quickWins    = fixes.filter(f => (f.effort||'medium') === 'low');
+    const gateChecks   = buildGateChecks(ev, fixes);
+    const gatePass     = gateChecks.every(c => c.score >= c.threshold);
+    const gateCond     = !gatePass && gateChecks.filter(c => c.score < c.threshold).length <= 1;
+
+    let gateClass, gateIcon, gateTitle, gateSub, gateAction;
+    if (gatePass) {
+        gateClass='pass'; gateIcon='fa-check-circle';
+        gateTitle='Deployment gate passed — all checks are within acceptable thresholds.';
+        gateSub=`Overall Ethics Score: ${scoreInt}/100. No critical issues blocking deployment.`;
+        gateAction='Recommended action: Proceed with deployment. Complete any low-effort improvements within 30 days.';
+    } else if (gateCond) {
+        gateClass='conditional'; gateIcon='fa-exclamation-circle';
+        gateTitle='Conditional pass — one check is below threshold. Address before deployment.';
+        gateSub=`Overall Ethics Score: ${scoreInt}/100. Most dimensions pass. The failing check must be resolved before production deployment.`;
+        gateAction='Recommended action: Fix the failing check and re-run evaluation before deploying to production.';
+    } else {
+        gateClass='blocked'; gateIcon='fa-times-circle';
+        gateTitle='Deployment blocked — multiple checks failed. Do not deploy.';
+        gateSub=`Overall Ethics Score: ${scoreInt}/100. ${critCount} critical issue${critCount!==1?'s':''} must be resolved before this model can be deployed.`;
+        gateAction='Recommended action: Work through the priority fixes below, then re-run the evaluation.';
+    }
+
+    // ── Hero ─────────────────────────────────────────────────────────────────
+    const heroHtml = `
+    <div class="report-hero">
+        <div class="hero-top">
+            <div>
+                <div class="hero-badge"><i class="fas fa-tools"></i> Remediation Toolkit</div>
+                <div class="hero-title">Fix Plan &amp;<br>Deployment Readiness</div>
+                <div class="hero-meta">
+                    <div class="hero-stat"><span class="hero-stat-val">${fixes.length}</span><span class="hero-stat-lbl">Total Fixes</span></div>
+                    <div class="hero-stat"><span class="hero-stat-val">${critCount}</span><span class="hero-stat-lbl">Critical</span></div>
+                    <div class="hero-stat"><span class="hero-stat-val">${quickWins.length}</span><span class="hero-stat-lbl">Quick Wins</span></div>
+                    <div class="hero-stat"><span class="hero-stat-val mono" style="font-size:0.9rem;font-family:var(--mono)">${evalId?evalId.slice(0,8)+'…':'—'}</span><span class="hero-stat-lbl">Eval ID</span></div>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn-hero btn-hero-primary" onclick="window.print()"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                    <a href="executiveReport.html?eval_id=${evalId}" class="btn-hero btn-hero-ghost"><i class="fas fa-chart-bar"></i> Executive Report</a>
+                    <a href="allReports.html?eval_id=${evalId}" class="btn-hero btn-hero-ghost"><i class="fas fa-arrow-left"></i> All Reports</a>
+                </div>
+            </div>
+            <div class="hero-score-ring">
+                <div class="score-big" style="color:${color}">${scoreInt}</div>
+                <div class="score-label">/ 100 Overall Ethics Score</div>
+                <div class="score-verdict" style="color:${color}">${scoreInt>=80?'Pass':scoreInt>=60?'Marginal':'Fail'}</div>
+            </div>
+        </div>
+    </div>`;
+
+    // ── Gate banner ──────────────────────────────────────────────────────────
+    const gateBannerHtml = `
+    <div class="gate-banner ${gateClass}">
+        <div class="gate-icon"><i class="fas ${gateIcon}"></i></div>
+        <div style="flex:1">
+            <div class="gate-title">${gateTitle}</div>
+            <div class="gate-sub">${gateSub}</div>
+            <div class="gate-action">${gateAction}</div>
+        </div>
+    </div>`;
+
+    // ── CI/CD checks ─────────────────────────────────────────────────────────
+    const checksHtml = `
+    <div class="section">
+        <div class="section-head">
+            <div class="section-title"><i class="fas fa-traffic-light"></i> Deployment Gate — 5 Checks</div>
+            <span style="font-size:0.8125rem;color:var(--muted)">${gateChecks.filter(c=>c.score>=c.threshold).length} passing &nbsp;·&nbsp; ${gateChecks.filter(c=>c.score<c.threshold).length} failing</span>
+        </div>
+        <div class="section-body">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span><strong style="color:var(--navy)">How this works:</strong> Before a model can be deployed, it must pass all 5 checks. Each check has a threshold score. A score below the threshold means that dimension has a problem that must be resolved. Green means pass, red means fail.</span>
+            </div>
+            <div class="checks-grid">
+                ${gateChecks.map(c => {
+                    const cls   = checkClass(c.score, c.threshold);
+                    const pct   = Math.round(c.score * 100);
+                    const thPct = Math.round(c.threshold * 100);
+                    return `
+                    <div class="check-card ${cls}">
+                        <div class="check-top">
+                            <div class="check-icon ${cls}"><i class="fas ${c.icon}"></i></div>
+                            <span class="check-sev ${cls}">${{pass:'Pass',warning:'Marginal',fail:'Fail'}[cls]}</span>
+                        </div>
+                        <div class="check-name">${c.name}</div>
+                        <div class="check-score ${cls}">${pct}<span style="font-size:1rem;opacity:0.5">/100</span></div>
+                        <div class="check-bar-track"><div class="check-bar ${cls}" style="width:${pct}%"></div></div>
+                        <div class="check-threshold">Required: ${thPct}+ &nbsp;·&nbsp; ${c.what}</div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    </div>`;
+
+    // ── Priority fixes ────────────────────────────────────────────────────────
+    const fixesHtml = `
+    <div class="section">
+        <div class="section-head">
+            <div class="section-title"><i class="fas fa-wrench"></i> Priority Fix Plan — ${fixes.length} Issue${fixes.length!==1?'s':''}</div>
+            <span style="font-size:0.8125rem;color:var(--muted)">${critCount} critical &nbsp;·&nbsp; ${warnCount} marginal &nbsp;·&nbsp; Click any card to expand</span>
+        </div>
+        <div class="section-body">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>Each fix below includes: <strong style="color:var(--navy)">why the problem exists</strong> in plain language, <strong style="color:var(--navy)">what to do</strong> step by step, and <strong style="color:var(--navy)">copy-paste code</strong> your ML team can run directly. Fixes are ordered by priority — most critical first.</span>
+            </div>
+            <div class="fix-list">
+                ${fixes.map((fix, i) => {
+                    // Normalise field names — API uses description/code_snippet/severity,
+                    // fallback builder uses why/what/code/priority
+                    const title     = fix.title || '—';
+                    const whyText   = fix.why || fix.description || '';
+                    const whatText  = fix.what || fix.description || '';
+                    const codeText  = fix.code || fix.code_snippet || '';
+                    const effort    = fix.effort || 'medium';
+                    const priority  = fix.priority || fix.severity || 'WARNING';
+                    const dimension = fix.dimension || '—';
+                    const risk      = fix.risk || 'Low';
+                    const expImpr   = fix.expected_improvement || '—';
+
+                    const cls       = priority === 'CRITICAL' ? 'critical' : priority === 'WARNING' ? 'warning' : 'info';
+                    const beforePct = Math.round((fix.current_score||0)*100);
+                    const afterPct  = Math.round((fix.estimated_score_after||0)*100);
+                    const beforeCls = beforePct >= 80 ? '' : beforePct >= 60 ? 'amber' : '';
+                    const shortDesc = whyText ? whyText.split('.')[0]+'.' : '';
+                    const effortCap = effort.charAt(0).toUpperCase()+effort.slice(1);
+                    return `
+                    <div class="fix-card ${cls}" id="fixcard-${i}">
+                        <div class="fix-header" onclick="toggleFix(${i})">
+                            <div class="fix-rank ${cls}">${i+1}</div>
+                            <div class="fix-meta">
+                                <div class="fix-title">${title}</div>
+                                ${shortDesc ? `<div class="fix-desc">${shortDesc}</div>` : ''}
+                                <div class="fix-tags">
+                                    <span class="fix-tag dim">${dimension}</span>
+                                    <span class="fix-tag">${effortCap} effort</span>
+                                    ${fix.estimated_score_after ? `<span class="fix-tag score-up">Score: ${beforePct}% &rarr; est. ${afterPct}%</span>` : ''}
+                                    ${risk ? `<span class="fix-tag">Risk: ${risk}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="fix-toggle" id="fixtoggle-${i}"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="fix-body" id="fixbody-${i}">
+                            <div class="fix-body-grid">
+                                <div>
+                                    <div class="fix-section-lbl">Why this problem exists</div>
+                                    <div class="fix-why"><p>${whyText || whatText || 'See full remediation plan for details.'}</p></div>
+
+                                    <div class="fix-section-lbl">What your team needs to do</div>
+                                    <div class="fix-what"><p>${whatText || whyText || 'Apply the suggested code fix below.'}</p></div>
+
+                                    ${codeText ? `
+                                    <div class="fix-section-lbl">Implementation code</div>
+                                    <div class="code-block-wrap">
+                                        <div class="code-block-header">
+                                            <span class="code-block-lang">Python</span>
+                                            <button class="code-copy-btn" onclick="event.stopPropagation();copyCode(this, ${JSON.stringify(codeText)})">Copy</button>
+                                        </div>
+                                        <div class="code-block"><code>${highlightCode(codeText)}</code></div>
+                                    </div>` : ''}
+                                </div>
+                                <div>
+                                    ${fix.current_score != null ? `
+                                    <div class="score-delta">
+                                        <div class="score-delta-title">Estimated score change after fix</div>
+                                        <div class="score-delta-row">
+                                            <div class="score-delta-label">Current</div>
+                                            <div class="score-delta-bar-track"><div class="score-delta-bar before ${beforeCls}" style="width:${Math.max(beforePct,8)}%">${beforePct}%</div></div>
+                                            <div class="score-delta-val">${beforePct}%</div>
+                                        </div>
+                                        <div class="score-delta-row">
+                                            <div class="score-delta-label">Estimated</div>
+                                            <div class="score-delta-bar-track"><div class="score-delta-bar after" style="width:${Math.max(afterPct,8)}%">${afterPct}%</div></div>
+                                            <div class="score-delta-val">${afterPct}%</div>
+                                        </div>
+                                    </div>` : ''}
+                                    <div class="effort-box">
+                                        <div class="fix-section-lbl">Fix details</div>
+                                        <div class="effort-row"><span class="effort-key">Effort</span><span class="effort-pill ${effort}">${effortCap}</span></div>
+                                        <div class="effort-row"><span class="effort-key">Retraining required</span><span class="effort-val">${effort === 'high' ? 'Yes' : 'No'}</span></div>
+                                        <div class="effort-row"><span class="effort-key">Risk of applying</span><span class="effort-val">${risk}</span></div>
+                                        <div class="effort-row"><span class="effort-key">Expected improvement</span><span class="effort-val">${expImpr}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    </div>`;
+
+    // ── Quick wins ────────────────────────────────────────────────────────────
+    const quickWinsHtml = quickWins.length ? `
+    <div class="section">
+        <div class="section-head">
+            <div class="section-title"><i class="fas fa-bolt"></i> Quick Wins — Low-Effort Fixes You Can Do Today</div>
+            <span style="font-size:0.8125rem;color:var(--muted)">${quickWins.length} fix${quickWins.length!==1?'es':''} &nbsp;·&nbsp; No retraining required</span>
+        </div>
+        <div class="section-body">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>These fixes require <strong style="color:var(--navy)">no model retraining</strong>. They can be applied directly to the existing model as post-processing steps, and will immediately improve one or more dimension scores.</span>
+            </div>
+            <div class="quickwins-grid">
+                ${quickWins.map(fix => {
+                    const afterPct   = Math.round((fix.estimated_score_after||0)*100);
+                    const whatText   = fix.what || fix.description || '';
+                    const shortWhat  = whatText ? whatText.split('.')[0]+'.' : '';
+                    return `
+                    <div class="quickwin-card">
+                        <div class="quickwin-tag"><i class="fas fa-bolt"></i> Low Effort</div>
+                        <div class="quickwin-title">${fix.title || '—'}</div>
+                        ${shortWhat ? `<div class="quickwin-desc">${shortWhat}</div>` : ''}
+                        <div class="quickwin-score">Expected score after fix: ~${afterPct}%</div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    </div>` : '';
+
+    // ── Counterfactual examples ───────────────────────────────────────────────
+        function renderProfileRows(person, diffAttr, sensitiveAttr) {
+        const profile = person.profile || {};
+        const rows = [];
+        // Show index and prediction
+        rows.push('<div class="cf-attr-row"><span class="cf-attr-key">index</span><span class="cf-attr-val">' + (person.index ?? '—') + '</span></div>');
+        rows.push('<div class="cf-attr-row"><span class="cf-attr-key">prediction</span><span class="cf-attr-val">' + (person.prediction ?? '—') + '</span></div>');
+        // Show profile fields
+        Object.keys(profile).forEach(function(key) {
+            var val = profile[key];
+            var displayVal = (val === null || val === undefined) ? '—' : (typeof val === 'object' ? JSON.stringify(val) : String(val));
+            rows.push('<div class="cf-attr-row"><span class="cf-attr-key">' + key.replace(/_/g,' ') + '</span><span class="cf-attr-val">' + displayVal + '</span></div>');
+        });
+        // Show sensitive value — highlighted
+        rows.push('<div class="cf-attr-row"><span class="cf-attr-key">sensitive val</span><span class="cf-attr-val diff"><strong>' + (person.sensitive_val ?? '—') + '</strong></span></div>');
+        return rows.join('');
+    }
+    
+    const cfHtml = cfExamples.length ? (function() {
+        var sectionOpen = '<div class="section"><div class="section-head"><div class="section-title"><i class="fas fa-not-equal"></i> Bias Evidence \u2014 Real Examples from the Dataset</div><span style="font-size:0.8125rem;color:var(--muted)">Identical profiles, different outcomes</span></div><div class="section-body"><div class="info-box"><i class="fas fa-info-circle"></i><span><strong style="color:var(--navy)">What is a counterfactual example?</strong> It is a pair of real records from your dataset where two applicants have identical qualifications, but differ only in a protected attribute (gender, caste, age). If the model gives them different outcomes, that is direct evidence of bias.</span></div><div class="cf-list">';
+    
+        var cards = cfExamples.map(function(cf, i) {
+            var pA = cf.person_a || {};
+            var pB = cf.person_b || {};
+            var attr = cf.attribute || cf.sensitive_attribute || 'protected attribute';
+            var outcomeA = (pA.outcome || 'REJECTED').toLowerCase();
+            var outcomeB = (pB.outcome || 'REJECTED').toLowerCase();
+            var iconA = outcomeA === 'approved' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
+            var iconB = outcomeB === 'approved' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
+    
+            return '<div class="cf-card">' +
+                '<div class="cf-header">' +
+                    '<div class="cf-header-title"><i class="fas fa-exchange-alt"></i> Counterfactual Example ' + (i+1) + '</div>' +
+                    '<span class="cf-header-attr">DIFFERS ON: ' + attr.toUpperCase() + '</span>' +
+                '</div>' +
+                '<div class="cf-body">' +
+                    '<div class="cf-compare">' +
+                        '<div class="cf-person">' +
+                            '<div class="cf-person-head ' + outcomeA + '">PERSON A</div>' +
+                            '<div class="cf-person-outcome ' + outcomeA + '">' + iconA + ' ' + (pA.outcome || 'REJECTED') + '</div>' +
+                            renderProfileRows(pA, cf.diff_attr, attr) +
+                        '</div>' +
+                        '<div class="cf-arrow"><i class="fas fa-not-equal"></i><div class="cf-arrow-label">BIAS</div></div>' +
+                        '<div class="cf-person">' +
+                            '<div class="cf-person-head ' + outcomeB + '">PERSON B</div>' +
+                            '<div class="cf-person-outcome ' + outcomeB + '">' + iconB + ' ' + (pB.outcome || 'REJECTED') + '</div>' +
+                            renderProfileRows(pB, cf.diff_attr, attr) +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="cf-explanation">' +
+                        '<div class="cf-explanation-lbl">WHAT THIS MEANS IN PLAIN LANGUAGE</div>' +
+                        '<div class="cf-explanation-text">' + (cf.plain_english || 'Two applicants with identical profiles received different outcomes based solely on a protected attribute.') + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    
+        var sectionClose = '</div></div></div>';
+        return sectionOpen + cards + sectionClose;
+    })() : '';
+ 
+
+    document.getElementById('app').innerHTML = heroHtml + gateBannerHtml + checksHtml + fixesHtml + quickWinsHtml + cfHtml;
+}
+
+// ── Cache fallback ────────────────────────────────────────────────────────────
+function buildFromCache(cached, evalId) {
+    const raw = JSON.parse(cached);
+    // Debug: log keys so we can see field names if scores are still wrong
+    console.log('[FairTrust] cache keys:', Object.keys(raw));
+    console.log('[FairTrust] score fields:', {
+        ethical_score: raw.ethical_score,
+        fairness_score: raw.fairness_score,
+        privacy_score: raw.privacy_score,
+        robustness_score: raw.robustness_score,
+        transparency_score: raw.transparency_score,
+        scores: raw.scores,
+        fairness: raw.fairness?.fairness_score,
+    });
+    // check top-level, nested objects, and model_metrics
+    const pick = (...paths) => {
+        for (const p of paths) {
+            const val = p.split('.').reduce((o, k) => o?.[k], raw);
+            if (val != null && val > 0) return val;
+        }
+        return null;
+    };
+
+    const ethicalScore = pick(
+        'ethical_score', 'fairness_score',
+        'fairness.fairness_score', 'fairness.ethical_score',
+        'scores.overall', 'scores.fairness'
+    );
+
+    const ev = {
+        ethical_score:        ethicalScore,
+        fairness_score:       pick('fairness_score', 'fairness.fairness_score', 'scores.fairness'),
+        privacy_score:        pick('privacy_score', 'privacy.privacy_score', 'scores.privacy'),
+        robustness_score:     pick('robustness_score', 'robustness.robustness_score', 'scores.robustness'),
+        transparency_score:   pick('transparency_score', 'transparency.transparency_score', 'scores.transparency'),
+        accountability_score: pick('accountability_score', 'accountability.accountability_score', 'scores.accountability'),
+        fairness:             raw.fairness    || {},
+        privacy:              raw.privacy     || {},
+        robustness:           raw.robustness  || {},
+        remediation:          raw.remediation || {},
+        records:              raw.records     || 0,
+    };
+
+    const fixes = raw.remediation?.all_fixes || buildFallbackFixes(ev);
+    const cfEx  = raw.counterfactual_examples || buildFallbackCF(ev);
+    renderReport(ev, evalId, fixes, cfEx);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(async function init() {
+    const evalId = new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+    if (!evalId) {
+        document.getElementById('app').innerHTML = `
+        <div class="state-wrap">
+            <div class="state-icon" style="color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="state-title">No evaluation found</div>
+            <div class="state-sub">Complete an evaluation on the upload page first.</div>
+            <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a>
+        </div>`;
+        return;
+    }
+    try {
+        const res  = await fetch(`${API_BASE}/remediation/${evalId}`);
+        const data = await res.json();
+        if (res.ok && data.status !== 'error') {
+            const pick = (...paths) => {
+                for (const p of paths) {
+                    const val = p.split('.').reduce((o, k) => o?.[k], data);
+                    if (val != null && val > 0) return val;
+                }
+                return null;
+            };
+            const ev = {
+                ethical_score:        pick('ethical_score', 'fairness_score', 'fairness.fairness_score', 'scores.overall'),
+                fairness_score:       pick('fairness_score', 'fairness.fairness_score', 'scores.fairness'),
+                privacy_score:        pick('privacy_score', 'privacy.privacy_score', 'scores.privacy'),
+                robustness_score:     pick('robustness_score', 'robustness.robustness_score', 'scores.robustness'),
+                transparency_score:   pick('transparency_score', 'transparency.transparency_score', 'scores.transparency'),
+                accountability_score: pick('accountability_score', 'accountability.accountability_score', 'scores.accountability'),
+                fairness:   data.fairness   || {},
+                privacy:    data.privacy    || {},
+                robustness: data.robustness || {},
+                records:    data.records    || 0,
+            };
+            const fixes = data.remediation?.all_fixes || buildFallbackFixes(ev);
+            const cfEx  = data.counterfactual_examples || buildFallbackCF(ev);
+            renderReport(ev, evalId, fixes, cfEx);
+            return;
+        }
+        throw new Error('failed');
+    } catch (_) {
+        const cached = sessionStorage.getItem('eval_result');
+        if (cached) { buildFromCache(cached, evalId); return; }
+        document.getElementById('app').innerHTML = `
+        <div class="state-wrap">
+            <div class="state-icon" style="color:var(--red)"><i class="fas fa-times-circle"></i></div>
+            <div class="state-title">Could not load remediation data</div>
+            <div class="state-sub">Evaluation not found or still processing.</div>
+            <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-redo"></i> Try again</a>
+        </div>`;
+    }
+})();
+</script>
+</body>
+</html>

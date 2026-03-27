@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Fairtrust AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #4F46E5; --primary-soft: #EEF2FF;
+            --success: #059669; --success-light: #D1FAE5;
+            --warning: #D97706; --warning-light: #FEF3C7;
+            --danger:  #DC2626; --danger-light:  #FEE2E2;
+            --bg: #FAFBFC; --surface: #FFFFFF;
+            --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
+        }
+        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+
+        /* ── Nav ── */
+        header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        nav { max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .admin-badge { background: var(--primary); color: white; padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 0.9375rem; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        /* ── Layout ── */
+        .admin-dashboard { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .dashboard-header h1 { font-size: 1.375rem; font-weight: 600; }
+        .date-range { display: flex; gap: 0.5rem; }
+        .date-range select { padding: 0.4rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; background: var(--surface); font-family: inherit; }
+
+        /* ── Health cards ── */
+        .health-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .health-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+        .health-card h3 { color: var(--text-muted); font-size: 0.8125rem; margin-bottom: 0.5rem; font-weight: 500; }
+        .health-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .health-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-muted); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .dot-green  { background: var(--success); }
+        .dot-yellow { background: var(--warning); }
+        .dot-red    { background: var(--danger);  }
+
+        /* ── Section card ── */
+        .section-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+        .section-header h2 { font-size: 1.0625rem; font-weight: 600; }
+
+        /* ── Alerts ── */
+        .alert-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .alert-chip { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .chip-red    { background: var(--danger);  color: white; }
+        .chip-yellow { background: var(--warning); color: white; }
+        .chip-green  { background: var(--success); color: white; }
+        .chip-neutral{ background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); }
+        .alert-item { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 0; border-bottom: 1px solid var(--border); gap: 1rem; }
+        .alert-item:last-child { border-bottom: none; }
+        .alert-info { display: flex; align-items: center; gap: 0.875rem; flex: 1; }
+        .alert-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+        .icon-red    { background: rgba(220,38,38,0.1);  color: var(--danger); }
+        .icon-yellow { background: rgba(217,119,6,0.1);  color: var(--warning); }
+        .icon-green  { background: rgba(5,150,105,0.1);  color: var(--success); }
+        .alert-text strong { font-size: 0.9rem; }
+        .alert-time { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.15rem; }
+        .alert-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+        .alert-actions button { padding: 0.4rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 0.8125rem; font-family: inherit; transition: all 0.2s; }
+        .alert-actions button:hover { background: var(--bg); border-color: var(--primary); color: var(--primary); }
+        .alert-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ── Stats ── */
+        .stats-section { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .chart-container { display: flex; align-items: flex-end; gap: 3px; height: 160px; padding: 0.5rem; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); margin: 1.25rem 0; }
+        .chart-bar { flex: 1; background: linear-gradient(180deg, var(--primary), #8B5CF6); border-radius: 4px 4px 0 0; min-width: 6px; transition: height 0.4s ease; }
+        .chart-labels { display: flex; gap: 3px; }
+        .chart-label { flex: 1; font-size: 0.65rem; color: var(--text-muted); text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-top: 3px; }
+        .stats-numbers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .stat-number-item { text-align: center; padding: 1rem; background: var(--bg); border-radius: 8px; }
+        .stat-number-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-number-label { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .users-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+        .users-total { font-size: 3rem; font-weight: 800; text-align: center; color: var(--primary); margin: 1rem 0; }
+        .tier-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
+        .tier-row:last-child { border-bottom: none; }
+
+        /* ── Models table ── */
+        .models-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .models-table th { background: var(--bg); padding: 0.6rem 0.75rem; text-align: left; font-weight: 600; font-size: 0.8125rem; color: var(--text-muted); }
+        .models-table td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border); }
+        .models-table tr:last-child td { border-bottom: none; }
+        .model-status { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .status-ACTIVE   { background: var(--success-light); color: var(--success); }
+        .status-INACTIVE { background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); }
+        .status-ARCHIVED { background: var(--bg); color: var(--text-muted); opacity: 0.6; }
+        .action-buttons { display: flex; gap: 0.4rem; }
+        .action-btn { padding: 0.35rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 0.8125rem; font-family: inherit; transition: all 0.2s; }
+        .action-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ── Users ── */
+        .user-filters { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+        .user-filters input, .user-filters select { padding: 0.45rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; font-family: inherit; background: var(--surface); }
+        .user-filters input { flex: 1; min-width: 160px; }
+        .user-filters input:focus, .user-filters select:focus { outline: none; border-color: var(--primary); }
+
+        /* ── Settings ── */
+        .settings-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin: 1.25rem 0; }
+        .settings-group h3 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-item label { font-size: 0.875rem; }
+        .setting-item input[type="number"] { width: 80px; padding: 0.35rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; font-family: inherit; text-align: center; }
+        .setting-item input:focus { outline: none; border-color: var(--primary); }
+        .toggle-switch { position: relative; width: 46px; height: 24px; background: var(--border); border-radius: 12px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .toggle-switch.on { background: var(--primary); }
+        .toggle-knob { position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.25s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .toggle-switch.on .toggle-knob { transform: translateX(22px); }
+        .settings-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; }
+
+        /* ── Buttons ── */
+        .btn { padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; cursor: pointer; border: none; font-family: inherit; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #4338CA; }
+        .btn-outline { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ── Toast ── */
+        #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: white; padding: 0.75rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9999; max-width: 320px; }
+        #toast.show { opacity: 1; }
+        #toast.success { background: var(--success); }
+        #toast.error   { background: var(--danger); }
+
+        @media (max-width: 1024px) {
+            .health-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-section { grid-template-columns: 1fr; }
+            .settings-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .health-grid { grid-template-columns: 1fr; }
+            .models-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div style="display:flex;align-items:center">
+                <a href="index.html" class="logo">Fairtrust AI Framework</a>
+                <span class="admin-badge">Admin</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="upload.html">Upload</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="aboutUs.html">Where AI Goes Wrong</a>
+                <a href="docs.html">Docs</a>
+                <a href="admin.html" class="active">Admin</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-dashboard">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <div class="date-range">
+                <select id="rangeSelect" onchange="loadStats()">
+                    <option value="24h">Last 24 hours</option>
+                    <option value="7d" selected>Last 7 days</option>
+                    <option value="30d">Last 30 days</option>
+                </select>
+                <button class="btn btn-primary" onclick="refreshAll()">↻ Refresh</button>
+            </div>
+        </div>
+
+        <!-- Health -->
+        <div class="health-grid" id="healthGrid">
+            <div class="health-card"><h3>Loading…</h3><div class="health-value">—</div></div>
+            <div class="health-card"><h3>Loading…</h3><div class="health-value">—</div></div>
+            <div class="health-card"><h3>Loading…</h3><div class="health-value">—</div></div>
+            <div class="health-card"><h3>Loading…</h3><div class="health-value">—</div></div>
+        </div>
+
+        <!-- Alerts -->
+        <section class="section-card">
+            <div class="section-header">
+                <h2>Active Alerts</h2>
+                <div class="alert-filters" id="alertSummary"></div>
+            </div>
+            <div id="alertsList"><p style="color:var(--text-muted);font-size:0.875rem">Loading alerts…</p></div>
+        </section>
+
+        <!-- Stats -->
+        <div class="stats-section">
+            <div class="section-card" style="margin-bottom:0">
+                <h2 style="font-size:1.0625rem;font-weight:600">API Usage</h2>
+                <div class="chart-container" id="usageChart"></div>
+                <div class="chart-labels" id="usageLabels"></div>
+                <div class="stats-numbers" id="statsNumbers" style="margin-top:1rem"></div>
+            </div>
+            <div class="users-card">
+                <h2 style="font-size:1.0625rem;font-weight:600">Active Users</h2>
+                <div class="users-total" id="usersTotal">—</div>
+                <div id="usersTiers"></div>
+            </div>
+        </div>
+
+        <!-- Models -->
+        <section class="section-card">
+            <div class="section-header">
+                <h2>Model Management</h2>
+                <button class="btn btn-primary" onclick="deployNewModel()">+ Deploy New Model</button>
+            </div>
+            <table class="models-table">
+                <thead>
+                    <tr>
+                        <th>Version</th><th>Deployed</th><th>Ethical Score</th>
+                        <th>Status</th><th>Records</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="modelsBody"><tr><td colspan="6" style="color:var(--text-muted);padding:1rem">Loading…</td></tr></tbody>
+            </table>
+        </section>
+
+        <!-- Users -->
+        <section class="section-card">
+            <div class="section-header">
+                <h2>User Management</h2>
+                <button class="btn btn-primary" onclick="openInviteForm()">+ Invite User</button>
+            </div>
+            <div class="user-filters">
+                <input type="text" id="userSearch" placeholder="Search users…" oninput="loadUsers()">
+                <select id="userRoleFilter" onchange="loadUsers()">
+                    <option value="">All Roles</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="DEVELOPER">Developer</option>
+                    <option value="VIEWER">Viewer</option>
+                </select>
+                <select id="userTierFilter" onchange="loadUsers()">
+                    <option value="">All Tiers</option>
+                    <option value="FREE">Free</option>
+                    <option value="PRO">Pro</option>
+                    <option value="ENTERPRISE">Enterprise</option>
+                </select>
+            </div>
+            <table class="models-table">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Role</th><th>Tier</th><th>API Key</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="usersBody"><tr><td colspan="6" style="color:var(--text-muted);padding:1rem">Loading…</td></tr></tbody>
+            </table>
+        </section>
+
+        <!-- Settings -->
+        <section class="section-card">
+            <h2 style="font-size:1.0625rem;font-weight:600;margin-bottom:1.25rem">System Settings</h2>
+            <div class="settings-grid">
+                <div class="settings-group">
+                    <h3>Fairness Thresholds</h3>
+                    <div class="setting-item">
+                        <label>Minimum Ethical Score</label>
+                        <input type="number" id="min_ethical_score" step="0.05" min="0" max="1">
+                    </div>
+                    <div class="setting-item">
+                        <label>Individual Fairness Min</label>
+                        <input type="number" id="individual_fairness_min" step="0.05" min="0" max="1">
+                    </div>
+                    <div class="setting-item">
+                        <label>Disparate Impact Threshold</label>
+                        <input type="number" id="disparate_impact_threshold" step="0.05" min="0" max="1">
+                    </div>
+                    <div class="setting-item">
+                        <label>Group Fairness Threshold</label>
+                        <input type="number" id="group_fairness_threshold" step="0.05" min="0" max="1">
+                    </div>
+                    <div class="setting-item">
+                        <label>Max Calibration Error</label>
+                        <input type="number" id="calibration_error_max" step="0.01" min="0" max="1">
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3>Alert Rules</h3>
+                    <div class="setting-item">
+                        <label>Alert on low fairness score</label>
+                        <div class="toggle-switch" id="toggle_alert_on_low_fairness" onclick="toggleSetting(this,'alert_on_low_fairness')"><div class="toggle-knob"></div></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Email notifications</label>
+                        <div class="toggle-switch" id="toggle_email_notifications" onclick="toggleSetting(this,'email_notifications')"><div class="toggle-knob"></div></div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Slack integration</label>
+                        <div class="toggle-switch" id="toggle_slack_integration" onclick="toggleSetting(this,'slack_integration')"><div class="toggle-knob"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button class="btn btn-outline" onclick="resetSettings()">Reset to Default</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast"></div>
+
+    <script>
+        const API = 'http://127.0.0.1:5000/admin';
+
+        // ── Toast ─────────────────────────────────────────────────────────────
+        function toast(msg, type = '') {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'show ' + type;
+            clearTimeout(el._t);
+            el._t = setTimeout(() => el.className = '', 2800);
+        }
+
+        // ── Health ────────────────────────────────────────────────────────────
+        async function loadHealth() {
+            try {
+                const res  = await fetch(`${API}/health`);
+                const data = await res.json();
+                document.getElementById('healthGrid').innerHTML = (data.cards || []).map(c => `
+                    <div class="health-card">
+                        <h3>${c.label}</h3>
+                        <div class="health-value">${c.value}</div>
+                        <div class="health-status">
+                            <span class="status-dot dot-${c.dot_color}"></span>
+                            <span>${c.status}</span>
+                        </div>
+                    </div>`).join('');
+            } catch (_) {
+                document.getElementById('healthGrid').innerHTML =
+                    '<div class="health-card" style="grid-column:1/-1"><p style="color:var(--text-muted)">Could not load health data.</p></div>';
+            }
+        }
+
+        // ── Alerts ────────────────────────────────────────────────────────────
+        async function loadAlerts() {
+            try {
+                const res  = await fetch(`${API}/alerts`);
+                const data = await res.json();
+                renderAlertSummary(data.summary || {});
+                renderAlertsList(data.alerts || []);
+            } catch (_) {
+                document.getElementById('alertsList').innerHTML =
+                    '<p style="color:var(--text-muted);font-size:0.875rem">Could not load alerts.</p>';
+            }
+        }
+
+        function renderAlertSummary(s) {
+            document.getElementById('alertSummary').innerHTML = `
+                ${s.critical ? `<span class="alert-chip chip-red">Critical (${s.critical})</span>` : ''}
+                ${s.warning  ? `<span class="alert-chip chip-yellow">Warning (${s.warning})</span>` : ''}
+                ${s.resolved ? `<span class="alert-chip chip-green">Resolved (${s.resolved})</span>` : ''}
+                <span class="alert-chip chip-neutral">Total: ${s.total || 0}</span>`;
+        }
+
+        function renderAlertsList(alerts) {
+            if (!alerts.length) {
+                document.getElementById('alertsList').innerHTML =
+                    '<p style="color:var(--text-muted);font-size:0.875rem;padding:0.5rem 0">✅ No active alerts.</p>';
+                return;
+            }
+            document.getElementById('alertsList').innerHTML = alerts.map(a => `
+                <div class="alert-item" id="aitem-${a.id}">
+                    <div class="alert-info">
+                        <div class="alert-icon icon-${a.color}">${a.icon}</div>
+                        <div class="alert-text">
+                            <strong>${a.message}</strong>
+                            <div class="alert-time">${a.detail || ''} · ${a.relative_time}</div>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        ${!a.acknowledged ? `<button onclick="acknowledgeAlert('${a.id}',this)" title="Acknowledge">Acknowledge</button>` : '<button disabled>Acknowledged</button>'}
+                        ${!a.resolved     ? `<button onclick="resolveAlert('${a.id}')"       title="Resolve">Resolve</button>` : ''}
+                    </div>
+                </div>`).join('');
+        }
+
+        async function acknowledgeAlert(id, btn) {
+            try {
+                await fetch(`${API}/alerts/${id}/acknowledge`, { method: 'POST' });
+                btn.textContent = 'Acknowledged';
+                btn.disabled = true;
+                toast('Alert acknowledged.');
+            } catch (_) { toast('Failed to acknowledge alert.', 'error'); }
+        }
+
+        async function resolveAlert(id) {
+            try {
+                await fetch(`${API}/alerts/${id}/resolve`, { method: 'POST' });
+                document.getElementById('aitem-' + id)?.remove();
+                toast('Alert resolved.', 'success');
+                loadAlerts();
+            } catch (_) { toast('Failed to resolve alert.', 'error'); }
+        }
+
+        // ── Stats ─────────────────────────────────────────────────────────────
+        async function loadStats() {
+            const range = document.getElementById('rangeSelect').value;
+            try {
+                const res  = await fetch(`${API}/stats?range=${range}`);
+                const data = await res.json();
+                renderChart(data.chart || {});
+                renderCounters(data.counters || {});
+                renderUsers(data.users || {});
+            } catch (_) {}
+        }
+
+        function renderChart(chart) {
+            const max    = chart.max || 100;
+            const values = chart.values || [];
+            const labels = chart.labels || [];
+
+            document.getElementById('usageChart').innerHTML =
+                values.map(v => `<div class="chart-bar" style="height:${Math.round((v / max) * 140)}px" title="${v}"></div>`).join('');
+
+            document.getElementById('usageLabels').innerHTML =
+                labels.map(l => `<div class="chart-label">${l}</div>`).join('');
+        }
+
+        function renderCounters(c) {
+            document.getElementById('statsNumbers').innerHTML = `
+                <div class="stat-number-item">
+                    <div class="stat-number-value">${(c.evaluations_today || 0).toLocaleString()}</div>
+                    <div class="stat-number-label">Evaluations</div>
+                </div>
+                <div class="stat-number-item">
+                    <div class="stat-number-value">${(c.certificates_issued || 0).toLocaleString()}</div>
+                    <div class="stat-number-label">Certificates Issued</div>
+                </div>`;
+        }
+
+        function renderUsers(u) {
+            document.getElementById('usersTotal').textContent = u.total ?? '—';
+            const by = u.by_tier || {};
+            document.getElementById('usersTiers').innerHTML = Object.entries(by).map(([tier, count]) => `
+                <div class="tier-row">
+                    <span>${tier.charAt(0) + tier.slice(1).toLowerCase()} Tier</span>
+                    <strong>${count}</strong>
+                </div>`).join('');
+        }
+
+        // ── Models ────────────────────────────────────────────────────────────
+        async function loadModels() {
+            try {
+                const res  = await fetch(`${API}/models`);
+                const data = await res.json();
+                document.getElementById('modelsBody').innerHTML = (data.models || []).map(m => {
+                    const actions = (m.actions || []).map(a => {
+                        const labels = { retrain: '↺ Retrain', rollback: '⏪ Rollback', archive: '🗄 Archive' };
+                        const fns    = { retrain: `retrainModel('${m.model_id}')`, rollback: `rollbackModel('${m.model_id}')`, archive: `archiveModel('${m.model_id}')` };
+                        return `<button class="action-btn" onclick="${fns[a]}">${labels[a]}</button>`;
+                    }).join('');
+                    const scoreColor = m.ethical_score >= 0.80 ? 'var(--success)' : m.ethical_score >= 0.65 ? 'var(--warning)' : 'var(--danger)';
+                    return `
+                    <tr>
+                        <td><strong>${m.version}</strong></td>
+                        <td style="color:var(--text-muted)">${m.deployed_at}</td>
+                        <td><strong style="color:${scoreColor}">${m.ethical_score?.toFixed(2)}</strong></td>
+                        <td><span class="model-status status-${m.status}">${m.status}</span></td>
+                        <td style="color:var(--text-muted)">${m.records_trained?.toLocaleString() ?? '—'}</td>
+                        <td><div class="action-buttons">${actions}</div></td>
+                    </tr>`;
+                }).join('');
+            } catch (_) {
+                document.getElementById('modelsBody').innerHTML =
+                    '<tr><td colspan="6" style="color:var(--text-muted);padding:1rem">Could not load models.</td></tr>';
+            }
+        }
+
+        async function retrainModel(id) {
+            if (!confirm(`Initiate retraining for ${id}?`)) return;
+            try {
+                const res  = await fetch(`${API}/models/${id}/retrain`, { method: 'POST' });
+                const data = await res.json();
+                toast(data.message || 'Retraining initiated.', 'success');
+            } catch (_) { toast('Retrain request failed.', 'error'); }
+        }
+
+        async function rollbackModel(id) {
+            if (!confirm(`Roll back ${id} to the previous version?`)) return;
+            try {
+                const res  = await fetch(`${API}/models/${id}/rollback`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                toast(data.message, 'success');
+                loadModels();
+            } catch (e) { toast(e.message || 'Rollback failed.', 'error'); }
+        }
+
+        async function archiveModel(id) {
+            if (!confirm(`Archive ${id}? This cannot be undone.`)) return;
+            try {
+                const res  = await fetch(`${API}/models/${id}/archive`, { method: 'POST' });
+                const data = await res.json();
+                toast(data.message, 'success');
+                loadModels();
+            } catch (_) { toast('Archive failed.', 'error'); }
+        }
+
+        function deployNewModel() { toast('Opening model deployment wizard…'); }
+
+        // ── Users ─────────────────────────────────────────────────────────────
+        async function loadUsers() {
+            const search = document.getElementById('userSearch').value;
+            const role   = document.getElementById('userRoleFilter').value;
+            const tier   = document.getElementById('userTierFilter').value;
+            const params = new URLSearchParams();
+            if (search) params.set('search', search);
+            if (role)   params.set('role', role);
+            if (tier)   params.set('tier', tier);
+            try {
+                const res  = await fetch(`${API}/users?${params}`);
+                const data = await res.json();
+                document.getElementById('usersBody').innerHTML = (data.users || []).map(u => `
+                    <tr>
+                        <td><strong>${u.name}</strong></td>
+                        <td style="color:var(--text-muted)">${u.email}</td>
+                        <td>${u.role}</td>
+                        <td>${u.tier}</td>
+                        <td style="font-family:monospace;color:var(--text-muted)">${u.api_key_hint}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn" onclick="editUser('${u.user_id}')">✏️ Edit</button>
+                                <button class="action-btn" onclick="resetKey('${u.user_id}')">🔑 Reset Key</button>
+                            </div>
+                        </td>
+                    </tr>`).join('');
+            } catch (_) {
+                document.getElementById('usersBody').innerHTML =
+                    '<tr><td colspan="6" style="color:var(--text-muted);padding:1rem">Could not load users.</td></tr>';
+            }
+        }
+
+        function editUser(id) { toast(`Opening edit form for user ${id.slice(0,8)}…`); }
+
+        async function resetKey(id) {
+            if (!confirm('Regenerate API key for this user?')) return;
+            try {
+                const res  = await fetch(`${API}/users/${id}/reset-key`, { method: 'POST' });
+                const data = await res.json();
+                toast(`New API key generated: ${data.api_key_hint}`, 'success');
+                loadUsers();
+            } catch (_) { toast('Key reset failed.', 'error'); }
+        }
+
+        function openInviteForm() {
+            const email = prompt('Enter email address to invite:');
+            if (!email) return;
+            const name  = prompt('Enter their name:');
+            if (!name)  return;
+            fetch(`${API}/users/invite`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, name, role: 'DEVELOPER', tier: 'FREE' })
+            }).then(r => r.json()).then(d => {
+                if (d.success) { toast(`Invitation sent to ${email}`, 'success'); loadUsers(); }
+                else toast(d.error || 'Invite failed.', 'error');
+            }).catch(() => toast('Invite failed.', 'error'));
+        }
+
+        // ── Settings ──────────────────────────────────────────────────────────
+        async function loadSettings() {
+            try {
+                const res  = await fetch(`${API}/settings`);
+                const data = await res.json();
+                const raw  = data.raw || {};
+                // Populate number inputs
+                ['min_ethical_score','individual_fairness_min','disparate_impact_threshold',
+                 'group_fairness_threshold','calibration_error_max'].forEach(k => {
+                    const el = document.getElementById(k);
+                    if (el) el.value = raw[k] ?? '';
+                });
+                // Populate toggles
+                ['alert_on_low_fairness','email_notifications','slack_integration'].forEach(k => {
+                    const el = document.getElementById('toggle_' + k);
+                    if (el) el.classList.toggle('on', !!raw[k]);
+                });
+            } catch (_) {}
+        }
+
+        function toggleSetting(el) { el.classList.toggle('on'); }
+
+        async function saveSettings() {
+            const body = {};
+            ['min_ethical_score','individual_fairness_min','disparate_impact_threshold',
+             'group_fairness_threshold','calibration_error_max'].forEach(k => {
+                const el = document.getElementById(k);
+                if (el) body[k] = parseFloat(el.value);
+            });
+            ['alert_on_low_fairness','email_notifications','slack_integration'].forEach(k => {
+                const el = document.getElementById('toggle_' + k);
+                if (el) body[k] = el.classList.contains('on');
+            });
+            try {
+                const res  = await fetch(`${API}/settings`, {
+                    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (res.ok) toast('Settings saved successfully.', 'success');
+                else        toast(data.details?.join(', ') || 'Validation error.', 'error');
+            } catch (_) { toast('Could not save settings.', 'error'); }
+        }
+
+        async function resetSettings() {
+            if (!confirm('Reset all settings to defaults?')) return;
+            try {
+                await fetch(`${API}/settings/reset`, { method: 'POST' });
+                await loadSettings();
+                toast('Settings reset to defaults.', 'success');
+            } catch (_) { toast('Reset failed.', 'error'); }
+        }
+
+        // ── Boot ──────────────────────────────────────────────────────────────
+        async function refreshAll() {
+            await Promise.all([loadHealth(), loadAlerts(), loadStats(), loadModels(), loadUsers(), loadSettings()]);
+            toast('Dashboard refreshed.');
+        }
+
+        refreshAll();
+    </script>
+</body>
+</html>

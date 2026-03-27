@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Report — FairTrust AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy:      #0F1E38;
+            --navy-mid:  #1A2D4E;
+            --navy-soft: #243D65;
+            --gold:      #EBB255;
+            --gold-dim:  rgba(235,178,85,0.12);
+            --gold-line: rgba(235,178,85,0.3);
+            --red:       #EF4444;
+            --red-dim:   rgba(239,68,68,0.1);
+            --amber:     #F59E0B;
+            --amber-dim: rgba(245,158,11,0.1);
+            --green:     #10B981;
+            --green-dim: rgba(16,185,129,0.1);
+            --blue:      #3B82F6;
+            --blue-dim:  rgba(59,130,246,0.1);
+            --surface:   #FFFFFF;
+            --bg:        #F1F3F8;
+            --bg2:       #E8EBF2;
+            --rule:      #DDE1EC;
+            --text:      #0F1E38;
+            --muted:     #64748B;
+            --mono:      'IBM Plex Mono', monospace;
+            --display:   'Plus Jakarta Sans', sans-serif;
+            --body:      'Plus Jakarta Sans', sans-serif;
+            --radius:    12px;
+            --shadow:    0 2px 12px rgba(15,30,56,0.07);
+            --shadow-md: 0 8px 32px rgba(15,30,56,0.10);
+        }
+        body { font-family: var(--body); background: var(--bg); color: var(--text); line-height: 1.6; }
+        .navbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule); padding: 0 5%; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: var(--shadow);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--navy), #4A90E2); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: white; font-size: 15px; }
+        .logo-text { font-family: var(--display); font-size: 18px; font-weight: 800; color: var(--navy); }
+        .logo-text span { color: var(--gold); }
+        .nav-links { display: flex; gap: 4px; }
+        .nav-links a { text-decoration: none; font-size: 14px; font-weight: 600; color: var(--muted); padding: 6px 12px; border-radius: 7px; transition: all 0.15s; }
+        .nav-links a:hover { color: var(--navy); background: var(--bg); }
+        .page { max-width: 1280px; margin: 0 auto; padding: 2rem 5% 5rem; }
+        .report-hero { background: var(--navy); border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+        .report-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(235,178,85,0.12) 0%, transparent 70%); }
+        .hero-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; position: relative; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-dim); border: 1px solid var(--gold-line); color: var(--gold); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 12px; border-radius: 999px; margin-bottom: 0.75rem; }
+        .hero-title { font-family: var(--display); font-size: 1.75rem; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 0.5rem; }
+        .hero-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+        .hero-stat { display: flex; flex-direction: column; }
+        .hero-stat-val { font-family: var(--display); font-size: 1.5rem; font-weight: 800; color: var(--gold); }
+        .hero-stat-lbl { font-size: 11px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.08em; }
+        .hero-score-ring { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.25rem 1.75rem; text-align: center; }
+        .score-big { font-family: var(--display); font-size: 3rem; font-weight: 800; line-height: 1; }
+        .score-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; color: rgba(255,255,255,0.5); }
+        .score-verdict { margin-top: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .hero-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .btn-hero { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--body); transition: all 0.2s; text-decoration: none; }
+        .btn-hero-primary { background: var(--gold); color: var(--navy); }
+        .btn-hero-primary:hover { background: #dfa342; transform: translateY(-1px); }
+        .btn-hero-ghost { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); }
+        .btn-hero-ghost:hover { background: rgba(255,255,255,0.14); color: white; }
+        .verdict-banner { display: flex; align-items: flex-start; gap: 1rem; border-radius: 0 10px 10px 0; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 1px solid; border-left: 4px solid; }
+        .verdict-banner.approved { background: var(--green-dim); border-color: rgba(16,185,129,0.25); border-left-color: var(--green); }
+        .verdict-banner.warn     { background: var(--amber-dim); border-color: rgba(245,158,11,0.25); border-left-color: var(--amber); }
+        .verdict-banner.blocked  { background: var(--red-dim);   border-color: rgba(239,68,68,0.25);  border-left-color: var(--red); }
+        .verdict-icon { font-size: 1.25rem; margin-top: 2px; flex-shrink: 0; }
+        .verdict-banner.approved .verdict-icon { color: var(--green); }
+        .verdict-banner.warn     .verdict-icon { color: var(--amber); }
+        .verdict-banner.blocked  .verdict-icon { color: var(--red); }
+        .verdict-title  { font-weight: 700; font-size: 0.9375rem; color: var(--text); }
+        .verdict-sub    { font-size: 0.8125rem; color: var(--muted); margin-top: 2px; line-height: 1.55; }
+        .verdict-action { font-size: 0.8125rem; font-weight: 600; margin-top: 6px; }
+        .verdict-banner.approved .verdict-action { color: var(--green); }
+        .verdict-banner.warn     .verdict-action { color: var(--amber); }
+        .verdict-banner.blocked  .verdict-action { color: var(--red); }
+        .section { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--rule); box-shadow: var(--shadow); margin-bottom: 1.5rem; overflow: hidden; }
+        .section-head { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--rule); background: var(--bg); }
+        .section-title { font-family: var(--display); font-size: 1rem; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--gold); font-size: 0.9rem; }
+        .section-body { padding: 1.75rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1.125rem 1rem; text-align: center; box-shadow: var(--shadow); transition: transform 0.15s, border-color 0.15s; }
+        .stat-card:hover { transform: translateY(-2px); border-color: var(--gold); }
+        .stat-val { font-family: var(--display); font-size: 1.5rem; font-weight: 800; color: var(--navy); line-height: 1; }
+        .stat-val.green { color: var(--green); }
+        .stat-val.amber { color: var(--amber); }
+        .stat-val.red   { color: var(--red); }
+        .stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-top: 5px; }
+        .dim5-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+        .dim5-card { border-radius: 10px; padding: 1.125rem; border: 1.5px solid var(--rule); background: var(--surface); transition: all 0.2s; }
+        .dim5-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .dim5-card.passing { border-color: rgba(16,185,129,0.4); }
+        .dim5-card.warning { border-color: rgba(245,158,11,0.4); }
+        .dim5-card.critical { border-color: rgba(239,68,68,0.4); }
+        .dim5-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .dim5-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .dim5-icon.passing { background: var(--green-dim); color: var(--green); }
+        .dim5-icon.warning { background: var(--amber-dim); color: var(--amber); }
+        .dim5-icon.critical { background: var(--red-dim); color: var(--red); }
+        .dim5-sev { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px; }
+        .dim5-sev.passing { background: var(--green-dim); color: var(--green); }
+        .dim5-sev.warning { background: var(--amber-dim); color: var(--amber); }
+        .dim5-sev.critical { background: var(--red-dim); color: var(--red); }
+        .dim5-name { font-size: 0.8125rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+        .dim5-score { font-family: var(--display); font-size: 1.75rem; font-weight: 800; line-height: 1; }
+        .dim5-score.passing { color: var(--green); }
+        .dim5-score.warning { color: var(--amber); }
+        .dim5-score.critical { color: var(--red); }
+        .dim5-bar-track { height: 4px; background: var(--bg2); border-radius: 100px; margin: 8px 0; overflow: hidden; }
+        .dim5-bar { height: 100%; border-radius: 100px; transition: width 0.8s ease; }
+        .dim5-bar.passing { background: var(--green); }
+        .dim5-bar.warning { background: var(--amber); }
+        .dim5-bar.critical { background: var(--red); }
+        .dim5-weight { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+        .dim5-plain { font-size: 0.75rem; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+        .risk-list { display: flex; flex-direction: column; gap: 0.875rem; }
+        .risk-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.25rem; border-radius: 10px; border: 1px solid var(--rule); background: var(--surface); transition: all 0.2s; }
+        .risk-item:hover { border-color: var(--gold); box-shadow: var(--shadow); }
+        .risk-item.high   { border-left: 4px solid var(--red); }
+        .risk-item.medium { border-left: 4px solid var(--amber); }
+        .risk-item.low    { border-left: 4px solid var(--green); }
+        .risk-icon { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .risk-icon.high   { background: var(--red-dim);   color: var(--red); }
+        .risk-icon.medium { background: var(--amber-dim); color: var(--amber); }
+        .risk-icon.low    { background: var(--green-dim); color: var(--green); }
+        .risk-cat   { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 3px; }
+        .risk-title { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 4px; }
+        .risk-detail { font-size: 0.8125rem; color: var(--muted); line-height: 1.55; }
+        .risk-badge { flex-shrink: 0; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; align-self: flex-start; }
+        .risk-badge.high   { background: var(--red-dim);   color: var(--red); }
+        .risk-badge.medium { background: var(--amber-dim); color: var(--amber); }
+        .risk-badge.low    { background: var(--green-dim); color: var(--green); }
+        .action-list { display: flex; flex-direction: column; gap: 0.875rem; }
+        .action-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.25rem; border-radius: 10px; border: 1px solid var(--rule); background: var(--surface); transition: all 0.2s; }
+        .action-item:hover { border-color: var(--gold); box-shadow: var(--shadow); }
+        .action-item.critical { border-left: 4px solid var(--red); }
+        .action-item.warning  { border-left: 4px solid var(--amber); }
+        .action-item.info     { border-left: 4px solid var(--blue); }
+        .action-rank { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 0.9rem; font-weight: 800; }
+        .action-rank.critical { background: var(--red-dim);   color: var(--red); }
+        .action-rank.warning  { background: var(--amber-dim); color: var(--amber); }
+        .action-rank.info     { background: var(--blue-dim);  color: var(--blue); }
+        .action-title { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 4px; }
+        .action-body  { font-size: 0.8125rem; color: var(--muted); line-height: 1.55; }
+        .action-effort { flex-shrink: 0; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; align-self: flex-start; margin-top: 2px; }
+        .action-effort.high   { background: var(--red-dim);   color: var(--red); }
+        .action-effort.medium { background: var(--amber-dim); color: var(--amber); }
+        .action-effort.low    { background: var(--green-dim); color: var(--green); }
+        .legal-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .legal-table th { background: var(--bg2); padding: 8px 12px; text-align: left; font-weight: 700; font-size: 0.75rem; color: var(--navy); border-bottom: 1.5px solid var(--rule); }
+        .legal-table td { padding: 0.875rem 12px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+        .legal-table tr:last-child td { border-bottom: none; }
+        .legal-table tr:hover td { background: var(--bg); }
+        .legal-fw   { font-weight: 600; color: var(--navy); font-size: 0.875rem; }
+        .legal-note { font-size: 0.75rem; color: var(--muted); margin-top: 2px; line-height: 1.45; }
+        .legal-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+        .legal-pill.pass    { background: var(--green-dim); color: var(--green); }
+        .legal-pill.warn    { background: var(--amber-dim); color: var(--amber); }
+        .legal-pill.fail    { background: var(--red-dim);   color: var(--red); }
+        .legal-pill.neutral { background: var(--bg2); color: var(--muted); border: 1px solid var(--rule); }
+        .perf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .perf-card { background: var(--bg); border: 1px solid var(--rule); border-radius: 10px; padding: 1.25rem; text-align: center; }
+        .perf-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+        .perf-value { font-family: var(--display); font-size: 2rem; font-weight: 800; line-height: 1; }
+        .perf-bar-track { height: 6px; background: var(--bg2); border-radius: 100px; margin: 10px 0 6px; overflow: hidden; }
+        .perf-bar-fill  { height: 100%; border-radius: 100px; background: var(--blue); transition: width 0.8s ease; }
+        .perf-sub { font-size: 0.75rem; color: var(--muted); }
+        .info-box { background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 1.25rem; font-size: 0.8125rem; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; }
+        .info-box i { color: var(--gold); margin-top: 2px; flex-shrink: 0; }
+        .state-wrap { min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--rule); }
+        .state-icon  { font-size: 2.5rem; margin-bottom: 1rem; }
+        .state-title { font-family: var(--display); font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+        .state-sub   { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+        @media (max-width: 900px) { .dim5-grid { grid-template-columns: repeat(3, 1fr); } .stats-grid { grid-template-columns: repeat(3, 1fr); } .perf-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 560px) { .dim5-grid { grid-template-columns: repeat(2, 1fr); } .nav-links { display: none; } }
+        @media print {
+            @page { size: A4; margin: 15mm 12mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .navbar, .hero-actions { display: none !important; }
+            body { background: white !important; }
+            .report-hero { background: #0F1E38 !important; }
+            .section { box-shadow: none !important; page-break-inside: avoid; margin-bottom: 12pt !important; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="logo-text">Fair<span>Trust</span></div>
+    </a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="docs.html">Docs</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+<div class="page" id="app">
+    <div class="state-wrap">
+        <div class="state-icon"><i class="fas fa-spinner fa-pulse" style="color:var(--gold)"></i></div>
+        <div class="state-title">Loading executive report…</div>
+        <div class="state-sub">Preparing strategic summary</div>
+    </div>
+</div>
+<script>
+const API_BASE = 'http://127.0.0.1:5000';
+const fmt    = (v, d=4) => v != null ? Number(v).toFixed(d) : '—';
+const fmtPct = (v, d=1) => v != null ? (Number(v)*100).toFixed(d) + '%' : '—';
+
+function sev(score) {
+    if (score == null) return 'warning';
+    if (score >= 0.80) return 'passing';
+    if (score >= 0.60) return 'warning';
+    return 'critical';
+}
+function sevLabel(score) { return {passing:'Pass', warning:'Marginal', critical:'Fail'}[sev(score)] || '—'; }
+function sevColor(score) { return {passing:'var(--green)', warning:'var(--amber)', critical:'var(--red)'}[sev(score)] || 'var(--muted)'; }
+
+/**
+ * Extract a numeric score from an object using multiple candidate paths.
+ * Returns the first value that is a finite number in [0,1].
+ * Returns null (never 0 as a false-negative) only when truly missing.
+ */
+function pickScore(/* ...candidateValues */) {
+    for (let i = 0; i < arguments.length; i++) {
+        const v = arguments[i];
+        if (v === null || v === undefined) continue;
+        const n = Number(v);
+        if (isFinite(n) && n >= 0 && n <= 1) return n;
+    }
+    return null;
+}
+
+/**
+ * Extract a performance metric (accuracy, f1, roc_auc) which may be > 1
+ * for some representations, but we keep it as-is and just check finite.
+ */
+function pickPerf(/* ...candidateValues */) {
+    for (let i = 0; i < arguments.length; i++) {
+        const v = arguments[i];
+        if (v === null || v === undefined) continue;
+        const n = Number(v);
+        if (isFinite(n) && n >= 0) return n;
+    }
+    return null;
+}
+
+function buildDimensions(ev) {
+    // The backend stores scores at BOTH top-level keys AND nested inside objects.
+    // We try every known location so the report works whether data came from
+    // /report/executive/ (top-level keys) or sessionStorage (nested objects).
+    return [
+        {
+            key: 'fairness',
+            name: 'Fairness',
+            icon: 'fa-balance-scale',
+            score: pickScore(
+                ev.fairness_score,
+                ev.fairness && ev.fairness.fairness_score,
+                ev.fairness && ev.fairness.ethical_score
+            ),
+            weight: '40% of overall score',
+            plain: 'Measures whether the model treats all demographic groups equally — gender, race, caste, age, and other protected attributes.',
+        },
+        {
+            key: 'privacy',
+            name: 'Privacy',
+            icon: 'fa-lock',
+            score: pickScore(
+                ev.privacy_score,
+                ev.privacy && ev.privacy.privacy_score
+            ),
+            weight: '20% of overall score',
+            plain: 'Checks whether the dataset contains personal data (PII) and whether sensitive information is handled appropriately before model training.',
+        },
+        {
+            key: 'robustness',
+            name: 'Robustness',
+            icon: 'fa-shield-alt',
+            score: pickScore(
+                ev.robustness_score,
+                ev.robustness && ev.robustness.robustness_score
+            ),
+            weight: '15% of overall score',
+            plain: 'Tests whether model decisions are stable. A low score means small input changes could flip a decision — making the system unreliable at scale.',
+        },
+        {
+            key: 'transparency',
+            name: 'Transparency',
+            icon: 'fa-eye',
+            score: pickScore(
+                ev.transparency_score,
+                ev.transparency && ev.transparency.transparency_score
+            ),
+            weight: '15% of overall score',
+            plain: 'Measures how explainable the model is. Can we understand why it made a specific decision? High transparency enables audit and appeals.',
+        },
+        {
+            key: 'accountability',
+            name: 'Accountability',
+            icon: 'fa-clipboard-check',
+            score: pickScore(
+                ev.accountability_score,
+                ev.accountability && ev.accountability.accountability_score
+            ),
+            weight: '10% of overall score',
+            plain: 'Verifies that protected attributes were declared, all fairness checks were completed, and the evaluation is fully documented for compliance purposes.',
+        },
+    ];
+}
+
+function buildRisks(ev) {
+    const f = ev.fairness || {};
+    const p = ev.privacy  || {};
+    const r = ev.robustness || {};
+    const risks = [];
+    if (f.disparateImpact != null && f.disparateImpact < 0.80)
+        risks.push({ sev:'high', cat:'Legal / Regulatory', icon:'fa-gavel', title:'Disparate Impact Violation — Potential Legal Liability', detail:`The approval rate for the least-favoured demographic group is only ${fmtPct(f.disparateImpact)} of the most-favoured group. The EEOC 80% Rule requires at least 80%. This creates legal exposure to discrimination claims.` });
+    if (f.demographicParity != null && f.demographicParity > 0.05)
+        risks.push({ sev:'medium', cat:'Reputational', icon:'fa-users', title:'Demographic Outcome Gap — Reputational Risk', detail:`A ${fmtPct(f.demographicParity)} gap in outcomes exists between demographic groups. If this becomes public or subject to audit, it could attract regulatory scrutiny and erode stakeholder trust.` });
+    const pii = (p.pii_columns || []);
+    if (pii.length > 0)
+        risks.push({ sev:'high', cat:'Privacy / Data Protection', icon:'fa-user-secret', title:`Personal Data Detected in Training Set (${pii.length} column${pii.length>1?'s':''})`, detail:`Columns containing personally identifiable information were found: ${pii.slice(0,3).join(', ')}${pii.length>3?'…':''}. This creates GDPR and IT Act liability. All PII must be removed or pseudonymised before training.` });
+    if (f.counterfactual != null && f.counterfactual < 0.80)
+        risks.push({ sev:'high', cat:'Discrimination Risk', icon:'fa-not-equal', title:'Model Sensitive to Protected Attributes — Direct Bias Detected', detail:`When only a person's gender, caste, or race is changed (keeping everything else identical), the model produces a different outcome. This is direct evidence that protected characteristics are influencing decisions.` });
+    const br = r.boundary_instability || 0;
+    if (br > 0.25)
+        risks.push({ sev:'medium', cat:'Operational', icon:'fa-exclamation-triangle', title:'Unstable Decisions for Borderline Cases', detail:`${Math.round(br*100)}% of model decisions fall in an uncertain zone where a small change in input would flip the outcome. This means the system is unreliable for borderline applicants — creating inconsistency at scale.` });
+    if (risks.length === 0)
+        risks.push({ sev:'low', cat:'Overall Assessment', icon:'fa-check-circle', title:'No Significant Business Risks Detected', detail:'The model passes all major risk checks. No legal, reputational, or operational concerns were identified. Continue with standard monitoring and quarterly re-evaluation.' });
+    return risks;
+}
+
+function buildActions(ev, dims) {
+    const f = ev.fairness || {};
+    const rem = ev.remediation || {};
+    const actions = [];
+    const fixes = rem.all_fixes || [];
+    if (fixes.length > 0) {
+        return fixes.slice(0, 4).map(fix => ({
+            sev:    fix.severity === 'CRITICAL' ? 'critical' : 'warning',
+            title:  fix.title,
+            why:    `The ${fix.dimension} score is ${Math.round((fix.current_score||0)*100)}% — below the required threshold. After this fix, the estimated score is ${Math.round((fix.estimated_score_after||0)*100)}%.`,
+            what:   fix.description,
+            effort: (fix.effort || 'medium').toLowerCase(),
+        }));
+    }
+    if (f.disparateImpact != null && f.disparateImpact < 0.80)
+        actions.push({ sev:'critical', title:'Adjust decision thresholds per demographic group', why:`The least-favoured group is approved at only ${fmtPct(f.disparateImpact)} the rate of the most-favoured group — below the legal 80% standard.`, what:'Apply post-processing threshold optimisation so each demographic group receives approvals at a balanced rate. This does not require retraining the model.', effort:'medium' });
+    if (f.demographicParity != null && f.demographicParity > 0.05)
+        actions.push({ sev:'critical', title:'Retrain the model with balanced demographic representation', why:`A ${fmtPct(f.demographicParity)} outcome gap exists between demographic groups. This indicates the training data was imbalanced.`, what:'Work with the data team to oversample underrepresented groups or apply fairness-aware training. The goal is to close the outcome gap across all protected groups.', effort:'high' });
+    dims.filter(d => d.score != null && sev(d.score) !== 'passing').forEach(d => {
+        if (d.key === 'privacy')
+            actions.push({ sev:'warning', title:'Remove or anonymise personal data from the dataset', why:`The Privacy score is ${Math.round(d.score*100)}%. Personal identifiable information was detected in the training data.`, what:'Work with the data engineering team to remove direct identifiers and pseudonymise quasi-identifiers (age, zip code) before the next training run.', effort:'low' });
+        else if (d.key === 'robustness')
+            actions.push({ sev:'warning', title:'Apply confidence calibration to reduce decision instability', why:`The Robustness score is ${Math.round(d.score*100)}%. Many decisions fall in an uncertain zone.`, what:"Ask the ML team to apply a calibration technique that makes the model's confidence scores better reflect reality. This reduces flip-prone borderline decisions.", effort:'low' });
+        else if (d.key === 'accountability')
+            actions.push({ sev:'warning', title:'Declare all sensitive attributes before running evaluations', why:`The Accountability score is ${Math.round(d.score*100)}%. Protected attributes were not fully declared.`, what:'Ensure gender, race, caste, age, and religion are explicitly declared in the evaluation configuration so fairness checks run across all relevant groups.', effort:'low' });
+    });
+    if (actions.length === 0)
+        actions.push({ sev:'info', title:'No immediate actions required — continue monitoring', why:'The model passes all ethical thresholds across all five dimensions.', what:'Schedule a re-evaluation every quarter or whenever the model is retrained. Set up automated fairness alerts for production drift.', effort:'low' });
+    return actions.slice(0, 4);
+}
+
+function renderReport(ev, evalId) {
+    const overallScore = pickScore(ev.ethical_score, ev.fairness_score, ev.fairness && ev.fairness.fairness_score) || 0;
+    const scoreInt     = Math.round(overallScore * 100);
+    const s            = sev(overallScore);
+    const color        = sevColor(overallScore);
+    const fairness     = ev.fairness || {};
+
+    // Performance metrics — stored under model_metrics or model_performance
+    const perfSrc = ev.model_metrics || ev.model_performance || {};
+    const perfVal = (key) => pickPerf(perfSrc[key]);
+
+    const dims    = buildDimensions(ev);
+    const risks   = buildRisks(ev);
+    const actions = buildActions(ev, dims);
+
+    let vClass, vIcon, vTitle, vSub, vAction;
+    if (scoreInt >= 80) {
+        vClass='approved'; vIcon='fa-check-circle';
+        vTitle='This model meets all ethical standards and is approved for deployment.';
+        vSub=`Overall Ethics Score: ${scoreInt}/100. All five ethical dimensions pass their required thresholds.`;
+        vAction='Recommended action: Proceed with deployment. Schedule a re-evaluation in 90 days.';
+    } else if (scoreInt >= 60) {
+        vClass='warn'; vIcon='fa-exclamation-circle';
+        vTitle='This model has issues that must be addressed before or shortly after deployment.';
+        vSub=`Overall Ethics Score: ${scoreInt}/100. Some ethical dimensions are below the required standard. Conditional deployment is possible, but the issues below must be resolved within 30 days.`;
+        vAction='Recommended action: Deploy only with explicit sign-off. Assign the ML team to fix listed issues within 30 days.';
+    } else {
+        vClass='blocked'; vIcon='fa-times-circle';
+        vTitle='This model should NOT be deployed — critical ethical failures detected.';
+        vSub=`Overall Ethics Score: ${scoreInt}/100. Multiple dimensions fall significantly below acceptable thresholds. Deploying creates legal, reputational, and operational risk.`;
+        vAction='Recommended action: Do not deploy. Escalate to the ML and compliance teams immediately.';
+    }
+
+    const diPasses = (fairness.disparateImpact || 0) >= 0.80;
+    const hasPII   = ((ev.privacy && ev.privacy.pii_columns) || []).length > 0;
+
+    const legalRows = [
+        { fw:'India — NITI Aayog Responsible AI', note:'Voluntary compliance framework. Aligned with transparency, accountability, and non-discrimination principles.', status:'Voluntary Compliant', cls:'pass' },
+        { fw:'EU AI Act — High-Risk AI Requirements', note: overallScore>=0.75 ? 'Model meets Limited Risk thresholds. Transparency and human oversight requirements satisfied.' : 'Model may be classified as High Risk. Bias testing, documentation, and human oversight obligations apply.', status: overallScore>=0.75?'Ready':'Review Required', cls: overallScore>=0.75?'pass':'warn' },
+        { fw:'GDPR — Automated Decision-Making (Art. 22)', note:'Right to explanation is supported through SHAP explainability. All decisions are logged in the audit trail.', status:'Compliant', cls:'pass' },
+        { fw:'EEOC 80% Rule (Disparate Impact)', note: diPasses ? `Disparate impact ratio is ${fmtPct(fairness.disparateImpact)} — above the 80% legal threshold.` : `Disparate impact ratio is ${fmtPct(fairness.disparateImpact)} — below the required 80% threshold. Legal liability applies.`, status: diPasses?'Compliant':'Non-Compliant', cls: diPasses?'pass':'fail' },
+        { fw:'India IT Act 2000 — Data Protection', note: hasPII ? 'Personal data detected in training set. Data processing agreements and anonymisation required before deployment.' : 'No direct PII detected. Data handling appears to comply with data protection requirements.', status: hasPII?'Review Required':'Documented', cls: hasPII?'warn':'pass' },
+    ];
+
+    const passingDims = dims.filter(d => d.score != null && sev(d.score) === 'passing').length;
+    const failingDims = dims.filter(d => d.score != null && sev(d.score) !== 'passing').length;
+
+    document.getElementById('app').innerHTML = `
+        <div class="report-hero">
+            <div class="hero-top">
+                <div>
+                    <div class="hero-badge"><i class="fas fa-chart-bar"></i> Executive Report</div>
+                    <div class="hero-title">Ethics &amp; Risk<br>Strategic Summary</div>
+                    <div class="hero-meta">
+                        <div class="hero-stat"><span class="hero-stat-val">${(ev.records||0).toLocaleString()}</span><span class="hero-stat-lbl">Records Evaluated</span></div>
+                        <div class="hero-stat"><span class="hero-stat-val">${passingDims} / 5</span><span class="hero-stat-lbl">Dimensions Passing</span></div>
+                        <div class="hero-stat"><span class="hero-stat-val">${risks.filter(r=>r.sev==='high').length}</span><span class="hero-stat-lbl">High Risks</span></div>
+                        <div class="hero-stat"><span class="hero-stat-val mono" style="font-size:0.9rem;font-family:var(--mono)">${evalId?evalId.slice(0,8)+'…':'—'}</span><span class="hero-stat-lbl">Eval ID</span></div>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn-hero btn-hero-primary" onclick="window.print()"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                        <a href="remediationReport.html?eval_id=${evalId}" class="btn-hero btn-hero-ghost"><i class="fas fa-tools"></i> Remediation Toolkit</a>
+                        <a href="allReports.html?eval_id=${evalId}" class="btn-hero btn-hero-ghost"><i class="fas fa-arrow-left"></i> All Reports</a>
+                    </div>
+                </div>
+                <div class="hero-score-ring">
+                    <div class="score-big" style="color:${color}">${scoreInt}</div>
+                    <div class="score-label">/ 100 Overall Ethics Score</div>
+                    <div class="score-verdict" style="color:${color}">${sevLabel(overallScore)}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verdict-banner ${vClass}">
+            <div class="verdict-icon"><i class="fas ${vIcon}"></i></div>
+            <div style="flex:1">
+                <div class="verdict-title">${vTitle}</div>
+                <div class="verdict-sub">${vSub}</div>
+                <div class="verdict-action">${vAction}</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-val ${s}">${scoreInt}</div><div class="stat-lbl">Ethics Score /100</div></div>
+            <div class="stat-card"><div class="stat-val">${(ev.records||0).toLocaleString()}</div><div class="stat-lbl">Records Evaluated</div></div>
+            <div class="stat-card"><div class="stat-val ${passingDims===5?'green':'amber'}">${passingDims} / 5</div><div class="stat-lbl">Dimensions Passing</div></div>
+            <div class="stat-card"><div class="stat-val ${risks.filter(r=>r.sev==='high').length===0?'green':'red'}">${risks.filter(r=>r.sev==='high').length}</div><div class="stat-lbl">High Business Risks</div></div>
+            <div class="stat-card"><div class="stat-val">${perfVal('accuracy')!=null?Math.round(perfVal('accuracy')*100)+'%':'—'}</div><div class="stat-lbl">Model Accuracy</div></div>
+            <div class="stat-card"><div class="stat-val">${perfVal('roc_auc')!=null?Number(perfVal('roc_auc')).toFixed(3):'—'}</div><div class="stat-lbl">ROC-AUC</div></div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-th-large"></i> 5-Dimension Ethical Profile — What Was Tested</div>
+                <span style="font-size:0.8125rem;color:var(--muted)">${passingDims} passing &nbsp;·&nbsp; ${failingDims} need attention</span>
+            </div>
+            <div class="section-body">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <span><strong style="color:var(--navy)">How to read this:</strong> Each card tests one ethical dimension. A score of 80 or above is passing. The weight shows how much each dimension contributes to the total score. The description explains what is being measured in plain language.</span>
+                </div>
+                <div class="dim5-grid">
+                    ${dims.map(d => {
+                        const scoreVal = d.score != null ? d.score : 0;
+                        const sv = sev(d.score);
+                        const p  = Math.round(scoreVal * 100);
+                        const displayScore = d.score != null ? p : '—';
+                        return `<div class="dim5-card ${sv}">
+                            <div class="dim5-top">
+                                <div class="dim5-icon ${sv}"><i class="fas ${d.icon}"></i></div>
+                                <span class="dim5-sev ${sv}">${d.score != null ? sevLabel(d.score) : 'No data'}</span>
+                            </div>
+                            <div class="dim5-name">${d.name}</div>
+                            <div class="dim5-score ${sv}">${displayScore}<span style="font-size:1rem;opacity:0.5">/100</span></div>
+                            <div class="dim5-bar-track"><div class="dim5-bar ${sv}" style="width:${p}%"></div></div>
+                            <div class="dim5-weight">${d.weight}</div>
+                            <div class="dim5-plain">${d.plain}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-exclamation-triangle"></i> Business Risk Assessment</div>
+                <span style="font-size:0.8125rem;color:var(--muted)">${risks.filter(r=>r.sev==='high').length} high &nbsp;·&nbsp; ${risks.filter(r=>r.sev==='medium').length} medium &nbsp;·&nbsp; ${risks.filter(r=>r.sev==='low').length} low</span>
+            </div>
+            <div class="section-body">
+                <div class="risk-list">
+                    ${risks.map(r => `
+                    <div class="risk-item ${r.sev}">
+                        <div class="risk-icon ${r.sev}"><i class="fas ${r.icon}"></i></div>
+                        <div style="flex:1">
+                            <div class="risk-cat">${r.cat}</div>
+                            <div class="risk-title">${r.title}</div>
+                            <div class="risk-detail">${r.detail}</div>
+                        </div>
+                        <div class="risk-badge ${r.sev}">${r.sev.toUpperCase()}</div>
+                    </div>`).join('')}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-tasks"></i> Priority Actions — What Needs to Be Done</div>
+                <a href="remediationReport.html?eval_id=${evalId}" style="font-size:0.8125rem;font-weight:600;color:var(--gold);text-decoration:none">Full technical remediation plan &rarr;</a>
+            </div>
+            <div class="section-body">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Actions are listed in priority order — most critical first. Each action explains <strong style="color:var(--navy)">why it is needed</strong> and <strong style="color:var(--navy)">what the team should do</strong> in plain language.</span>
+                </div>
+                <div class="action-list">
+                    ${actions.map((a,i) => `
+                    <div class="action-item ${a.sev==='info'?'info':a.sev}">
+                        <div class="action-rank ${a.sev==='info'?'info':a.sev}">${i+1}</div>
+                        <div style="flex:1">
+                            <div class="action-title">${a.title}</div>
+                            <div class="action-body" style="margin-bottom:4px"><strong style="color:var(--text)">Why this matters:</strong> ${a.why}</div>
+                            <div class="action-body"><strong style="color:var(--text)">What to do:</strong> ${a.what}</div>
+                        </div>
+                        <div class="action-effort ${a.effort}">${a.effort} effort</div>
+                    </div>`).join('')}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-gavel"></i> Legal &amp; Regulatory Compliance Status</div>
+            </div>
+            <div class="section-body">
+                <table class="legal-table">
+                    <thead><tr><th style="width:30%">Framework</th><th>Assessment</th><th style="width:150px">Status</th></tr></thead>
+                    <tbody>
+                        ${legalRows.map(r => `<tr>
+                            <td><div class="legal-fw">${r.fw}</div></td>
+                            <td><div class="legal-note">${r.note}</div></td>
+                            <td><span class="legal-pill ${r.cls}"><i class="fas ${r.cls==='pass'?'fa-check-circle':r.cls==='warn'?'fa-exclamation-circle':'fa-times-circle'}"></i> ${r.status}</span></td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-chart-line"></i> Model Performance Metrics</div>
+                <span style="font-size:0.8125rem;color:var(--muted)">Accuracy alone does not mean fairness</span>
+            </div>
+            <div class="section-body">
+                <div class="perf-grid">
+                    ${[
+                        {label:'ROC-AUC',  val:perfVal('roc_auc'),   desc:'Measures how well the model ranks outcomes. Above 0.85 is strong.'},
+                        {label:'Accuracy', val:perfVal('accuracy'),  desc:'Percentage of decisions that are correct overall.'},
+                        {label:'F1-Score', val:perfVal('f1_score'),  desc:'Balances precision and recall. Important when classes are unequal.'}
+                    ].map(m => {
+                        const v   = m.val != null ? Number(m.val) : null;
+                        const w   = v != null ? v * 100 : 0;
+                        const col = v == null ? 'var(--muted)' : v >= 0.85 ? 'var(--green)' : v >= 0.70 ? 'var(--amber)' : 'var(--red)';
+                        return `<div class="perf-card">
+                            <div class="perf-label">${m.label}</div>
+                            <div class="perf-value" style="color:${col}">${v != null ? v.toFixed(4) : '—'}</div>
+                            <div class="perf-bar-track"><div class="perf-bar-fill" style="width:${w}%;background:${col}"></div></div>
+                            <div class="perf-sub">${m.desc}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <p style="margin-top:1.25rem;font-size:0.8125rem;color:var(--muted);padding:1rem;background:var(--bg);border-radius:8px;border:1px solid var(--rule);">
+                    <i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px"></i>
+                    <strong>Important for decision-makers:</strong> A model can be 90% accurate while still being unfair — for example, by correctly predicting outcomes for the majority but systematically rejecting qualified applicants from a minority group. Performance and fairness metrics must always be reviewed together before deployment.
+                </p>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Normalise raw session-cache data into the flat shape renderReport() expects.
+ * Tries every known location for each score — top-level keys, nested objects,
+ * the remediation 'scores' sub-object, and the executive report 'dimensions' array.
+ */
+function normaliseEv(raw) {
+    // Log the raw keys so we can see exactly what the cache contains
+    console.log('[FairTrust] normaliseEv raw keys:', Object.keys(raw));
+    console.log('[FairTrust] score candidates:', {
+        ethical_score:        raw.ethical_score,
+        fairness_score:       raw.fairness_score,
+        privacy_score:        raw.privacy_score,
+        robustness_score:     raw.robustness_score,
+        transparency_score:   raw.transparency_score,
+        accountability_score: raw.accountability_score,
+        scores:               raw.scores,
+        fairness_obj:         raw.fairness && raw.fairness.fairness_score,
+        privacy_obj:          raw.privacy  && raw.privacy.privacy_score,
+        robustness_obj:       raw.robustness && raw.robustness.robustness_score,
+        transparency_obj:     raw.transparency && raw.transparency.transparency_score,
+        accountability_obj:   raw.accountability && raw.accountability.accountability_score,
+    });
+
+    // The remediation endpoint wraps scores inside a 'scores' object
+    const sc = raw.scores || {};
+
+    // The executive report endpoint returns a 'dimensions' array like:
+    // [{name:'Fairness', score:0.7, ...}, ...]
+    // Extract those into a lookup map
+    const dimMap = {};
+    if (Array.isArray(raw.dimensions)) {
+        raw.dimensions.forEach(d => {
+            if (d.name) dimMap[d.name.toLowerCase()] = d.score;
+        });
+    }
+
+    const fairness_score = pickScore(
+        raw.fairness_score,
+        sc.fairness,
+        raw.fairness && raw.fairness.fairness_score,
+        raw.fairness && raw.fairness.ethical_score,
+        dimMap['fairness']
+    );
+    const privacy_score = pickScore(
+        raw.privacy_score,
+        sc.privacy,
+        raw.privacy && raw.privacy.privacy_score,
+        dimMap['privacy']
+    );
+    const robustness_score = pickScore(
+        raw.robustness_score,
+        sc.robustness,
+        raw.robustness && raw.robustness.robustness_score,
+        dimMap['robustness']
+    );
+    const transparency_score = pickScore(
+        raw.transparency_score,
+        sc.transparency,
+        raw.transparency && raw.transparency.transparency_score,
+        dimMap['transparency']
+    );
+    const accountability_score = pickScore(
+        raw.accountability_score,
+        sc.accountability,
+        raw.accountability && raw.accountability.accountability_score,
+        dimMap['accountability']
+    );
+    const ethical_score = pickScore(
+        raw.ethical_score,
+        sc.overall,
+        fairness_score
+    );
+
+    console.log('[FairTrust] resolved scores:', {
+        ethical_score, fairness_score, privacy_score,
+        robustness_score, transparency_score, accountability_score
+    });
+
+    return {
+        ethical_score,
+        fairness_score,
+        privacy_score,
+        robustness_score,
+        transparency_score,
+        accountability_score,
+        records:        raw.records     ?? 0,
+        fairness:       raw.fairness    ?? {},
+        privacy:        raw.privacy     ?? {},
+        robustness:     raw.robustness  ?? {},
+        transparency:   raw.transparency  ?? {},
+        accountability: raw.accountability ?? {},
+        model_metrics:  raw.model_metrics  ?? raw.model_performance ?? {},
+        remediation:    raw.remediation    ?? {},
+    };
+}
+
+(async function init() {
+    const evalId = new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+    if (!evalId) {
+        document.getElementById('app').innerHTML = `<div class="state-wrap"><div class="state-icon" style="color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div><div class="state-title">No evaluation found</div><div class="state-sub">Complete an evaluation on the upload page first.</div><a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a></div>`;
+        return;
+    }
+
+    // Try the API endpoint first
+    try {
+        const res = await fetch(`${API_BASE}/report/executive/${evalId}`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data && (data.status === 'complete' || data.ethical_score != null)) {
+                renderReport(normaliseEv(data), evalId);
+                return;
+            }
+        }
+    } catch (_) { /* fall through to cache */ }
+
+    // Fall back to session cache
+    const cached = sessionStorage.getItem('eval_result');
+    if (cached) {
+        try {
+            renderReport(normaliseEv(JSON.parse(cached)), evalId);
+            return;
+        } catch (e) {
+            console.error('Cache parse error:', e);
+        }
+    }
+
+    document.getElementById('app').innerHTML = `<div class="state-wrap"><div class="state-icon" style="color:var(--red)"><i class="fas fa-times-circle"></i></div><div class="state-title">Could not load report</div><div class="state-sub">Evaluation not found or still processing.</div><a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-redo"></i> Try again</a></div>`;
+})();
+</script>
+</body>
+</html>

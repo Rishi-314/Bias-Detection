@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - FairTrust AI Framework</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        :root {
+            --primary: #1A2D4E;
+            --primary-light: #2A3F66;
+            --primary-soft: #E9ECF3;
+            --secondary: #EBB255;
+            --accent: #4A90E2;
+            --warning: #FFB020;
+            --danger: #FF5C38;
+            --success: #00C896;
+            --success-soft: #E9FBF4;
+            --bg: #F5F6FA;
+            --bg-2: #ECEEF5;
+            --surface: #FFFFFF;
+            --ink: #1A2D4E;
+            --ink-2: #1E2433;
+            --ink-3: #3D4560;
+            --muted: #6B7594;
+            --rule: #E4E7F0;
+            --shadow: 0 4px 20px rgba(26, 45, 78, 0.07);
+            --shadow-md: 0 8px 32px rgba(26, 45, 78, 0.10);
+            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --radius: 14px;
+        }
+        
+        body { 
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--ink); 
+            line-height: 1.6; 
+        }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.97);
+            padding: 0 2.5rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 0 var(--rule), var(--shadow);
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            height: 56px;
+            box-shadow: 0 2px 12px rgba(26,45,78,0.10);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), #4A90E2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 17px;
+            box-shadow: 0 3px 10px rgba(26,45,78,0.18);
+            transition: var(--transition);
+        }
+
+        .logo:hover .logo-icon { transform: rotate(5deg) scale(1.05); }
+
+        .logo-text { font-size: 20px; font-weight: 800; line-height: 1.2; }
+        .logo-text span { color: var(--secondary); }
+        .logo-subtitle { font-size: 11px; font-weight: 600; color: var(--secondary); letter-spacing: 1.5px; }
+
+        .nav-links { display: flex; gap: 4px; }
+
+        .nav-links a {
+            text-decoration: none;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--muted);
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover { color: var(--primary); background: var(--bg); }
+
+        .nav-links a.active {
+            color: var(--secondary);
+            background: rgba(235,178,85,0.08);
+        }
+
+        /* ================= GLOBAL ERROR ================= */
+        .global-error { 
+            display: none; 
+            max-width: 1280px; 
+            margin: 0 auto 1rem; 
+            padding: 0 2.5rem; 
+        }
+
+        .global-error-inner { 
+            background: #FFF1EE; 
+            border: 1px solid #FFCFC4; 
+            border-left: 4px solid var(--danger);
+            border-radius: 0 10px 10px 0; 
+            padding: 0.875rem 1rem; 
+            color: #C0391B; 
+            font-size: 0.875rem; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 0.625rem; 
+        }
+
+        .global-error-inner i { color: var(--danger); margin-top: 2px; }
+
+        /* ================= PAGE LAYOUT ================= */
+        .upload-page { 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 2.5rem 2.5rem 5rem; 
+        }
+
+        /* ================= PAGE HEADER ================= */
+        .page-header { 
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .page-header h1 { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            color: var(--primary);
+            margin-bottom: 0.375rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header p { 
+            color: var(--muted); 
+            font-size: 0.9375rem;
+        }
+
+        /* ================= FORM SECTIONS ================= */
+        .upload-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 1.25rem; 
+            margin-bottom: 1.25rem; 
+        }
+
+        .upload-card, .section-block { 
+            background: var(--surface); 
+            border: 1.5px solid var(--rule); 
+            border-radius: var(--radius); 
+            padding: 1.5rem; 
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .section-block {
+            margin-top: 1.25rem;
+        }
+
+        .upload-card:hover, .section-block:hover { 
+            border-color: rgba(235,178,85,0.35); 
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Card headers */
+        .card-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem; 
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .card-icon { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+            background: rgba(235,178,85,0.1); 
+            color: var(--secondary); 
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .upload-card:hover .card-icon,
+        .section-block:hover .card-icon { 
+            background: var(--secondary); 
+            color: white; 
+        }
+
+        .card-title { 
+            font-size: 1rem; 
+            font-weight: 700; 
+            color: var(--primary);
+            letter-spacing: -0.01em;
+        }
+
+        /* Upload Area */
+        .upload-area { 
+            border: 2px dashed rgba(26,45,78,0.18); 
+            border-radius: 10px; 
+            padding: 1.75rem 1rem; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: var(--transition);
+            margin-bottom: 0.625rem; 
+            user-select: none; 
+            background: var(--bg); 
+        }
+
+        .upload-area:hover, .upload-area.dragover { 
+            border-color: var(--secondary); 
+            background: rgba(235,178,85,0.04); 
+        }
+
+        .upload-area.uploaded { 
+            border-color: var(--success); 
+            background: var(--success-soft); 
+            border-style: solid; 
+        }
+
+        .upload-icon { 
+            display: flex; 
+            justify-content: center; 
+            margin-bottom: 0.625rem; 
+            color: var(--secondary);
+            font-size: 32px;
+        }
+
+        .upload-main-text { font-weight: 600; font-size: 0.875rem; color: var(--ink-2); }
+        .upload-hint { color: var(--muted); font-size: 0.775rem; margin-top: 0.2rem; }
+
+        .file-limit { 
+            color: var(--muted); 
+            font-size: 0.75rem; 
+            margin-bottom: 0.75rem; 
+        }
+
+        .file-status { 
+            display: none; 
+            align-items: center; 
+            gap: 0.5rem; 
+            margin-top: 0.5rem; 
+            padding: 0.5rem 0.875rem; 
+            border-radius: 8px; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+        }
+
+        .file-status.success { display: flex; background: var(--success-soft); color: #059669; border: 1px solid #A7F3D0; }
+        .file-status.error   { display: flex; background: #FFF1EE; color: var(--danger); border: 1px solid #FFCFC4; }
+        .file-status.uploading { display: flex; background: rgba(235,178,85,0.1); color: var(--secondary); border: 1px solid rgba(235,178,85,0.2); }
+
+        .upload-spinner { 
+            width: 13px; 
+            height: 13px; 
+            border: 2px solid currentColor; 
+            border-top-color: transparent; 
+            border-radius: 50%; 
+            animation: spin 0.7s linear infinite; 
+            flex-shrink: 0; 
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Form Fields */
+        .field-group { margin-top: 1rem; }
+
+        .field-group label { 
+            display: block; 
+            margin-bottom: 0.35rem; 
+            font-size: 0.8125rem; 
+            font-weight: 600; 
+            color: var(--ink-3); 
+        }
+
+        .field-group label .optional {
+            color: var(--muted);
+            font-weight: 400;
+            font-size: 0.75rem;
+            margin-left: 4px;
+        }
+
+        .field-group select, 
+        .field-group input[type="text"] { 
+            width: 100%; 
+            padding: 0.575rem 0.875rem; 
+            border: 1.5px solid var(--rule); 
+            border-radius: 8px; 
+            background: var(--surface); 
+            font-size: 0.875rem; 
+            font-family: inherit; 
+            color: var(--ink); 
+            transition: var(--transition);
+            outline: none; 
+        }
+
+        .field-group select:focus, 
+        .field-group input[type="text"]:focus { 
+            border-color: var(--secondary); 
+            box-shadow: 0 0 0 3px rgba(235,178,85,0.12); 
+        }
+
+        .field-hint { 
+            font-size: 0.75rem; 
+            color: var(--muted); 
+            margin-top: 0.3rem; 
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-hint i { color: var(--secondary); font-size: 0.7rem; }
+
+        .field-row { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 0.75rem; 
+            margin-top: 1rem; 
+        }
+
+        /* Buttons */
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.375rem; 
+            padding: 0.575rem 1rem; 
+            border-radius: 8px; 
+            font-size: 0.8125rem; 
+            font-family: inherit; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: var(--transition);
+            border: 1.5px solid transparent; 
+        }
+
+        .btn-block { width: 100%; }
+
+        .btn-ghost { 
+            background: var(--bg); 
+            border-color: var(--rule); 
+            color: var(--ink-3); 
+        }
+
+        .btn-ghost:hover { 
+            border-color: var(--secondary); 
+            color: var(--secondary); 
+            background: rgba(235,178,85,0.05); 
+        }
+
+        .btn-primary-filled { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary); 
+            box-shadow: 0 2px 10px rgba(26,45,78,0.18);
+        }
+
+        .btn-primary-filled:hover { 
+            background: #243d65;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(26,45,78,0.25);
+        }
+
+        .btn-danger-outline { 
+            border-color: rgba(255,92,56,0.3); 
+            color: var(--danger); 
+            background: #FFF1EE; 
+        }
+
+        .btn-danger-outline:hover { 
+            background: var(--danger); 
+            color: white; 
+            border-color: var(--danger); 
+        }
+
+        /* Checkbox */
+        .checkbox-wrapper { 
+            margin-top: 0.875rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            font-size: 0.8125rem; 
+            color: var(--ink-3); 
+        }
+
+        .checkbox-wrapper input[type="checkbox"] { 
+            width: 16px; 
+            height: 16px; 
+            cursor: pointer; 
+            accent-color: var(--secondary); 
+        }
+
+        .section-desc { 
+            font-size: 0.875rem; 
+            color: var(--muted); 
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+        }
+
+        /* Attribute Grid */
+        .attribute-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); 
+            gap: 0.625rem; 
+            margin-bottom: 1rem; 
+        }
+
+        .attribute-checkbox { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.625rem; 
+            background: var(--bg); 
+            padding: 0.65rem 0.875rem; 
+            border-radius: 8px; 
+            border: 1.5px solid var(--rule); 
+            cursor: pointer; 
+            transition: var(--transition);
+            font-size: 0.8375rem; 
+            font-weight: 500; 
+            color: var(--ink-3); 
+        }
+
+        .attribute-checkbox:hover { 
+            border-color: var(--secondary); 
+            background: rgba(235,178,85,0.05); 
+            color: var(--secondary); 
+        }
+
+        .attribute-checkbox:has(input:checked) { 
+            border-color: var(--secondary); 
+            background: rgba(235,178,85,0.08); 
+            color: var(--secondary); 
+        }
+
+        .attribute-checkbox input[type="checkbox"] { display: none; }
+
+        .checkbox-custom { 
+            width: 15px; 
+            height: 15px; 
+            border: 1.5px solid rgba(26,45,78,0.25); 
+            border-radius: 4px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: var(--transition);
+            flex-shrink: 0; 
+        }
+
+        .attribute-checkbox input[type="checkbox"]:checked + .checkbox-custom { 
+            background: var(--secondary); 
+            border-color: var(--secondary); 
+        }
+
+        .attribute-checkbox input[type="checkbox"]:checked + .checkbox-custom::after { 
+            content: ''; 
+            display: block; 
+            width: 4px; 
+            height: 7px; 
+            border: 2px solid white; 
+            border-top: none; 
+            border-left: none; 
+            transform: rotate(45deg) translateY(-1px); 
+        }
+
+        .attr-icon { width: 15px; height: 15px; color: currentColor; flex-shrink: 0; font-size: 0.8rem; }
+
+        .other-input-wrap { display: none; margin-top: 0.75rem; }
+        .other-input-wrap.visible { display: block; }
+
+        .selected-attrs-display { 
+            display: none; 
+            margin-bottom: 1rem; 
+            padding: 0.875rem 1rem; 
+            background: rgba(235,178,85,0.07); 
+            border-radius: 8px; 
+            border: 1px solid rgba(235,178,85,0.2); 
+        }
+
+        .attrs-label { 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            color: var(--secondary); 
+            text-transform: uppercase; 
+            letter-spacing: 0.06em; 
+            margin-bottom: 0.5rem; 
+        }
+
+        .attr-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.3rem; 
+            padding: 0.2rem 0.625rem; 
+            background: white; 
+            border: 1px solid rgba(235,178,85,0.3); 
+            border-radius: 999px; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+            color: var(--primary); 
+        }
+
+        .attr-tag i { color: var(--secondary); font-size: 0.65rem; }
+
+        .warning-banner { 
+            background: #FFFBEB; 
+            border-left: 4px solid var(--warning); 
+            padding: 0.75rem 0.875rem; 
+            border-radius: 0 8px 8px 0; 
+            margin-top: 0.875rem; 
+            font-size: 0.8rem; 
+            color: #92400E; 
+            display: flex; 
+            gap: 0.5rem; 
+            align-items: flex-start; 
+        }
+
+        .warning-banner i { color: var(--warning); margin-top: 2px; }
+
+        .info-banner { 
+            margin-top: 1rem; 
+            padding: 0.75rem 0.875rem; 
+            background: rgba(235,178,85,0.08); 
+            border-radius: 8px; 
+            border: 1px solid rgba(235,178,85,0.2); 
+            font-size: 0.8125rem; 
+            color: var(--primary); 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-banner i { color: var(--secondary); }
+
+        /* Button row inside sections */
+        .btn-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Ranking List */
+        .ranking-list { margin: 0 0 1rem; }
+
+        .ranking-item { 
+            display: grid; 
+            grid-template-columns: 36px 1fr 1fr 52px 110px; 
+            align-items: center; 
+            gap: 0.875rem; 
+            padding: 0.75rem 1rem; 
+            background: var(--bg); 
+            border: 1.5px solid var(--rule); 
+            border-radius: 9px; 
+            margin-bottom: 0.5rem; 
+            cursor: grab; 
+            transition: var(--transition);
+            font-size: 0.875rem; 
+        }
+
+        .ranking-item:hover { 
+            background: rgba(235,178,85,0.04); 
+            border-color: var(--secondary); 
+            box-shadow: 0 2px 8px rgba(26,45,78,0.07); 
+        }
+
+        .ranking-item.dragging { 
+            opacity: 0.5; 
+            background: rgba(235,178,85,0.1); 
+            cursor: grabbing; 
+        }
+
+        .rank-number { 
+            width: 28px; 
+            height: 28px; 
+            background: var(--primary); 
+            color: white; 
+            border-radius: 7px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700; 
+            font-size: 0.8rem; 
+            flex-shrink: 0; 
+        }
+
+        .dimension-name { font-weight: 600; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .weight-bar { height: 5px; background: var(--rule); border-radius: 100px; overflow: hidden; }
+        .weight-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), #ffce6d); border-radius: 100px; transition: width 0.25s; }
+
+        .weight-value { font-weight: 700; color: var(--secondary); min-width: 38px; text-align: right; font-size: 0.8rem; }
+
+        .weight-slider { 
+            width: 100%; 
+            height: 4px; 
+            border-radius: 100px; 
+            background: var(--rule); 
+            outline: none; 
+            -webkit-appearance: none; 
+            appearance: none; 
+            cursor: pointer; 
+        }
+
+        .weight-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 15px; 
+            height: 15px; 
+            border-radius: 50%; 
+            background: var(--secondary); 
+            cursor: pointer; 
+            box-shadow: 0 0 0 3px rgba(235,178,85,0.2); 
+            transition: var(--transition);
+        }
+
+        .weight-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        .weight-summary { 
+            background: var(--bg); 
+            padding: 0.875rem 1rem; 
+            border-radius: 9px; 
+            margin: 0.75rem 0 1rem; 
+            border: 1.5px solid var(--rule); 
+        }
+
+        .weight-summary-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 0.625rem; 
+            font-size: 0.8125rem; 
+            font-weight: 600; 
+            color: var(--ink-2); 
+        }
+
+        .weight-summary-total { color: var(--secondary); font-size: 0.9rem; font-weight: 700; }
+
+        .weight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+
+        .weight-stat { 
+            text-align: center; 
+            padding: 0.5rem; 
+            background: var(--surface); 
+            border-radius: 7px; 
+            border: 1px solid var(--rule); 
+        }
+
+        .weight-stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+        .weight-stat-name  { font-size: 0.8rem; font-weight: 700; color: var(--secondary); margin-top: 0.15rem; }
+        .weight-stat.low .weight-stat-name { color: var(--danger); }
+        .weight-stat-val   { font-size: 0.75rem; color: var(--muted); }
+
+        /* Report Toggle */
+        .report-toggle { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 1rem; 
+        }
+
+        .report-card { 
+            border: 1.5px solid var(--rule); 
+            border-radius: 11px; 
+            padding: 1.25rem; 
+            cursor: pointer; 
+            transition: var(--transition);
+            position: relative; 
+            background: var(--bg); 
+        }
+
+        .report-card:hover { 
+            border-color: var(--secondary); 
+            transform: translateY(-2px); 
+            box-shadow: var(--shadow-md); 
+            background: var(--surface); 
+        }
+
+        .report-card.selected { 
+            border-color: var(--secondary); 
+            background: rgba(235,178,85,0.05); 
+        }
+
+        .report-icon { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 10px; 
+            background: var(--surface); 
+            border: 1px solid var(--rule); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 0.875rem; 
+            color: var(--secondary); 
+            font-size: 20px; 
+        }
+
+        .report-card.selected .report-icon { 
+            background: rgba(235,178,85,0.12); 
+            border-color: rgba(235,178,85,0.3); 
+        }
+
+        .report-title { font-size: 0.9375rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
+        .report-desc  { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.875rem; min-height: 36px; line-height: 1.5; }
+
+        .report-features { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+
+        .feature-tag { 
+            background: var(--surface); 
+            border: 1px solid var(--rule); 
+            padding: 0.175rem 0.575rem; 
+            border-radius: 100px; 
+            font-size: 0.7rem; 
+            font-weight: 500; 
+            color: var(--ink-3); 
+        }
+
+        .report-card.selected .feature-tag { 
+            background: rgba(255,255,255,0.7); 
+            border-color: rgba(235,178,85,0.3); 
+        }
+
+        .selection-indicator { 
+            position: absolute; 
+            top: 0.75rem; 
+            right: 0.75rem; 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            background: var(--secondary); 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transform: scale(0); 
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+
+        .report-card.selected .selection-indicator { transform: scale(1); }
+        .selection-indicator i { font-size: 0.65rem; }
+
+        #selectedReportDisplay { 
+            display: none; 
+            margin-top: 1rem; 
+            padding: 0.875rem 1rem; 
+            background: rgba(235,178,85,0.08); 
+            border-left: 4px solid var(--secondary); 
+            border-radius: 0 8px 8px 0; 
+        }
+
+        #selectedReportName { font-size: 0.9375rem; font-weight: 600; color: var(--primary); }
+
+        #allReportsWarning { 
+            display: none; 
+            margin-top: 0.875rem; 
+            padding: 0.75rem 0.875rem; 
+            background: #FFFBEB; 
+            border-left: 4px solid var(--warning); 
+            border-radius: 0 8px 8px 0; 
+            font-size: 0.875rem; 
+            color: #92400E; 
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #allReportsWarning i { color: var(--warning); }
+
+        /* Submit Section */
+        .submit-section { 
+            margin-top: 2rem; 
+            padding: 1.75rem; 
+            background: var(--surface); 
+            border: 1.5px solid var(--rule); 
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center; 
+        }
+
+        .submit-btn { 
+            width: 100%; 
+            max-width: 420px; 
+            padding: 1rem; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 0.9375rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: var(--transition);
+            margin-bottom: 0.75rem; 
+            letter-spacing: 0.3px; 
+            box-shadow: 0 3px 16px rgba(26,45,78,0.25); 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .submit-btn:hover:not(:disabled) { 
+            background: #243d65;
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 24px rgba(26,45,78,0.32); 
+        }
+
+        .submit-btn:disabled { 
+            background: #B4BAD0; 
+            cursor: not-allowed; 
+            transform: none; 
+            box-shadow: none; 
+        }
+
+        .eta-text { font-size: 0.8125rem; color: var(--muted); }
+
+        /* Toast */
+        .toast { 
+            position: fixed; 
+            bottom: 1.5rem; 
+            right: 1.5rem; 
+            padding: 0.8rem 1.125rem; 
+            border-radius: 10px; 
+            font-size: 0.875rem; 
+            font-weight: 500; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.625rem; 
+            box-shadow: 0 8px 32px rgba(13,15,20,0.15); 
+            z-index: 9999; 
+            transform: translateY(120px); 
+            opacity: 0; 
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            max-width: 360px; 
+        }
+
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: var(--success-soft); color: #059669; border: 1px solid #A7F3D0; }
+        .toast.error   { background: #FFF1EE; color: var(--danger); border: 1px solid #FFCFC4; }
+        .toast.info    { background: rgba(235,178,85,0.1); color: var(--primary); border: 1px solid rgba(235,178,85,0.2); }
+        .toast i { font-size: 0.9rem; }
+
+        /* Divider between hint and button in weight section */
+        .hint-row {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .upload-grid { grid-template-columns: 1fr; }
+            .ranking-item { grid-template-columns: 36px 1fr 52px; }
+            .ranking-item .weight-bar, .ranking-item .weight-slider { display: none; }
+            .report-toggle { grid-template-columns: 1fr; }
+            .navbar { padding: 0 1.5rem; }
+            .upload-page { padding: 1.5rem 1.5rem 3rem; }
+        }
+
+        @media (max-width: 560px) {
+            .nav-links { display: none; }
+            .logo-text { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+    <a href="index.html" class="logo">
+        <div class="logo-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <div>
+            <div class="logo-text">Fair<span>Trust</span></div>
+            <div class="logo-subtitle">ETHICAL AI</div>
+        </div>
+    </a>
+
+    <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="upload.html" class="active">Upload</a>
+        <a href="docs.html">Docs</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<!-- ── breadcrumbs REMOVED ── -->
+
+<div class="global-error" id="globalError">
+    <div class="global-error-inner">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="globalErrorMsg"></span>
+    </div>
+</div>
+
+<main class="upload-page">
+    <div class="page-header">
+        <h1>Upload your model</h1>
+        <p>Evaluate fairness &amp; bias across seven dimensions</p>
+    </div>
+
+    <div class="upload-grid">
+
+        <!-- Dataset Card -->
+        <div class="upload-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-database"></i></div>
+                <span class="card-title">Upload Dataset</span>
+            </div>
+
+            <div class="upload-area" id="datasetDropZone" role="button" tabindex="0" aria-label="Click or drag to upload dataset">
+                <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <div class="upload-main-text" id="datasetUploadText">Drag &amp; drop or click to upload</div>
+                <div class="upload-hint">CSV, JSON, or Excel — must include feature &amp; target columns</div>
+            </div>
+            <div class="file-limit">Max file size: 100MB</div>
+
+            <input type="file" id="datasetFileInput" accept=".csv,.json,.xlsx,.xls"
+                   style="position:fixed;top:-200px;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none;">
+
+            <div class="file-status" id="datasetStatus">
+                <span id="datasetStatusIcon"></span>
+                <span id="datasetStatusText"></span>
+            </div>
+
+            <div class="field-group">
+                <label for="targetVariableText">Target Variable <span style="color:var(--danger)">*</span></label>
+                <input type="text" id="targetVariableText" placeholder="e.g. approved, outcome, label">
+                <div class="field-hint">
+                    <i class="fas fa-info-circle"></i>
+                    The ground-truth label column in your dataset.
+                </div>
+            </div>
+            <div class="field-group" id="targetDropdownSection" style="display:none;">
+                <label for="targetVariableSelect">Or select from detected columns</label>
+                <select id="targetVariableSelect" onchange="onTargetSelect()">
+                    <option value="">— select a column —</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Model Config Card -->
+        <div class="upload-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <span class="card-title">Model Configuration</span>
+            </div>
+
+            <input type="hidden" id="predictionVariableText">
+            <div id="predictionDropdownSection" style="display:none;">
+                <select id="predictionVariableSelect" onchange="onPredictionSelect()" style="display:none;">
+                    <option value="">— select a column —</option>
+                </select>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="modelName">Model Name</label>
+                    <input type="text" id="modelName" placeholder="e.g. LoanApprovalV2" value="My Model">
+                </div>
+                <div class="field-group">
+                    <label for="modelVersion">Version</label>
+                    <input type="text" id="modelVersion" placeholder="e.g. 1.0.0" value="1.0.0">
+                </div>
+            </div>
+
+            <div class="checkbox-wrapper" style="margin-top:1rem;">
+                <input type="checkbox" id="useSampleData" onchange="toggleSampleData()">
+                <label for="useSampleData" style="cursor:pointer;">Use sample data (for testing)</label>
+            </div>
+
+            <div id="columnInfoBanner" class="info-banner" style="display:none;">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Tip:</strong> Upload a dataset first, then use the dropdown to pick your target column.
+            </div>
+        </div>
+
+    </div><!-- /upload-grid -->
+
+    <!-- Sensitive Attributes -->
+    <section class="section-block">
+        <div class="card-header">
+            <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+            <span class="card-title">Select Sensitive Attributes</span>
+        </div>
+        <p class="section-desc">Select the attributes to test for bias in your model's predictions.</p>
+
+        <div class="attribute-grid">
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="gender" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-venus-mars attr-icon"></i>Gender</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="race" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-globe attr-icon"></i>Race / Ethnicity</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="age" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-calendar-alt attr-icon"></i>Age</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="socioeconomic" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-chart-pie attr-icon"></i>Socioeconomic</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="disability" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-wheelchair attr-icon"></i>Disability</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="religion" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-church attr-icon"></i>Religion</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="caste" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-users attr-icon"></i>Caste</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="marital" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-heart attr-icon"></i>Marital Status</label>
+            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="__other__" id="attrOtherCb" onchange="toggleOtherAttr()"><span class="checkbox-custom"></span><i class="fas fa-ellipsis-h attr-icon"></i>Other…</label>
+        </div>
+
+        <div class="other-input-wrap" id="otherAttrWrap">
+            <div class="field-group" style="margin-top:0;">
+                <label for="otherAttrInput">Custom attribute(s)</label>
+                <input type="text" id="otherAttrInput" placeholder="e.g. nationality, zipcode, language  (comma-separated)" oninput="updateAttrDisplay()">
+                <div class="field-hint">Separate multiple values with commas.</div>
+            </div>
+        </div>
+
+        <div class="selected-attrs-display" id="selectedAttrsDisplay">
+            <div class="attrs-label"><i class="fas fa-tags"></i> Selected attributes</div>
+            <div id="attributeTags" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.375rem;"></div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary-filled btn-block" type="button" onclick="autoDetect()" style="flex:1;">
+                <i class="fas fa-search"></i> Auto-detect from dataset
+            </button>
+            <button class="btn btn-danger-outline btn-block" type="button" onclick="resetAttrs()" style="flex:1;">
+                <i class="fas fa-times"></i> Clear All
+            </button>
+        </div>
+
+        <div class="warning-banner" id="proxyWarning" style="display:none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span><strong>Proxy variables may be present.</strong> Some attributes can correlate with others — review before submitting.</span>
+        </div>
+    </section>
+
+    <!-- Fairness Priorities -->
+    <section class="section-block">
+        <div class="card-header">
+            <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+            <span class="card-title">Rank Fairness Dimensions</span>
+        </div>
+        <p class="section-desc">Drag to reorder · Adjust sliders to set weights (min 5%)</p>
+
+        <div class="ranking-list" id="rankingList">
+            <div class="ranking-item" draggable="true" data-value="individualFairness"><span class="rank-number">1</span><span class="dimension-name">Individual Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:25%"></div></div><span class="weight-value">25%</span><input type="range" class="weight-slider" min="5" max="100" value="25" oninput="updateWeights()"></div>
+            <div class="ranking-item" draggable="true" data-value="groupFairness"><span class="rank-number">2</span><span class="dimension-name">Group Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:20%"></div></div><span class="weight-value">20%</span><input type="range" class="weight-slider" min="5" max="100" value="20" oninput="updateWeights()"></div>
+            <div class="ranking-item" draggable="true" data-value="demographicParity"><span class="rank-number">3</span><span class="dimension-name">Demographic Parity</span><div class="weight-bar"><div class="weight-fill" style="width:15%"></div></div><span class="weight-value">15%</span><input type="range" class="weight-slider" min="5" max="100" value="15" oninput="updateWeights()"></div>
+            <div class="ranking-item" draggable="true" data-value="calibrationError"><span class="rank-number">4</span><span class="dimension-name">Calibration</span><div class="weight-bar"><div class="weight-fill" style="width:12%"></div></div><span class="weight-value">12%</span><input type="range" class="weight-slider" min="5" max="100" value="12" oninput="updateWeights()"></div>
+            <div class="ranking-item" draggable="true" data-value="disparateImpact"><span class="rank-number">5</span><span class="dimension-name">Disparate Impact</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
+            <div class="ranking-item" draggable="true" data-value="counterfactual"><span class="rank-number">6</span><span class="dimension-name">Counterfactual</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
+            <div class="ranking-item" draggable="true" data-value="intersectional"><span class="rank-number">7</span><span class="dimension-name">Intersectional</span><div class="weight-bar"><div class="weight-fill" style="width:8%"></div></div><span class="weight-value">8%</span><input type="range" class="weight-slider" min="5" max="100" value="8" oninput="updateWeights()"></div>
+        </div>
+
+        <div class="weight-summary">
+            <div class="weight-summary-header"><span>Total Weight:</span><span class="weight-summary-total" id="totalWeight">100%</span></div>
+            <div class="weight-grid">
+                <div class="weight-stat"><div class="weight-stat-label">Highest</div><div class="weight-stat-name" id="highestDim">Individual Fairness</div><div class="weight-stat-val" id="highestVal">25%</div></div>
+                <div class="weight-stat low"><div class="weight-stat-label">Lowest</div><div class="weight-stat-name" id="lowestDim">Intersectional</div><div class="weight-stat-val" id="lowestVal">8%</div></div>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-danger-outline" type="button" onclick="resetRanking()" style="flex:1;"><i class="fas fa-redo-alt"></i> Reset to Default</button>
+            <button class="btn btn-primary-filled" type="button" onclick="normalizeWeights()" style="flex:1;"><i class="fas fa-bolt"></i> Normalize Weights</button>
+        </div>
+        <div class="hint-row">
+            <i class="fas fa-info-circle" style="color:var(--secondary);"></i>
+            Each dimension gets at least 5%. Click Normalize to distribute proportionally.
+        </div>
+    </section>
+
+    <!-- Report Type -->
+    <section class="section-block">
+        <div class="card-header">
+            <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+            <span class="card-title">Report Type</span>
+        </div>
+        <p class="section-desc">Choose the format for your fairness report</p>
+
+        <div class="report-toggle">
+            <div class="report-card" id="reportDev" onclick="selectReport('developer')">
+                <div class="report-icon"><i class="fas fa-code"></i></div>
+                <h3 class="report-title">Developer</h3><p class="report-desc">Technical metrics &amp; detailed analysis</p>
+                <div class="report-features"><span class="feature-tag">ML Metrics</span><span class="feature-tag">SHAP Analysis</span><span class="feature-tag">JSON Output</span></div>
+                <div class="selection-indicator"><i class="fas fa-check"></i></div>
+            </div>
+            <div class="report-card" id="reportReg" onclick="selectReport('regulator')">
+                <div class="report-icon"><i class="fas fa-gavel"></i></div>
+                <h3 class="report-title">Regulator</h3><p class="report-desc">Compliance &amp; audit documentation</p>
+                <div class="report-features"><span class="feature-tag">Legal Docs</span><span class="feature-tag">Compliance</span><span class="feature-tag">Evidence</span></div>
+                <div class="selection-indicator"><i class="fas fa-check"></i></div>
+            </div>
+            <div class="report-card" id="reportUser" onclick="selectReport('enduser')">
+                <div class="report-icon"><i class="fas fa-users"></i></div>
+                <h3 class="report-title">End-user</h3><p class="report-desc">Plain language explanations</p>
+                <div class="report-features"><span class="feature-tag">Simple Text</span><span class="feature-tag">FAQ</span><span class="feature-tag">Visual</span></div>
+                <div class="selection-indicator"><i class="fas fa-check"></i></div>
+            </div>
+        </div>
+
+        <div id="selectedReportDisplay">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--secondary);margin-bottom:0.2rem;">Selected</div>
+            <div id="selectedReportName" style="font-size:0.9375rem;font-weight:600;color:var(--primary);"></div>
+        </div>
+
+        <div class="checkbox-wrapper" style="margin-top:1.5rem;">
+            <input type="checkbox" id="generateAllReports" onchange="toggleGenerateAll()">
+            <label for="generateAllReports" style="cursor:pointer;"><strong>Generate all report types</strong> — gives you all 3 formats (~5–7 min)</label>
+        </div>
+
+        <div id="allReportsWarning">
+            <i class="fas fa-clock"></i>
+            Generating all reports takes approximately 5–7 minutes.
+        </div>
+    </section>
+
+    <!-- Submit -->
+    <div class="submit-section">
+        <button class="submit-btn" id="submitBtn" type="button" onclick="analyzeFairness()" disabled>
+            <i class="fas fa-play-circle"></i> ANALYZE FAIRNESS →
+        </button>
+        <p class="eta-text" id="etaText">Upload a dataset file to continue</p>
+    </div>
+</main>
+
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script>
+const API_BASE = 'http://127.0.0.1:5000';
+
+const S = {
+    datasetId:      null,
+    modelId:        null,
+    columns:        [],
+    selectedReport: null,
+};
+
+// Toast
+let _toastTimer = null;
+function toast(msg, type = 'info') {
+    const el = document.getElementById('toast');
+    const icons = {
+        success: '<i class="fas fa-check-circle"></i>',
+        error:   '<i class="fas fa-exclamation-circle"></i>',
+        info:    '<i class="fas fa-info-circle"></i>',
+    };
+    document.getElementById('toastIcon').innerHTML = icons[type] || icons.info;
+    document.getElementById('toastMsg').textContent = msg;
+    el.className = 'toast ' + type + ' show';
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+// File status
+function setStatus(which, type, msg) {
+    const el  = document.getElementById(which + 'Status');
+    const ico = document.getElementById(which + 'StatusIcon');
+    const txt = document.getElementById(which + 'StatusText');
+    el.className = 'file-status ' + type;
+    ico.innerHTML = type === 'uploading' ? '<div class="upload-spinner"></div>'
+                  : type === 'success'   ? '<i class="fas fa-check-circle"></i>'
+                  : type === 'error'     ? '<i class="fas fa-exclamation-circle"></i>' : '';
+    txt.textContent = msg;
+}
+
+// Drop zone
+function wireDropZone(zoneId, inputId, handlerFn) {
+    const zone  = document.getElementById(zoneId);
+    const input = document.getElementById(inputId);
+    zone.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); setTimeout(() => { input.value = ''; input.click(); }, 0); });
+    zone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTimeout(() => { input.value = ''; input.click(); }, 0); } });
+    zone.addEventListener('dragenter', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragover',  e => { e.preventDefault(); });
+    zone.addEventListener('dragleave', e => { if (!zone.contains(e.relatedTarget)) zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); const file = e.dataTransfer && e.dataTransfer.files[0]; if (file) handlerFn(file); });
+    input.addEventListener('change', e => { e.stopPropagation(); if (input.files[0]) handlerFn(input.files[0]); });
+}
+
+// Dataset upload
+async function uploadDataset(file) {
+    const zone = document.getElementById('datasetDropZone');
+    document.getElementById('datasetUploadText').textContent = file.name;
+    zone.classList.remove('uploaded');
+    setStatus('dataset', 'uploading', 'Uploading ' + file.name + '...');
+
+    const fd = new FormData();
+    fd.append('file', file);
+
+    try {
+        const res  = await fetch(API_BASE + '/datasets', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
+
+        S.datasetId = data.dataset_id;
+        S.columns   = Array.isArray(data.columns) ? data.columns : [];
+
+        zone.classList.add('uploaded');
+        setStatus('dataset', 'success', (data.records || 0).toLocaleString() + ' records · ' + S.columns.length + ' columns');
+
+        // Populate both dropdowns from the same column list
+        ['targetVariableSelect', 'predictionVariableSelect'].forEach(selId => {
+            const sel = document.getElementById(selId);
+            sel.innerHTML = '<option value="">— select a column —</option>';
+            S.columns.forEach(col => {
+                const o = document.createElement('option');
+                o.value = col; o.textContent = col;
+                sel.appendChild(o);
+            });
+        });
+        document.getElementById('targetDropdownSection').style.display    = 'block';
+        document.getElementById('predictionDropdownSection').style.display = 'block';
+        document.getElementById('columnInfoBanner').style.display          = 'block';
+
+        // Auto-suggest prediction column
+        const candidates = ['prediction', 'prediction_score', 'score', 'label', 'output', 'pred'];
+        const autoMatch  = S.columns.find(c => candidates.includes(c.toLowerCase()));
+        if (autoMatch && !document.getElementById('predictionVariableText').value) {
+            document.getElementById('predictionVariableText').value = autoMatch;
+            document.getElementById('predictionVariableSelect').value = autoMatch;
+            toast('Auto-detected prediction column: "' + autoMatch + '"', 'info');
+        }
+
+        toast('Dataset ready — ' + (data.records || 0).toLocaleString() + ' rows', 'success');
+    } catch (err) {
+        zone.classList.remove('uploaded');
+        S.datasetId = null;
+        setStatus('dataset', 'error', err.message);
+        toast('Dataset: ' + err.message, 'error');
+    }
+    refreshSubmitState();
+}
+
+function onTargetSelect() {
+    const sel = document.getElementById('targetVariableSelect');
+    if (sel.value) document.getElementById('targetVariableText').value = sel.value;
+}
+
+function onPredictionSelect() {
+    const sel = document.getElementById('predictionVariableSelect');
+    if (sel.value) document.getElementById('predictionVariableText').value = sel.value;
+}
+
+function getTargetVariable() { return (document.getElementById('targetVariableText').value || '').trim(); }
+
+// Sample data
+function toggleSampleData() {
+    const on = document.getElementById('useSampleData').checked;
+    if (on) {
+        document.getElementById('targetVariableText').value      = 'approved';
+        document.getElementById('predictionVariableText').value  = 'prediction_score';
+        toast('Sample column names pre-filled', 'info');
+    } else {
+        document.getElementById('targetVariableText').value      = '';
+        document.getElementById('predictionVariableText').value  = '';
+    }
+    refreshSubmitState();
+}
+
+// Submit state
+function refreshSubmitState() {
+    const btn = document.getElementById('submitBtn');
+    const eta = document.getElementById('etaText');
+    btn.disabled = !S.datasetId;
+    if (!S.datasetId) {
+        eta.textContent = 'Upload a dataset file to continue';
+    } else {
+        const all = document.getElementById('generateAllReports').checked;
+        eta.textContent = all ? 'Estimated time: ~5–7 minutes' : 'Estimated time: ~2–3 minutes';
+    }
+}
+
+// Sensitive attributes
+function toggleOtherAttr() {
+    const cb = document.getElementById('attrOtherCb');
+    document.getElementById('otherAttrWrap').classList.toggle('visible', cb.checked);
+    updateAttrDisplay();
+}
+
+function getSensitiveAttrs() {
+    const standard = Array.from(document.querySelectorAll('input[name="sensitive-attr"]:checked'))
+        .map(cb => cb.value).filter(v => v !== '__other__');
+    if (document.getElementById('attrOtherCb').checked) {
+        const extras = (document.getElementById('otherAttrInput').value || '')
+            .split(',').map(s => s.trim()).filter(Boolean);
+        return standard.concat(extras);
+    }
+    return standard;
+}
+
+function updateAttrDisplay() {
+    const attrs   = getSensitiveAttrs();
+    const display = document.getElementById('selectedAttrsDisplay');
+    if (attrs.length === 0) {
+        display.style.display = 'none';
+    } else {
+        display.style.display = 'block';
+        document.getElementById('attributeTags').innerHTML =
+            attrs.map(v => '<span class="attr-tag"><i class="fas fa-tag"></i> ' + v + '</span>').join('');
+    }
+}
+
+// ── FIXED: auto-detect uses actual uploaded columns from S.columns ──
+function autoDetect() {
+    if (!S.columns.length) { toast('Upload a dataset first', 'info'); return; }
+
+    // Keywords for each preset checkbox value — partial substring match on column names
+    const map = {
+        gender:        ['gender', 'sex'],
+        race:          ['race', 'ethnicity', 'nationality'],
+        age:           ['age'],
+        disability:    ['disability', 'disabled'],
+        religion:      ['religion', 'faith'],
+        caste:         ['caste'],
+        marital:       ['marital', 'marriage', 'spouse'],
+        socioeconomic: ['income', 'salary', 'socioeconomic', 'wealth', 'class', 'economic']
+    };
+
+    let n = 0;
+    document.querySelectorAll('input[name="sensitive-attr"]:not(#attrOtherCb)').forEach(cb => {
+        const kws = map[cb.value] || [cb.value];
+        // Check if any actual column name contains any keyword (case-insensitive substring)
+        const matched = S.columns.some(col =>
+            kws.some(kw => col.toLowerCase().includes(kw))
+        );
+        if (matched) { cb.checked = true; n++; }
+    });
+
+    // Also detect extra sensitive-looking columns not covered by presets
+    const coveredKws = Object.values(map).flat();
+    const proxyKws   = ['zip', 'postcode', 'region', 'location', 'area', 'language', 'nation', 'proxy'];
+    const extraCols  = S.columns.filter(col => {
+        const c = col.toLowerCase();
+        const alreadyCovered = coveredKws.some(kw => c.includes(kw));
+        const isProxy = proxyKws.some(kw => c.includes(kw));
+        return !alreadyCovered && isProxy;
+    });
+
+    if (extraCols.length > 0) {
+        document.getElementById('attrOtherCb').checked = true;
+        document.getElementById('otherAttrWrap').classList.add('visible');
+        const existing = document.getElementById('otherAttrInput').value.trim();
+        document.getElementById('otherAttrInput').value =
+            existing ? existing + ', ' + extraCols.join(', ') : extraCols.join(', ');
+        n += extraCols.length;
+    }
+
+    updateAttrDisplay();
+    if (n) {
+        document.getElementById('proxyWarning').style.display = 'flex';
+        toast('Auto-detected ' + n + ' attribute(s) from your dataset', 'success');
+    } else {
+        toast('No matching sensitive attributes found in dataset columns', 'info');
+    }
+}
+
+function resetAttrs() {
+    document.querySelectorAll('input[name="sensitive-attr"]').forEach(cb => cb.checked = false);
+    document.getElementById('otherAttrInput').value = '';
+    document.getElementById('otherAttrWrap').classList.remove('visible');
+    document.getElementById('proxyWarning').style.display = 'none';
+    updateAttrDisplay();
+}
+
+// Weights
+function updateWeights() {
+    let hi = {name:'',val:-Infinity}, lo = {name:'',val:Infinity}, total = 0;
+    document.querySelectorAll('.ranking-item').forEach(item => {
+        const v    = parseInt(item.querySelector('.weight-slider').value);
+        const name = item.querySelector('.dimension-name').textContent;
+        total += v;
+        item.querySelector('.weight-value').textContent = v + '%';
+        item.querySelector('.weight-fill').style.width  = Math.min(v,100) + '%';
+        if (v > hi.val) hi = {name, val:v};
+        if (v < lo.val) lo = {name, val:v};
+    });
+    document.getElementById('totalWeight').textContent = total + '%';
+    document.getElementById('highestDim').textContent  = hi.name;
+    document.getElementById('highestVal').textContent  = hi.val + '%';
+    document.getElementById('lowestDim').textContent   = lo.name;
+    document.getElementById('lowestVal').textContent   = lo.val + '%';
+}
+
+function getWeights() {
+    const w = {};
+    document.querySelectorAll('.ranking-item').forEach(item => {
+        w[item.dataset.value] = parseInt(item.querySelector('.weight-slider').value);
+    });
+    return w;
+}
+
+function normalizeWeights() {
+    const sls   = Array.from(document.querySelectorAll('.weight-slider'));
+    const raw   = sls.map(sl => parseInt(sl.value));
+    const total = raw.reduce((s, v) => s + v, 0);
+    if (!total) return;
+
+    // Step 1: proportional allocation, floored (not rounded) — rounding causes overshoot
+    const proportional = raw.map(v => Math.max(5, Math.floor(v / total * 100)));
+
+    // Step 2: how far are we from 100 after flooring?
+    const flooredSum = proportional.reduce((s, v) => s + v, 0);
+    let   remainder  = 100 - flooredSum;
+
+    // Step 3: if sum > 100 (can happen when min-5 floors push values up),
+    // reduce largest items first; if sum < 100, add to items with the
+    // largest fractional parts (standard largest-remainder method).
+    if (remainder < 0) {
+        const order = proportional
+            .map((v, i) => ({ i, v }))
+            .sort((a, b) => b.v - a.v);
+        for (const { i } of order) {
+            if (remainder === 0) break;
+            const canReduce = proportional[i] - 5;
+            const reduce    = Math.min(canReduce, -remainder);
+            proportional[i] -= reduce;
+            remainder       += reduce;
+        }
+    } else if (remainder > 0) {
+        const fractions = raw
+            .map((v, i) => ({ i, frac: (v / total * 100) - Math.floor(v / total * 100) }))
+            .sort((a, b) => b.frac - a.frac);
+        for (let k = 0; k < remainder; k++) {
+            proportional[fractions[k % fractions.length].i]++;
+        }
+    }
+
+    // Step 4: apply — sum is now guaranteed to be exactly 100
+    sls.forEach((sl, i) => { sl.value = proportional[i]; });
+    updateWeights();
+    toast('Weights normalized to 100%', 'info');
+}
+
+const DEFAULTS = [25,20,15,12,10,10,8];
+function resetRanking() {
+    document.querySelectorAll('.weight-slider').forEach((sl, i) => sl.value = DEFAULTS[i]);
+    updateWeights();
+    toast('Weights reset', 'info');
+}
+
+// Drag reorder
+(function() {
+    let drag = null;
+    const list = document.getElementById('rankingList');
+    list.addEventListener('dragstart', e => { drag = e.target.closest('.ranking-item'); if (drag) drag.classList.add('dragging'); });
+    list.addEventListener('dragend',   () => { if (drag) drag.classList.remove('dragging'); drag = null; renum(); });
+    list.addEventListener('dragover',  e => {
+        e.preventDefault();
+        const tgt = e.target.closest('.ranking-item');
+        if (!tgt || tgt === drag) return;
+        const mid = tgt.getBoundingClientRect().top + tgt.getBoundingClientRect().height / 2;
+        list.insertBefore(drag, e.clientY < mid ? tgt : tgt.nextSibling);
+    });
+    function renum() { document.querySelectorAll('.ranking-item .rank-number').forEach((el,i) => el.textContent = i+1); }
+})();
+
+// Report selection
+function selectReport(type) {
+    S.selectedReport = type;
+    document.querySelectorAll('.report-card').forEach(c => c.classList.remove('selected'));
+    const map = {developer:'reportDev', regulator:'reportReg', enduser:'reportUser'};
+    if (map[type]) document.getElementById(map[type]).classList.add('selected');
+    document.getElementById('selectedReportName').textContent =
+        ({developer:'Developer Report', regulator:'Regulator Report', enduser:'End-user Report'})[type] || type;
+    document.getElementById('selectedReportDisplay').style.display = 'block';
+    document.getElementById('generateAllReports').checked = false;
+    document.getElementById('allReportsWarning').style.display = 'none';
+    refreshSubmitState();
+}
+
+// ── FIXED: toggleGenerateAll redirects to allReports.html ──
+function toggleGenerateAll() {
+    const on = document.getElementById('generateAllReports').checked;
+    document.getElementById('allReportsWarning').style.display = on ? 'flex' : 'none';
+    if (on) {
+        S.selectedReport = 'all';
+        document.querySelectorAll('.report-card').forEach(c => c.classList.add('selected'));
+        document.getElementById('selectedReportName').textContent = 'All Report Types';
+        document.getElementById('selectedReportDisplay').style.display = 'block';
+    } else {
+        S.selectedReport = null;
+        document.querySelectorAll('.report-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('selectedReportDisplay').style.display = 'none';
+    }
+    refreshSubmitState();
+}
+
+// Main submit
+async function analyzeFairness() {
+    if (!S.datasetId) { toast('Please upload a dataset file first', 'error'); return; }
+
+    const targetVariable = getTargetVariable();
+
+    if (!targetVariable) { toast('Please specify a target variable', 'error'); document.getElementById('targetVariableText').focus(); return; }
+   
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Starting analysis…';
+    document.getElementById('globalError').style.display = 'none';
+
+    try {
+        // Step 1: Register model
+        const modelName    = (document.getElementById('modelName').value.trim()    || 'Uploaded Model');
+        const modelVersion = (document.getElementById('modelVersion').value.trim() || '1.0.0');
+
+        const modelRes  = await fetch(API_BASE + '/models', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:modelName, version:modelVersion}) });
+        const modelData = await modelRes.json();
+        if (!modelRes.ok) throw new Error(modelData.error || 'Model registration failed');
+        S.modelId = modelData.model_id;
+
+        // Step 2: Evaluate
+        const generateAll = document.getElementById('generateAllReports').checked;
+        const payload = {
+            dataset_id:           S.datasetId,
+            model_id:             S.modelId,
+            target_variable:      targetVariable,
+            sensitive_attributes: getSensitiveAttrs(),
+            fairness_weights:     getWeights(),
+            report_type:          generateAll ? 'all' : (S.selectedReport || 'developer'),
+        };
+
+        const evalRes  = await fetch(API_BASE + '/evaluate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+        const evalData = await evalRes.json();
+        if (!evalRes.ok) throw new Error(evalData.error || 'Evaluation failed to start');
+
+        const evalId = evalData.evaluation_id;
+        sessionStorage.setItem('eval_id', evalId);
+        sessionStorage.setItem('eval_meta', JSON.stringify(Object.assign({}, payload, {modelId:S.modelId, modelName, modelVersion})));
+        sessionStorage.setItem('report_type', generateAll ? 'all' : (S.selectedReport || 'developer'));
+        // Store destination so processing.html knows where to redirect after completion
+        sessionStorage.setItem('eval_dest', generateAll ? 'allReports' : 'dashboard');
+
+        toast('Analysis started! Redirecting…', 'success');
+
+        // ── FIXED: always go through processing.html so evaluation can complete.
+        // Pass ?dest=allReports when "generate all" is checked so processing.html
+        // can forward to the right destination once done.
+        if (generateAll) {
+            setTimeout(() => { window.location.href = 'processing.html?eval_id=' + evalId + '&dest=allReports'; }, 700);
+        } else {
+            setTimeout(() => { window.location.href = 'processing.html?eval_id=' + evalId; }, 700);
+        }
+
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-play-circle"></i> ANALYZE FAIRNESS →';
+        document.getElementById('globalErrorMsg').textContent = err.message;
+        document.getElementById('globalError').style.display = 'block';
+        toast(err.message, 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    wireDropZone('datasetDropZone', 'datasetFileInput', uploadDataset);
+    refreshSubmitState();
+    
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
+    });
+});
+</script>
+</body>
+</html>

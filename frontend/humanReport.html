@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Fairness Report — FairTrust AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --navy:     #0F1E38;
+            --gold:     #EBB255;
+            --gold-dim: rgba(235,178,85,0.12);
+            --green:    #059669;
+            --green-dim:rgba(5,150,105,0.08);
+            --amber:    #D97706;
+            --amber-dim:rgba(217,119,6,0.08);
+            --red:      #DC2626;
+            --red-dim:  rgba(220,38,38,0.08);
+            --bg:       #F8F6F2;   /* warm off-white, not cold gray */
+            --surface:  #FFFFFF;
+            --rule:     #E8E4DC;
+            --muted:    #6B7280;
+            --text:     #1C1917;
+            --serif:    'Lora', Georgia, serif;
+            --sans:     'Plus Jakarta Sans', sans-serif;
+            --mono:     'IBM Plex Mono', monospace;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; height: 60px;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo-icon { width: 34px; height: 34px; background: var(--navy); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+        .nav-logo-icon svg { width: 20px; height: 20px; }
+        .nav-logo-name { font-family: var(--sans); font-weight: 800; font-size: 1.0625rem; color: var(--navy); }
+        .nav-logo-name span { color: var(--gold); }
+        .nav-links { display: flex; gap: 0.25rem; }
+        .nav-links a { font-size: 0.875rem; font-weight: 600; color: var(--muted); text-decoration: none; padding: 0.375rem 0.75rem; border-radius: 7px; transition: color 0.15s, background 0.15s; }
+        .nav-links a:hover { color: var(--navy); background: #F1EDE8; }
+
+        /* ── PAGE ── */
+        .page { max-width: 1100px; margin: 0 auto; padding: 3rem 2.5rem 6rem; }
+
+        /* ── VERDICT HERO ── */
+        .verdict-hero {
+            border-radius: 20px;
+            padding: 2.75rem 3rem 2.25rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .verdict-hero.fair    { background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border: 1.5px solid rgba(5,150,105,0.2); }
+        .verdict-hero.partial { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1.5px solid rgba(217,119,6,0.2); }
+        .verdict-hero.concern { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); border: 1.5px solid rgba(220,38,38,0.2); }
+
+        .verdict-eyebrow {
+            font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; margin-bottom: 0.75rem;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .fair    .verdict-eyebrow { color: var(--green); }
+        .partial .verdict-eyebrow { color: var(--amber); }
+        .concern .verdict-eyebrow { color: var(--red); }
+
+        .verdict-icon-row { display: flex; align-items: flex-start; gap: 1.25rem; }
+        .verdict-emoji { display: flex; align-items: center; flex-shrink: 0; margin-top: 4px; }
+        .verdict-headline { font-family: var(--serif); font-size: 1.875rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.625rem; }
+        .fair    .verdict-headline { color: #065F46; }
+        .partial .verdict-headline { color: #78350F; }
+        .concern .verdict-headline { color: #7F1D1D; }
+        .verdict-sub { font-size: 1rem; line-height: 1.6; }
+        .fair    .verdict-sub { color: #047857; }
+        .partial .verdict-sub { color: #92400E; }
+        .concern .verdict-sub { color: #991B1B; }
+
+        /* Score bar */
+        .score-bar-wrap { margin-top: 1.5rem; }
+        .score-bar-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+        .score-bar-title { font-size: 0.8125rem; font-weight: 600; color: var(--muted); }
+        .score-bar-num   { font-family: var(--mono); font-size: 1.125rem; font-weight: 700; }
+        .fair    .score-bar-num { color: var(--green); }
+        .partial .score-bar-num { color: var(--amber); }
+        .concern .score-bar-num { color: var(--red); }
+        .score-track { height: 10px; background: rgba(0,0,0,0.08); border-radius: 100px; overflow: hidden; }
+        .score-fill  { height: 100%; border-radius: 100px; transition: width 1s ease; }
+        .fair    .score-fill { background: linear-gradient(90deg, #059669, #34D399); }
+        .partial .score-fill { background: linear-gradient(90deg, #D97706, #FCD34D); }
+        .concern .score-fill { background: linear-gradient(90deg, #DC2626, #F87171); }
+        .score-ticks { display: flex; justify-content: space-between; margin-top: 4px; }
+        .score-tick  { font-size: 0.6875rem; color: var(--muted); }
+
+        /* ── PLAIN ENGLISH EXPLAINER ── */
+        .explainer-box {
+            background: var(--surface); border-radius: 14px;
+            border: 1.5px solid var(--rule); padding: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .box-heading {
+            font-family: var(--serif); font-size: 1.125rem; font-weight: 700;
+            color: var(--navy); margin-bottom: 0.25rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .box-heading i { color: var(--gold); font-size: 0.9375rem; }
+        .box-sub { font-size: 0.8125rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+        /* ── CHECK LIST ── */
+        .check-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .check-item {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding: 1rem 1.125rem; border-radius: 10px;
+            border: 1.5px solid var(--rule); background: var(--surface);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .check-item:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(15,30,56,0.07); }
+        .check-item.ok   { border-color: rgba(5,150,105,0.2); background: #FAFFFE; }
+        .check-item.warn { border-color: rgba(217,119,6,0.2); background: #FFFDF7; }
+
+        .check-icon-wrap {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.125rem; flex-shrink: 0;
+        }
+        .check-icon-wrap.ok   { background: rgba(5,150,105,0.1); color: var(--green); }
+        .check-icon-wrap.warn { background: rgba(217,119,6,0.1);  color: var(--amber); }
+
+        .check-body { flex: 1; }
+        .check-name { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 3px; }
+        .check-detail { font-size: 0.8125rem; color: var(--muted); line-height: 1.55; }
+
+        .check-badge {
+            flex-shrink: 0; display: flex; align-items: center; gap: 4px;
+            padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+            align-self: center;
+        }
+        .check-badge.ok   { background: rgba(5,150,105,0.1); color: var(--green); }
+        .check-badge.warn { background: rgba(217,119,6,0.1);  color: var(--amber); }
+        .check-badge.fail { background: rgba(220,38,38,0.1);  color: var(--red); }
+
+        /* ── BIAS ALERT ── */
+        .bias-alert {
+            border-radius: 14px; padding: 1.5rem 1.75rem;
+            margin-bottom: 1.25rem;
+            display: flex; gap: 1rem;
+        }
+        .bias-alert.has-issues { background: #FFFBEB; border: 1.5px solid rgba(217,119,6,0.25); }
+        .bias-alert.all-clear  { background: #ECFDF5; border: 1.5px solid rgba(5,150,105,0.2); }
+        .bias-alert-icon {
+            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 1.125rem;
+        }
+        .has-issues .bias-alert-icon { background: rgba(217,119,6,0.12); color: var(--amber); }
+        .all-clear  .bias-alert-icon { background: rgba(5,150,105,0.1);  color: var(--green); }
+        .bias-alert-title { font-weight: 700; font-size: 0.9375rem; color: var(--navy); margin-bottom: 0.5rem; }
+        .bias-issue-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+        .bias-issue-item { font-size: 0.8375rem; color: #78350F; line-height: 1.55; display: flex; gap: 8px; }
+        .bias-issue-item::before { content: '▸'; color: var(--amber); flex-shrink: 0; }
+        .all-clear .bias-issue-item { color: #047857; }
+        .all-clear .bias-issue-item::before { color: var(--green); }
+
+        /* ── WHAT THIS MEANS ── */
+        .meaning-text {
+            font-family: var(--serif); font-size: 1.0625rem; line-height: 1.75;
+            color: #374151; margin-bottom: 1.25rem; font-style: italic;
+        }
+        .action-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+        .action-card {
+            background: var(--bg); border: 1.5px solid var(--rule); border-radius: 10px;
+            padding: 1.125rem; text-align: center; transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(15,30,56,0.08); }
+        .action-card-icon { display: flex; justify-content: center; margin-bottom: 0.5rem; }
+        .action-card-title { font-weight: 700; font-size: 0.875rem; color: var(--navy); margin-bottom: 4px; }
+        .action-card-text  { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+        /* ── RECOMMENDATIONS ── */
+        .rec-list { display: flex; flex-direction: column; gap: 0.625rem; }
+        .rec-item {
+            display: flex; gap: 1rem; align-items: flex-start;
+            padding: 0.875rem 1rem; background: var(--bg);
+            border: 1.5px solid var(--rule); border-radius: 9px;
+            transition: border-color 0.15s;
+        }
+        .rec-item:hover { border-color: var(--gold); }
+        .rec-num {
+            width: 26px; height: 26px; border-radius: 50%; background: var(--navy);
+            color: white; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; margin-top: 1px;
+        }
+        .rec-icon { display: flex; align-items: center; flex-shrink: 0; margin-top: 2px; }
+        .rec-title  { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
+        .rec-detail { font-size: 0.8125rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+        /* ── FAQ BOX ── */
+        .faq-item {
+            border-bottom: 1px solid var(--rule); padding: 1rem 0;
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q {
+            font-weight: 700; font-size: 0.9375rem; color: var(--navy);
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            user-select: none;
+        }
+        .faq-q i { color: var(--gold); font-size: 0.75rem; transition: transform 0.2s; }
+        .faq-q.open i { transform: rotate(180deg); }
+        .faq-a {
+            font-size: 0.875rem; color: var(--muted); line-height: 1.65;
+            margin-top: 0.75rem; display: none;
+        }
+        .faq-a.open { display: block; }
+
+        /* ── PRINT BUTTON ── */
+        .print-row {
+            display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;
+        }
+        .btn-print {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 0.75rem 1.5rem; border-radius: 9px;
+            font-family: var(--sans); font-size: 0.875rem; font-weight: 700;
+            cursor: pointer; border: none; transition: all 0.15s;
+        }
+        .btn-print-primary { background: var(--navy); color: white; }
+        .btn-print-primary:hover { background: #1A2D4E; }
+        .btn-print-ghost { background: transparent; border: 1.5px solid var(--rule); color: var(--muted); }
+        .btn-print-ghost:hover { border-color: var(--navy); color: var(--navy); }
+
+        /* ── SECTION DIVIDER ── */
+        .section-label {
+            font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--muted);
+            display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+        /* ── STATES ── */
+        .state-wrap { text-align: center; padding: 5rem 2rem; }
+        .state-icon  { font-size: 2.5rem; margin-bottom: 1rem; }
+        .state-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+        .state-sub   { color: var(--muted); font-size: 0.9rem; }
+
+        /* ── PRINT ── */
+        @media print {
+            @page { size: A4; margin: 15mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .navbar, .print-row { display: none !important; }
+            body { background: white !important; }
+            .verdict-hero, .explainer-box, .check-item, .action-card, .bias-alert { break-inside: avoid; }
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .anim { opacity: 0; animation: fadeUp 0.45s ease forwards; }
+        .anim-1 { animation-delay: 0.05s; }
+        .anim-2 { animation-delay: 0.12s; }
+        .anim-3 { animation-delay: 0.19s; }
+        .anim-4 { animation-delay: 0.26s; }
+        .anim-5 { animation-delay: 0.33s; }
+        .anim-6 { animation-delay: 0.40s; }
+        .anim-7 { animation-delay: 0.47s; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="upload.html" class="nav-logo">
+        <div class="nav-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3L4 7V13C4 17.42 7.58 21.29 12 22C16.42 21.29 20 17.42 20 13V7L12 3Z" fill="white" fill-opacity="0.15"/>
+                <path d="M9 12L11.5 14.5L16 10" stroke="white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <span class="nav-logo-name">Fair<span>Trust</span></span>
+    </a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="docs.html">Docs</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<main class="page" id="app">
+    <div class="state-wrap">
+        <div class="state-icon" style="color:var(--gold)"><i class="fas fa-spinner fa-pulse"></i></div>
+        <div class="state-title">Loading your report…</div>
+        <div class="state-sub">Just a moment.</div>
+    </div>
+</main>
+
+<script>
+const API_BASE = 'http://127.0.0.1:5000';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function outcomeClass(score) {
+    if (score >= 0.80) return 'fair';
+    if (score >= 0.65) return 'partial';
+    return 'concern';
+}
+
+function checkSev(ok) { return ok ? 'ok' : 'warn'; }
+
+
+// ── SVG icon helpers ─────────────────────────────────────────────────────────
+const SVG = {
+    fair:    `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="rgba(5,150,105,0.15)"/><path d="M7.5 12.5L10.5 15.5L16.5 9.5" stroke="#059669" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    partial: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="rgba(217,119,6,0.15)" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#D97706" stroke-width="2.25" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="#D97706"/></svg>`,
+    concern: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="rgba(220,38,38,0.15)"/><path d="M15 9L9 15M9 9l6 6" stroke="#DC2626" stroke-width="2.25" stroke-linecap="round"/></svg>`,
+    check:   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    warn:    `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="currentColor"/></svg>`,
+    scales:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 7h18" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M5 7l-2 5c0 1.66 1.79 3 4 3s4-1.34 4-3L9 7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7l-2 5c0 1.66 1.79 3 4 3s4-1.34 4-3l-2-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    shuffle: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="16 3 21 3 21 8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="20" x2="21" y2="3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><polyline points="21 16 21 21 16 21" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="15" x2="21" y2="21" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><line x1="4" y1="4" x2="9" y2="9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
+    clipboard:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M16 4H18C19.1 4 20 4.9 20 6V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V6C4 4.9 4.9 4 6 4H8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><line x1="8" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
+    chart:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="13" width="4" height="8" rx="1" stroke="currentColor" stroke-width="1.75"/><rect x="10" y="8" width="4" height="13" rx="1" stroke="currentColor" stroke-width="1.75"/><rect x="17" y="3" width="4" height="18" rx="1" stroke="currentColor" stroke-width="1.75"/></svg>`,
+    group:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.75"/><path d="M3 21v-1a6 6 0 0112 0v1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><circle cx="17" cy="7" r="3" stroke="currentColor" stroke-width="1.75"/><path d="M22 21v-1a6 6 0 00-5-5.91" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
+    trending_down: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16 17 22 17 22 11" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    target:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.75"/><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.75"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>`,
+    refresh: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="23 4 23 10 17 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><polyline points="1 20 1 14 7 14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
+
+function emojiToSvg(emoji, size) {
+    const map = {
+        '✅': SVG.fair, '⚠️': SVG.partial, '🔴': SVG.concern,
+        '⚖️': SVG.scales, '🔀': SVG.shuffle, '📋': SVG.clipboard,
+        '📊': SVG.chart, '👥': SVG.group, '📉': SVG.trending_down,
+        '🎯': SVG.target, '🔄': SVG.refresh,
+    };
+    let svg = map[emoji] || `<span style="font-size:${size||'1.25rem'}">${emoji}</span>`;
+    if (size) svg = svg.replace(/width="\d+"/, `width="${size}"`).replace(/height="\d+"/, `height="${size}"`);
+    return svg;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderReport(data, evalId) {
+    const score    = data.ethical_score || 0;
+    const pct      = Math.round(score * 100);
+    const cls      = outcomeClass(score);
+    const summary  = data.overall_summary || {};
+    const factors  = data.factor_items    || [];
+    const biases   = data.bias_indicators || [];
+    const wtm      = data.what_this_means || {};
+    const recs     = data.recommendations || [];
+
+    // ── Verdict hero ─────────────────────────────────────────────────────
+    const heroHtml = `
+    <div class="verdict-hero ${cls} anim anim-1">
+        <div class="verdict-eyebrow"><i class="fas fa-shield-alt"></i> FairTrust AI · Fairness Assessment</div>
+        <div class="verdict-icon-row">
+            <div class="verdict-emoji">${emojiToSvg(summary.icon || (cls === 'fair' ? '✅' : cls === 'partial' ? '⚠️' : '🔴'), 48)}</div>
+            <div>
+                <div class="verdict-headline">${summary.verdict || 'Assessment Complete'}</div>
+                <div class="verdict-sub">${summary.sub || ''}</div>
+            </div>
+        </div>
+        <div class="score-bar-wrap">
+            <div class="score-bar-label">
+                <span class="score-bar-title">Overall Fairness Score</span>
+                <span class="score-bar-num">${pct} / 100</span>
+            </div>
+            <div class="score-track">
+                <div class="score-fill" id="scoreFill" style="width:0%"></div>
+            </div>
+            <div class="score-ticks">
+                <span class="score-tick">0</span>
+                <span class="score-tick">Poor ←</span>
+                <span class="score-tick">→ 80 Passing</span>
+                <span class="score-tick">100</span>
+            </div>
+        </div>
+    </div>`;
+
+    // ── Checks ───────────────────────────────────────────────────────────
+    const checkItems = factors.map(f => {
+        const sev  = f.status === 'approved' ? 'ok' : 'warn';
+        const icon = f.status === 'approved' ? 'fa-check' : 'fa-exclamation';
+        const badgeLabel = f.status === 'approved' ? 'Looks Good' : 'Needs Attention';
+        return `
+        <div class="check-item ${sev}">
+            <div class="check-icon-wrap ${sev}"><i class="fas ${icon}"></i></div>
+            <div class="check-body">
+                <div class="check-name">${f.name}</div>
+                <div class="check-detail">${f.detail}</div>
+            </div>
+            <div class="check-badge ${sev}">
+                <i class="fas ${f.status === 'approved' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                ${badgeLabel}
+            </div>
+        </div>`;
+    }).join('');
+
+    const checksHtml = `
+    <div class="explainer-box anim anim-2">
+        <div class="box-heading"><i class="fas fa-list-check"></i> How was this model checked?</div>
+        <div class="box-sub">We ran ${factors.length} automated fairness checks. Here's what we found, in plain English.</div>
+        <div class="check-list">${checkItems || '<p style="color:var(--muted)">No checks available.</p>'}</div>
+    </div>`;
+
+    // ── Bias alert ────────────────────────────────────────────────────────
+    const isClean = biases.length === 1 && biases[0].title.toLowerCase().includes('no major');
+    const biasClass = isClean ? 'all-clear' : 'has-issues';
+    const biasIcon  = isClean ? 'fa-check-circle' : 'fa-exclamation-triangle';
+    const biasTitle = isClean ? 'No major bias detected' : `${biases.length} bias indicator${biases.length !== 1 ? 's' : ''} found`;
+    const biasItems = biases.map(b => `
+        <li class="bias-issue-item">
+            <strong>${b.title}:</strong> ${b.detail}
+        </li>`).join('');
+
+    const biasHtml = `
+    <div class="bias-alert ${biasClass} anim anim-3">
+        <div class="bias-alert-icon"><i class="fas ${biasIcon}"></i></div>
+        <div>
+            <div class="bias-alert-title">${biasTitle}</div>
+            <ul class="bias-issue-list">${biasItems}</ul>
+        </div>
+    </div>`;
+
+    // ── What this means ───────────────────────────────────────────────────
+    const actionCards = (wtm.action_cards || []).map(c => `
+        <div class="action-card">
+            <div class="action-card-icon">${emojiToSvg(c.icon, 32)}</div>
+            <div class="action-card-title">${c.title}</div>
+            <div class="action-card-text">${c.text}</div>
+        </div>`).join('');
+
+    const meaningHtml = `
+    <div class="explainer-box anim anim-4">
+        <div class="box-heading"><i class="fas fa-comment-alt"></i> What does this mean for you?</div>
+        <div class="box-sub">A plain-English summary of the key takeaways.</div>
+        <p class="meaning-text">"${wtm.summary || ''}"</p>
+        ${actionCards ? `<div class="action-cards-grid">${actionCards}</div>` : ''}
+    </div>`;
+
+    // ── Recommendations ───────────────────────────────────────────────────
+    const recItems = recs.map((r, i) => `
+        <div class="rec-item">
+            <div class="rec-num">${i + 1}</div>
+            <div class="rec-icon">${emojiToSvg(r.icon, 24)}</div>
+            <div>
+                <div class="rec-title">${r.title}</div>
+                <div class="rec-detail">${r.detail}</div>
+            </div>
+        </div>`).join('');
+
+    const recsHtml = recs.length ? `
+    <div class="explainer-box anim anim-5">
+        <div class="box-heading"><i class="fas fa-lightbulb"></i> Recommended next steps</div>
+        <div class="box-sub">Actions that would improve this model's fairness.</div>
+        <div class="rec-list">${recItems}</div>
+    </div>` : '';
+
+    // ── FAQ ───────────────────────────────────────────────────────────────
+    const faqs = [
+        {
+            q: 'What is a "fairness score" and what does mine mean?',
+            a: `A fairness score between 0–100 measures how equally the model treats different groups of people. Your model scored ${pct}/100. A score of 80 or above is considered passing. ${pct >= 80 ? 'Your model is above this threshold.' : 'Your model is below this threshold and needs improvement.'}`,
+        },
+        {
+            q: 'What are "protected attributes"?',
+            a: 'Protected attributes are characteristics like gender, race, age, or caste. A fair model should not base its decisions on these — it should focus on relevant factors only. Our checks verify this.',
+        },
+        {
+            q: 'Does a high accuracy mean the model is fair?',
+            a: 'No. A model can be 90% accurate while still being unfair — for example, by making correct predictions for most people but systematically disadvantaging a minority group. Fairness and accuracy are separate measures.',
+        },
+        {
+            q: 'What is the 80% rule?',
+            a: 'The 80% rule (or four-fifths rule) is a legal standard: the least-favoured group should receive positive outcomes at least 80% as often as the most-favoured group. If this ratio drops below 0.80, it may constitute unlawful disparate impact.',
+        },
+        {
+            q: 'What happens if this model fails its fairness checks?',
+            a: 'The model should not be deployed until the identified issues are resolved. The recommended next steps above outline the specific technical actions needed to bring the model within acceptable fairness thresholds.',
+        },
+    ];
+
+    const faqItems = faqs.map((f, i) => `
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(${i})" id="faq-q-${i}">
+                ${f.q}
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a" id="faq-a-${i}">${f.a}</div>
+        </div>`).join('');
+
+    const faqHtml = `
+    <div class="explainer-box anim anim-6">
+        <div class="box-heading"><i class="fas fa-question-circle"></i> Common questions</div>
+        <div class="box-sub">Answers to things people often ask about AI fairness reports.</div>
+        ${faqItems}
+    </div>`;
+
+    // ── Footer actions ────────────────────────────────────────────────────
+    const footerHtml = `
+    <div class="anim anim-7">
+        <div class="print-row">
+            <button class="btn-print btn-print-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Print this report
+            </button>
+            <a href="allReports.html?eval_id=${evalId}" class="btn-print btn-print-ghost">
+                <i class="fas fa-arrow-left"></i> All reports
+            </a>
+        </div>
+        <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem">
+            Eval ID: <span style="font-family:var(--mono)">${evalId || '—'}</span> &nbsp;·&nbsp;
+            Records evaluated: ${(data.records || 0).toLocaleString()} &nbsp;·&nbsp;
+            Generated by FairTrust AI Automated Ethics Framework
+        </p>
+    </div>`;
+
+    // ── Assemble ──────────────────────────────────────────────────────────
+    document.getElementById('app').innerHTML = `
+        <div class="section-label">Your Fairness Report</div>
+        ${heroHtml}
+        <div class="section-label" style="margin-top:2rem">What we checked</div>
+        ${checksHtml}
+        ${biasHtml}
+        <div class="section-label" style="margin-top:0.5rem">What this means</div>
+        ${meaningHtml}
+        ${recsHtml}
+        <div class="section-label" style="margin-top:0.5rem">Questions & Answers</div>
+        ${faqHtml}
+        ${footerHtml}
+    `;
+
+    // Animate score bar
+    setTimeout(() => {
+        const fill = document.getElementById('scoreFill');
+        if (fill) fill.style.width = pct + '%';
+    }, 200);
+}
+
+// ── FAQ toggle ────────────────────────────────────────────────────────────────
+function toggleFaq(i) {
+    const q = document.getElementById(`faq-q-${i}`);
+    const a = document.getElementById(`faq-a-${i}`);
+    q.classList.toggle('open');
+    a.classList.toggle('open');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(async function init() {
+    const evalId = new URLSearchParams(location.search).get('eval_id')
+                || sessionStorage.getItem('eval_id');
+
+    if (!evalId) {
+        document.getElementById('app').innerHTML = `
+            <div class="state-wrap">
+                <div class="state-icon" style="color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div>
+                <div class="state-title">No evaluation found</div>
+                <div class="state-sub">Complete an evaluation on the upload page first.</div>
+                <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:1.5rem;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a>
+            </div>`;
+        return;
+    }
+
+    try {
+        const res  = await fetch(`${API_BASE}/report/enduser/${evalId}`);
+        const data = await res.json();
+        if (res.ok && data.status === 'complete') { renderReport(data, evalId); return; }
+        throw new Error(data.error || 'not complete');
+    } catch (_) {
+        const cached = sessionStorage.getItem('eval_result');
+        if (cached) {
+            const raw      = JSON.parse(cached);
+            const fairness = raw.fairness || {};
+            const score    = raw.ethical_score || 0;
+            const cls      = outcomeClass(score);
+
+            const verdicts = {
+                fair:    { verdict: 'This model is treating people fairly.', sub: 'Our automated checks found no major fairness problems.', icon: '✅', outcome: 'FAIR' },
+                partial: { verdict: 'This model has some fairness concerns.', sub: 'It works well in most cases but has specific areas that need attention.', icon: '⚠️', outcome: 'PARTIAL' },
+                concern: { verdict: 'This model has significant fairness issues.', sub: 'There are areas where the model may treat people unfairly.', icon: '🔴', outcome: 'CONCERN' },
+            };
+
+            const makeFactor = (name, icon, scoreVal, threshold, goodText, badText) => ({
+                icon, name,
+                detail: scoreVal >= threshold ? goodText : badText,
+                status: scoreVal >= threshold ? 'approved' : 'rejected',
+                status_label: scoreVal >= threshold ? '✓' : '!',
+                icon_style: scoreVal >= threshold ? 'normal' : 'warning',
+            });
+
+            renderReport({
+                ethical_score:   score, records: raw.records || 0,
+                overall_summary: verdicts[cls],
+                factor_items: [
+                    makeFactor('Similar people are treated similarly', '📊', fairness.individualFairness || 0, 0.8,
+                        `${Math.round((fairness.individualFairness||0)*100)}% of similar people get the same outcome.`,
+                        `Only ${Math.round((fairness.individualFairness||0)*100)}% consistency — some similar people get different outcomes.`),
+                    makeFactor('Different groups are treated equally', '👥', fairness.groupFairness || 0, 0.8,
+                        'No significant gap in outcomes between different demographic groups.',
+                        'Some groups are receiving meaningfully different outcomes.'),
+                    makeFactor('Approval rates are similar across groups', '📉', fairness.disparateImpact || 0, 0.8,
+                        `The least-favoured group receives outcomes at ${Math.round((fairness.disparateImpact||0)*100)}% the rate of the best-favoured group — above the 80% legal threshold.`,
+                        `The least-favoured group receives outcomes at only ${Math.round((fairness.disparateImpact||0)*100)}% the rate — below the 80% legal threshold.`),
+                    makeFactor('The model\'s predictions are reliable', '🎯', 1 - (fairness.calibrationError || 0), 0.8,
+                        'When the model predicts a high likelihood, it is correct most of the time.',
+                        'The model\'s confidence levels don\'t always match real outcomes.'),
+                    makeFactor('Changing someone\'s background doesn\'t change the outcome', '🔄', fairness.counterfactual || 0, 0.8,
+                        'Swapping gender, race, or age in a profile does not change the decision.',
+                        'In some cases, changing only gender or race changes the decision.'),
+                ],
+                bias_indicators: (fairness.intersectional < 0.8 || fairness.disparateImpact < 0.8 || fairness.demographicParity > 0.1)
+                    ? [
+                        fairness.intersectional < 0.8 && { title: 'Intersectional Bias', detail: 'Some combinations of characteristics (e.g. older women) face compounding disadvantages.' },
+                        fairness.disparateImpact < 0.8 && { title: 'Disparate Impact', detail: `The approval gap between groups falls below the legal 80% threshold (currently ${Math.round((fairness.disparateImpact||0)*100)}%).` },
+                        fairness.demographicParity > 0.1 && { title: 'Demographic Gap', detail: `A ${Math.round((fairness.demographicParity||0)*100)}% outcome gap exists between demographic groups.` },
+                      ].filter(Boolean)
+                    : [{ title: 'No Major Bias Indicators Found', detail: 'The model passed all automated bias checks.' }],
+                what_this_means: {
+                    summary: score >= 0.8
+                        ? 'This model is performing fairly across our checks. It uses relevant factors and does not show significant bias against protected groups.'
+                        : `This model has fairness concerns that should be addressed before deployment. The score of ${Math.round(score*100)}/100 is below the recommended threshold of 80.`,
+                    action_cards: [
+                        { icon: score >= 0.8 ? '✅' : '⚠️', title: 'Fairness Risk', text: score >= 0.8 ? 'Within acceptable limits.' : 'Adjustment recommended before deployment.' },
+                        { icon: '⚖️', title: 'Legal Compliance', text: (fairness.disparateImpact || 0) >= 0.8 ? 'Meets 80% rule threshold.' : 'Does not meet 80% rule threshold.' },
+                        { icon: '🔀', title: 'Group Fairness', text: (fairness.intersectional || 0) >= 0.8 ? 'No intersectional disadvantage found.' : 'Intersectional bias detected.' },
+                    ],
+                },
+                recommendations: [{ icon: '📋', title: 'View the full technical report', detail: 'The Developer Report contains specific code-level fixes and SHAP analysis.' }],
+            }, evalId);
+            return;
+        }
+        document.getElementById('app').innerHTML = `
+            <div class="state-wrap">
+                <div class="state-icon" style="color:var(--red)"><i class="fas fa-times-circle"></i></div>
+                <div class="state-title">Could not load report</div>
+                <div class="state-sub">Please try again or start a new evaluation.</div>
+            </div>`;
+    }
+})();
+</script>
+</body>
+</html>
