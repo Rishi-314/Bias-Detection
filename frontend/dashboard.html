@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — FairTrust-AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1A2D4E;
+            --secondary: #EBB255;
+            --sidebar-bg: #F8F9FA;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --text-muted: #6B7280;
+            --text-main: #111827;
+        }
+
+        body {
+            font-family: "Inter", "Segoe UI", sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            color: var(--text-main);
+        }
+
+        /* LEFT SIDEBAR (Gemini Style) */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .logo {
+            padding: 0 20px 30px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span { color: var(--secondary); }
+
+        .history-container {
+            flex: 1;
+            padding: 0 12px;
+            overflow-y: auto;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 10px 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .history-item:hover { background: #E5E7EB; }
+
+        .history-item input {
+            background: transparent;
+            border: none;
+            font-size: 14px;
+            color: var(--text-main);
+            width: 100%;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-banner {
+            text-align: right;
+            padding: 15px 40px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .top-banner i { color: #10B981; margin-right: 5px; }
+
+        .content-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 40px;
+        }
+
+        .hero-section {
+            text-align: center;
+            max-width: 700px;
+            margin-bottom: 60px;
+        }
+
+        .hero-section h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* TOOL CARDS */
+        .cards-grid {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+            max-width: 850px;
+        }
+
+        .card {
+            flex: 1;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: left;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            background: #F3F4F6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .footer-links {
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #9CA3AF;
+        }
+
+        .footer-links a {
+            color: #9CA3AF;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .helper-text {
+            margin-top: 40px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">FAIR<span>TRUST-AI</span></div>
+        
+        <div class="history-container">
+            <div class="section-label">Recent History</div>
+            
+            <div class="history-item">
+                <i class="fa-regular fa-message" style="margin-right: 12px; font-size: 14px; color: #9CA3AF;"></i>
+                <input type="text" value="Financial Risk Audit" readonly onclick="this.readOnly=false" onblur="this.readOnly=true">
+            </div>
+
+            <div class="history-item">
+                <i class="fa-regular fa-message" style="margin-right: 12px; font-size: 14px; color: #9CA3AF;"></i>
+                <input type="text" value="Lending Dataset v2" readonly onclick="this.readOnly=false" onblur="this.readOnly=true">
+            </div>
+        </div>
+
+        <div style="padding: 20px; border-top: 1px solid var(--border);">
+            <div class="history-item" style="margin-bottom: 0;">
+                <i class="fa-solid fa-circle-user" style="margin-right: 12px; font-size: 20px;"></i>
+                <span style="font-size: 14px; font-weight: 500;">Enterprise Account</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-stage">
+        <div class="top-banner">
+            <i class="fa-solid fa-shield-check"></i> Enterprise-grade security. We never use your data to train our models.
+        </div>
+
+        <div class="content-body">
+            <div class="hero-section">
+                <h1>Evaluate with Confidence. Deploy with Trust.</h1>
+                <p>Audit your models for hidden biases and optimize your datasets for peak ethical performance. Understand your AI better than ever before.</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card" onclick="alert('Module initializing...')">
+                    <div class="icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h3>Dataset Refinement</h3>
+                    <p>Clean, structure, and prepare your data for high-integrity evaluation.</p>
+                </div>
+
+                <a href="http://127.0.0.1:5000/" class="card">
+                    <div class="icon-box"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <h3>Fairness Audit</h3>
+                    <p>Identify and mitigate discriminatory patterns with automated bias detection.</p>
+                </a>
+            </div>
+
+            <div class="helper-text">
+                New here? Start by refining your dataset to ensure a high-precision fairness audit.
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact Support</a>
+        </div>
+    </div>
+
+</body>
+</html>
