@@ -778,13 +778,15 @@
         .dim-card p { font-size: 12px; color: var(--light-text); line-height: 1.4; }
 
         /* ================= VIDEO SECTION ================= */
+        /* ================= VIDEO SECTION ================= */
         .video-section {
-            background: linear-gradient(135deg, var(--primary) 0%, #0F1E38 100%);
+            background: var(--white); /* Changed from gradient to white */
             padding: 0 5%;
             position: relative;
             overflow: hidden;
         }
 
+        /* Adjusted the decorative circle to be visible on white */
         .video-section:before {
             content: '';
             position: absolute;
@@ -793,7 +795,7 @@
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(235, 178, 85, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(235, 178, 85, 0.15) 0%, transparent 70%);
             z-index: 1;
         }
 
@@ -809,17 +811,18 @@
             width: 100%;
         }
 
+        /* Text colors updated to be readable on white */
         .video-section .section-eyebrow { color: var(--secondary); }
-        .video-section .section-heading { color: var(--white); }
+        .video-section .section-heading { color: var(--primary); } /* Changed from white to primary */
         .video-section .section-heading:after { background: var(--secondary); }
-        .video-section .section-sub { color: rgba(255, 255, 255, 0.6); }
+        .video-section .section-sub { color: var(--light-text); } /* Changed from transparent white to light-text */
 
         .video-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--white); /* Changed from semi-transparent */
             border: 2px solid rgba(235, 178, 85, 0.2);
             border-radius: 20px;
             padding: 20px;
-            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow); /* Added shadow for depth on white background */
         }
 
         .video-card iframe {
@@ -835,7 +838,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: var(--white);
+            color: var(--primary); /* Changed from white to primary */
         }
 
         /* ================= CERT SECTION ================= */
@@ -1238,149 +1241,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- ═══ SECTION 3: PROBLEM ════════════════════════════════════════ -->
-<section class="snap-section problem-section">
-    <div class="section-inner">
-        <div class="section-eyebrow fade-in">The Problem</div>
-        <h2 class="section-heading fade-in delay-1">AI is making life-changing decisions. Is yours fair?</h2>
-        <p class="section-sub fade-in delay-1">Hiring, lending, healthcare, criminal justice — hidden bias in AI systems is causing real harm, today. There's no universal standard to prove otherwise.</p>
-
-        <div class="problem-grid">
-            <div class="problem-card fade-in delay-2">
-                <div class="problem-card-icon"><i class="fas fa-users"></i></div>
-                <span class="stat-highlight red">Amazon</span>
-                <h3>Scrapped a hiring AI that penalised women</h3>
-                <p>Resumes containing the word "women's" (e.g. women's chess club) were systematically downranked — learned entirely from historical data.</p>
-            </div>
-            <div class="problem-card fade-in delay-2">
-                <div class="problem-card-icon"><i class="fas fa-university"></i></div>
-                <span class="stat-highlight amber">Banks</span>
-                <h3>Charging minorities higher rates</h3>
-                <p>Loan approval AIs charge higher interest rates or reject minority applicants — even with identical financial profiles.</p>
-            </div>
-            <div class="problem-card fade-in delay-3">
-                <div class="problem-card-icon"><i class="fas fa-chart-line"></i></div>
-                <span class="stat-highlight" style="color: var(--primary);">Hidden</span>
-                <h3>Bias buried deep in model mathematics</h3>
-                <p>The bias is never programmed in — it's learned from historical data. Removing a sensitive column doesn't remove the information.</p>
-            </div>
-            <div class="problem-card fade-in delay-3">
-                <div class="problem-card-icon"><i class="fas fa-gavel"></i></div>
-                <span class="stat-highlight" style="color: #059669;">India</span>
-                <h3>No AI Act. No enforcement. No standard.</h3>
-                <p>Unlike the EU, India has no law requiring companies to prove their AI is fair. FairTrust fills both technical and policy gaps.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ═══ SECTION 4: HOW IT WORKS ═══════════════════════════════════ -->
-<section class="snap-section how-section">
-    <div class="section-inner">
-        <div class="section-eyebrow fade-in">How It Works</div>
-        <h2 class="section-heading fade-in delay-1">Six-layer pipeline.<br>One ethical score.</h2>
-        <p class="section-sub fade-in delay-1">Upload your model predictions and dataset. FairTrust handles the rest — from bias detection to compliance certification.</p>
-
-        <div class="steps-grid">
-            <div class="step fade-in delay-2">
-                <div class="step-num">1</div>
-                <div class="step-icon-wrap"><i class="fas fa-cloud-upload-alt"></i></div>
-                <h3>Model Ingestion</h3>
-                <p>Upload your dataset and model predictions. Define sensitive attributes and fairness priorities.</p>
-            </div>
-            <div class="step fade-in delay-2">
-                <div class="step-num">2</div>
-                <div class="step-icon-wrap"><i class="fas fa-search"></i></div>
-                <h3>Bias Detection</h3>
-                <p>Seven fairness dimensions evaluated across four Swiss-cheese layers of analysis.</p>
-            </div>
-            <div class="step fade-in delay-2">
-                <div class="step-num">3</div>
-                <div class="step-icon-wrap"><i class="fas fa-chart-bar"></i></div>
-                <h3>SHAP/LIME Explainability</h3>
-                <p>Individual and group-level feature attribution to make invisible decisions visible.</p>
-            </div>
-            <div class="step fade-in delay-3">
-                <div class="step-num">4</div>
-                <div class="step-icon-wrap"><i class="fas fa-tools"></i></div>
-                <h3>Remediation Engine</h3>
-                <p>Prescribes fixes — rebalancing, proxy removal, recalibration, and fairness-aware thresholds.</p>
-            </div>
-            <div class="step fade-in delay-3">
-                <div class="step-num">5</div>
-                <div class="step-icon-wrap"><i class="fas fa-file-alt"></i></div>
-                <h3>Three Audience Reports</h3>
-                <p>Developer technical analysis, regulator compliance checklist, end-user plain language.</p>
-            </div>
-            <div class="step fade-in delay-3">
-                <div class="step-num">6</div>
-                <div class="step-icon-wrap"><i class="fas fa-certificate"></i></div>
-                <h3>JEDI Certification</h3>
-                <p>Machine-readable certificate for regulators and clients as proof of ethical compliance.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ═══ SECTION 5: 7 DIMENSIONS ══════════════════════════════════ -->
-<section class="snap-section dims-section">
-    <div class="section-inner">
-        <div class="dims-header">
-            <div>
-                <div class="section-eyebrow fade-in">Evaluation Dimensions</div>
-                <h2 class="section-heading fade-in delay-1" style="margin-bottom:0">Seven angles of fairness</h2>
-            </div>
-            <p class="fade-in delay-1" style="font-size:16px; color:var(--light-text); max-width:350px;">Each dimension independently scored and weighted, combined into a single ethical score.</p>
-        </div>
-
-        <div class="dims-grid">
-            <div class="dim-card fade-in delay-2">
-                <div class="dim-num">DIM 01</div>
-                <div class="dim-icon"><i class="fas fa-user-check"></i></div>
-                <h4>Individual Fairness</h4>
-                <p>Similar individuals are treated similarly by the model, regardless of demographic group.</p>
-            </div>
-            <div class="dim-card fade-in delay-2">
-                <div class="dim-num">DIM 02</div>
-                <div class="dim-icon"><i class="fas fa-users"></i></div>
-                <h4>Group Fairness</h4>
-                <p>Demographic groups receive equitable outcomes across the model's predictions.</p>
-            </div>
-            <div class="dim-card fade-in delay-2">
-                <div class="dim-num">DIM 03</div>
-                <div class="dim-icon"><i class="fas fa-venus-mars"></i></div>
-                <h4>Demographic Bias</h4>
-                <p>Gender, age, race, disability, and socioeconomic bias across all protected attributes.</p>
-            </div>
-            <div class="dim-card fade-in delay-2">
-                <div class="dim-num">DIM 04</div>
-                <div class="dim-icon"><i class="fas fa-balance-scale"></i></div>
-                <h4>Calibration Bias</h4>
-                <p>Model confidence equally reliable across all subgroups — 80% means 80% for everyone.</p>
-            </div>
-            <div class="dim-card fade-in delay-3">
-                <div class="dim-num">DIM 05</div>
-                <div class="dim-icon"><i class="fas fa-chart-pie"></i></div>
-                <h4>Disparate Impact</h4>
-                <p>The 80% rule — minority approval rate must be at least 80% of the majority rate.</p>
-            </div>
-            <div class="dim-card fade-in delay-3">
-                <div class="dim-num">DIM 06</div>
-                <div class="dim-icon"><i class="fas fa-random"></i></div>
-                <h4>Counterfactual Bias</h4>
-                <p>Outcomes shouldn't change if only a sensitive attribute is flipped.</p>
-            </div>
-            <div class="dim-card fade-in delay-3" style="grid-column: span 2;">
-                <div class="dim-num">DIM 07</div>
-                <div class="dim-icon"><i class="fas fa-layer-group"></i></div>
-                <h4>Intersectional Bias</h4>
-                <p>Overlapping disadvantages across multiple identities — invisible to single-dimension analysis.</p>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- ═══ SECTION 6: VIDEO ══════════════════════════════════════════ -->
 <section class="snap-section video-section">
