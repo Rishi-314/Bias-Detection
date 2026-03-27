@@ -4,8 +4,12 @@ from routes.evaluation import evaluations   # shared in-memory store
 developer_report_routes = Blueprint("developer_report_routes", __name__)
 
 
-def _badge(score: float, threshold: float = 0.80) -> str:
-    return "PASS" if score >= threshold else "WARNING"
+def _badge(score: float, threshold: float = 0.7) -> str:
+    if score >= 0.8:
+        return "PASS"
+    elif score >= 0.6:
+        return "WARNING"
+    return "FAIL"
 
 
 def _dimension_style(score: float) -> str:
@@ -13,6 +17,21 @@ def _dimension_style(score: float) -> str:
 
 
 # ── Dimension builders ────────────────────────────────────────────────────────
+def normalize_gap(gap: float, threshold: float = 0.05) -> float:
+    """
+    Converts fairness gap into score.
+
+    threshold = acceptable gap (5%)
+    beyond this → strong penalty
+    """
+    if gap is None:
+        return 0.5
+
+    if gap <= threshold:
+        return round(1 - (gap / threshold) * 0.5, 4)  # small penalty
+
+    # heavy penalty beyond threshold
+    return round(max(0.0, 0.5 * (threshold / gap)), 4)
 
 def _build_individual_fairness(fairness: dict) -> dict:
     score = fairness.get("individualFairness", 0.0)
@@ -36,91 +55,94 @@ def _build_individual_fairness(fairness: dict) -> dict:
 
 
 def _build_group_fairness(fairness: dict) -> dict:
-    score    = fairness.get("groupFairness", 0.0)
     per_attr = fairness.get("per_attribute", {})
 
+    worst_eo = 0.0
     groups = []
+
     for attr, metrics in per_attr.items():
         if "error" in metrics:
             continue
+
+        eo = abs(metrics.get("equalized_odds_difference", 0.0))
+        worst_eo = max(worst_eo, eo)
+
         groups.append({
-            "attribute":                    attr,
-            "equalized_odds_difference":    metrics.get("equalized_odds_difference", None),
-            "demographic_parity_difference": metrics.get("demographic_parity_difference", None),
-            "fairness_score":               metrics.get("fairness_score", None),
+            "attribute": attr,
+            "equalized_odds_diff": round(eo, 4),
         })
 
+    score = normalize_gap(worst_eo)
+
     return {
-        "id":     2,
-        "icon":   "👪",
-        "title":  "Group Fairness",
-        "score":  round(score, 4),
-        "status": _badge(score),
-        "style":  _dimension_style(score),
+        "id": 2,
+        "icon": "👪",
+        "title": "Group Fairness",
+        "score": score,
+        "status": _badge(score, threshold=0.7),
+        "style": _dimension_style(score),
         "detail": {
-            "description": (
-                "Evaluates equal opportunity across protected groups. "
-                "Reports equalized-odds difference per sensitive attribute."
-            ),
+            "worst_equalized_odds_diff": round(worst_eo, 4),
             "per_attribute": groups,
         },
     }
 
 
 def _build_demographic_bias(fairness: dict) -> dict:
-    dp_raw   = fairness.get("demographicParity", 0.0)
-    dp_score = round(max(0.0, 1.0 - dp_raw), 4)
     per_attr = fairness.get("per_attribute", {})
 
+    worst_gap = 0.0
     disparities = []
+
     for attr, metrics in per_attr.items():
         if "error" in metrics:
             continue
-        dp = abs(metrics.get("demographic_parity_difference", 0.0))
+
+        gap = abs(metrics.get("demographic_parity_difference", 0.0))
+        worst_gap = max(worst_gap, gap)
+
         disparities.append({
-            "attribute":   attr,
-            "gap_pct":     round(dp * 100, 2),
-            "raw_dp_diff": round(metrics.get("demographic_parity_difference", 0.0), 4),
+            "attribute": attr,
+            "gap_pct": round(gap * 100, 2),
+            "raw_gap": round(gap, 4),
         })
 
+    score = normalize_gap(worst_gap)
+
     return {
-        "id":     3,
-        "icon":   "🌍",
-        "title":  "Demographic Bias",
-        "score":  dp_score,
-        "status": _badge(dp_score),
-        "style":  _dimension_style(dp_score),
+        "id": 3,
+        "icon": "🌍",
+        "title": "Demographic Bias",
+        "score": score,
+        "status": _badge(score, threshold=0.7),
+        "style": _dimension_style(score),
         "detail": {
-            "description": (
-                "Measures demographic parity: whether the positive outcome rate is equal "
-                "across all groups of each sensitive attribute."
+            "worst_gap": round(worst_gap, 4),
+            "disparities": disparities,
+            "interpretation": (
+                f"Worst group gap is {round(worst_gap*100,2)}%. "
+                "Above 5% indicates potential bias."
             ),
-            "raw_parity_gap": round(dp_raw, 4),
-            "disparities":    disparities,
         },
     }
 
-
 def _build_calibration(fairness: dict) -> dict:
-    cal_err   = fairness.get("calibrationError", 0.0)
-    cal_score = round(max(0.0, 1.0 - cal_err), 4)
+    cal_err = fairness.get("calibrationError", 0.0)
+
+    # Brier score threshold ~0.1 good
+    score = normalize_gap(cal_err, threshold=0.1)
+
     return {
-        "id":     4,
-        "icon":   "⚖️",
-        "title":  "Calibration",
-        "score":  cal_score,
-        "status": _badge(cal_score),
-        "style":  _dimension_style(cal_score),
+        "id": 4,
+        "icon": "⚖️",
+        "title": "Calibration",
+        "score": score,
+        "status": _badge(score, threshold=0.7),
+        "style": _dimension_style(score),
         "detail": {
-            "description": (
-                "Calibration measures whether predicted probabilities match observed frequencies. "
-                "Computed as mean Brier score across sensitive groups."
-            ),
-            "brier_score":     round(cal_err, 4),
-            "calibration_score": cal_score,
+            "brier_score": round(cal_err, 4),
             "interpretation": (
-                "A Brier score of 0 is perfect; 0.25 is no-skill. "
-                f"Current score: {round(cal_err, 4)}"
+                "Closer to 0 is better. >0.1 indicates poor calibration."
             ),
         },
     }
@@ -128,43 +150,44 @@ def _build_calibration(fairness: dict) -> dict:
 
 def _build_disparate_impact(fairness: dict) -> dict:
     di = fairness.get("disparateImpact", 0.0)
+
+    # ideal = 1.0
+    gap = abs(1 - di)
+    score = normalize_gap(gap, threshold=0.2)
+
     return {
-        "id":     5,
-        "icon":   "📊",
-        "title":  "Disparate Impact",
-        "score":  round(di, 4),
-        "status": _badge(di, threshold=0.80),
-        "style":  _dimension_style(di),
+        "id": 5,
+        "icon": "📊",
+        "title": "Disparate Impact",
+        "score": score,
+        "status": _badge(score, threshold=0.7),
+        "style": _dimension_style(score),
         "detail": {
-            "description": (
-                "The 80% rule (four-fifths rule): the ratio of the lowest group positive-outcome "
-                "rate to the highest. Scores below 0.80 indicate adverse impact."
-            ),
-            "impact_ratio":  round(di, 4),
-            "threshold":     0.80,
-            "passes_80_rule": di >= 0.80,
+            "impact_ratio": round(di, 4),
+            "ideal": 1.0,
         },
     }
 
 
 def _build_counterfactual(fairness: dict) -> dict:
-    score = fairness.get("counterfactual", 0.0)
+    score_raw = fairness.get("counterfactual", 1.0)
+
+    # convert to violation
+    violation = 1 - score_raw
+
+    score = normalize_gap(violation, threshold=0.05)
+
     return {
-        "id":     6,
-        "icon":   "🔄",
-        "title":  "Counterfactual Fairness",
-        "score":  round(score, 4),
-        "status": _badge(score),
-        "style":  _dimension_style(score),
+        "id": 6,
+        "icon": "🔄",
+        "title": "Counterfactual Fairness",
+        "score": score,
+        "status": _badge(score, threshold=0.7),
+        "style": _dimension_style(score),
         "detail": {
-            "description": (
-                "Counterfactual fairness checks whether swapping a sensitive attribute "
-                "value changes the model's prediction. Measured as 1 minus the std of "
-                "group-level positive prediction rates."
-            ),
-            "consistency_score": round(score, 4),
+            "violation_rate": round(violation * 100, 2),
             "interpretation": (
-                "Higher is better. A score of 1.0 means group-level rates are identical."
+                "Measures how often changing sensitive attributes changes outcome."
             ),
         },
     }
@@ -309,7 +332,11 @@ def get_developer_report(eval_id: str):
     
     # 🔥 Detect real bias using counterfactual
     counterfactual_score = fairness.get("counterfactual", 1.0)
-    bias_detected = fairness.get("counterfactual", 1.0) < 0.95
+    bias_detected = any([
+        fairness.get("counterfactual", 1.0) < 0.95,
+        fairness.get("demographicParity", 0.0) > 0.05,
+        fairness.get("groupFairness", 1.0) < 0.9
+    ])
 
     dimensions = [
         _build_individual_fairness(fairness),

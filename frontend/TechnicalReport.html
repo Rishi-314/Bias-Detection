@@ -6,19 +6,16 @@
 <title>Technical Bias Audit — FairTrust AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --navy:#0F1E38;--navy-mid:#1A2D4E;--navy-soft:#243D65;
-  --gold:#EBB255;--gold-dim:rgba(235,178,85,0.13);--gold-line:rgba(235,178,85,0.32);
-  --red:#EF4444;--red-dim:rgba(239,68,68,0.1);--red-bright:#F87171;
-  --amber:#F59E0B;--amber-dim:rgba(245,158,11,0.1);
-  --green:#10B981;--green-dim:rgba(16,185,129,0.1);--green-bright:#34D399;
-  --blue:#3B82F6;--blue-dim:rgba(59,130,246,0.1);--blue-bright:#60A5FA;
-  --purple:#8B5CF6;--purple-dim:rgba(139,92,246,0.1);
-  --cyan:#06B6D4;--cyan-dim:rgba(6,182,212,0.1);
+  --gold:#EBB255;--gold-dim:rgba(235,178,85,0.12);--gold-line:rgba(235,178,85,0.30);
+  --red:#EF4444;--red-dim:rgba(239,68,68,0.09);--red-mid:rgba(239,68,68,0.18);
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,0.09);
+  --green:#10B981;--green-dim:rgba(16,185,129,0.09);
+  --blue:#3B82F6;--blue-dim:rgba(59,130,246,0.09);
   --surface:#fff;--bg:#F0F2F8;--bg2:#E4E7F0;--rule:#D8DCEC;
   --text:#0F1E38;--muted:#64748B;--muted2:#94A3B8;
   --mono:'JetBrains Mono',monospace;
@@ -27,487 +24,340 @@
   --r:10px;--r-lg:16px;
   --shadow:0 2px 12px rgba(15,30,56,0.07);
   --shadow-md:0 8px 32px rgba(15,30,56,0.11);
-  --shadow-lg:0 20px 64px rgba(15,30,56,0.14);
 }
-
 html{scroll-behavior:smooth}
 body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:#C1C8DA;border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:#94A3B8}
 
-/* ══════════════════ NAV ══════════════════ */
+/* ── NAV ── */
 .navbar{
   position:sticky;top:0;z-index:200;
   background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--rule);height:58px;
+  border-bottom:1px solid var(--rule);height:56px;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 2.5rem;box-shadow:var(--shadow);
+  padding:0 2rem;box-shadow:var(--shadow);
 }
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--navy),#2563EB);border-radius:9px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px}
-.logo-text{font-family:var(--display);font-size:17px;font-weight:800;color:var(--navy)}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--navy),#2563EB);border-radius:9px;display:flex;align-items:center;justify-content:center;color:white;font-size:13px}
+.logo-text{font-family:var(--display);font-size:16px;font-weight:800;color:var(--navy)}
 .logo-text span{color:var(--gold)}
-.nav-links{display:flex;gap:4px}
-.nav-links a{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:5px 11px;border-radius:7px;transition:all .15s}
+.nav-links{display:flex;gap:3px}
+.nav-links a{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:7px;transition:all .15s}
 .nav-links a:hover{color:var(--navy);background:var(--bg)}
 .nav-links a.active{color:var(--navy);background:var(--bg2)}
 
-/* ══════════════════ LAYOUT ══════════════════ */
-.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 58px);max-width:1440px;margin:0 auto}
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 56px);max-width:1400px;margin:0 auto}
 
 /* ── SIDEBAR ── */
 .sidebar{
-  position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;
-  background:var(--navy);padding:1.5rem 0;border-right:1px solid rgba(255,255,255,0.06);
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
+  background:var(--navy);padding:1.25rem 0;
+  border-right:1px solid rgba(255,255,255,0.05);
 }
-.sidebar-section-label{
+.sb-label{
   font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;
   text-transform:uppercase;color:rgba(255,255,255,0.3);
-  padding:0 1.25rem;margin-bottom:.5rem;margin-top:1.25rem;
+  padding:0 1.125rem;margin-bottom:.4rem;margin-top:1.125rem;
 }
-.sidebar-section-label:first-child{margin-top:0}
-.sidebar-item{
-  display:flex;align-items:center;gap:9px;
-  padding:.5rem 1.25rem;font-size:13px;font-weight:500;
+.sb-label:first-child{margin-top:0}
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:.45rem 1.125rem;font-size:12.5px;font-weight:500;
   color:rgba(255,255,255,0.5);text-decoration:none;cursor:pointer;
   transition:all .15s;border-left:2px solid transparent;
 }
-.sidebar-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.05)}
-.sidebar-item.active{color:var(--gold);background:rgba(235,178,85,0.08);border-left-color:var(--gold)}
-.sidebar-item i{width:14px;font-size:11px;flex-shrink:0}
-.sidebar-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
-.sidebar-badge.crit{background:rgba(239,68,68,0.2);color:var(--red-bright)}
-.sidebar-badge.warn{background:rgba(245,158,11,0.2);color:#FCD34D}
-.sidebar-badge.pass{background:rgba(16,185,129,0.2);color:var(--green-bright)}
+.sb-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.05)}
+.sb-item.active{color:var(--gold);background:rgba(235,178,85,0.07);border-left-color:var(--gold)}
+.sb-item i{width:13px;font-size:10px;flex-shrink:0}
+.sb-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px}
+.sb-badge.crit{background:rgba(239,68,68,0.2);color:#F87171}
+.sb-badge.pass{background:rgba(16,185,129,0.2);color:#34D399}
+.sb-badge.warn{background:rgba(245,158,11,0.2);color:#FCD34D}
 
 /* ── MAIN ── */
-.main{padding:2rem 2.5rem 5rem;overflow:auto}
-section[id]{scroll-margin-top:80px}
+.main{padding:1.75rem 2rem 5rem;overflow:auto}
+section[id]{scroll-margin-top:72px}
 
-/* ══════════════════ HERO ══════════════════ */
-.report-hero{
+/* ── HERO ── */
+.hero{
   background:var(--navy);border-radius:var(--r-lg);
-  padding:2.25rem 2.5rem;margin-bottom:1.75rem;
+  padding:2rem 2.25rem;margin-bottom:1.5rem;
   position:relative;overflow:hidden;
 }
-.report-hero::before{
-  content:'';position:absolute;top:-80px;right:-80px;
-  width:320px;height:320px;border-radius:50%;
-  background:radial-gradient(circle,rgba(235,178,85,0.09) 0%,transparent 70%);
-}
-.report-hero::after{
-  content:'TECHNICAL AUDIT';position:absolute;
-  bottom:-20px;right:2rem;font-family:var(--mono);font-size:72px;
-  font-weight:700;color:rgba(255,255,255,0.025);pointer-events:none;
-  letter-spacing:-.02em;white-space:nowrap;
-}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--gold-dim);border:1px solid var(--gold-line);
-  color:var(--gold);font-family:var(--mono);font-size:10px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.1em;padding:3px 12px;
-  border-radius:999px;margin-bottom:.875rem;
-}
-.hero-layout{display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap;position:relative}
-.hero-title{font-family:var(--display);font-size:2rem;font-weight:800;color:white;line-height:1.15;margin-bottom:.5rem}
-.hero-desc{font-size:.875rem;color:rgba(255,255,255,0.5);max-width:480px;line-height:1.6;margin-bottom:1.25rem}
-.hero-chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.hero-chip{
-  display:inline-flex;align-items:center;gap:5px;padding:4px 12px;
-  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
-  border-radius:6px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.6);
-}
-.hero-chip.warn{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:var(--red-bright)}
-.hero-chip.ok{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.25);color:var(--green-bright)}
-.hero-actions{display:flex;gap:.625rem;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--body);transition:all .2s;text-decoration:none}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(235,178,85,0.08) 0%,transparent 70%)}
+.hero-badge{display:inline-flex;align-items:center;gap:5px;background:var(--gold-dim);border:1px solid var(--gold-line);color:var(--gold);font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;padding:3px 10px;border-radius:999px;margin-bottom:.75rem}
+.hero-body{display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap;position:relative}
+.hero-title{font-family:var(--display);font-size:1.875rem;font-weight:800;color:white;line-height:1.15;margin-bottom:.4rem}
+.hero-sub{font-size:.875rem;color:rgba(255,255,255,0.5);max-width:440px;line-height:1.6;margin-bottom:1.125rem}
+.hero-chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.55)}
+.chip.warn{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:#F87171}
+.hero-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--body);transition:all .2s;text-decoration:none}
 .btn-gold{background:var(--gold);color:var(--navy)}
 .btn-gold:hover{background:#dfa342;transform:translateY(-1px)}
-.btn-ghost{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15)}
+.btn-ghost{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.14)}
 .btn-ghost:hover{background:rgba(255,255,255,0.14);color:white}
-.hero-score-panel{
+
+/* Score panel */
+.score-panel{
   background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-  border-radius:14px;padding:1.5rem 2rem;text-align:center;min-width:200px;
-  flex-shrink:0;
+  border-radius:12px;padding:1.375rem 1.75rem;text-align:center;min-width:180px;flex-shrink:0;
 }
-.score-num{font-family:var(--display);font-size:3.5rem;font-weight:800;line-height:1}
-.score-denom{font-size:1rem;opacity:.4;font-weight:500}
-.score-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.4);margin-top:5px}
-.score-verdict{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:.06em}
+.score-num{font-family:var(--display);font-size:3.25rem;font-weight:800;line-height:1}
+.score-denom{font-size:.9rem;opacity:.38;font-weight:500}
+.score-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,0.38);margin-top:4px}
+.score-verdict{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:7px;text-transform:uppercase;letter-spacing:.06em}
 
-/* ══════════════════ SECTION CHROME ══════════════════ */
-.section-block{
-  background:var(--surface);border-radius:var(--r);border:1px solid var(--rule);
-  box-shadow:var(--shadow);margin-bottom:1.5rem;overflow:hidden;
-}
-.section-block-head{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:1rem 1.5rem;border-bottom:1px solid var(--rule);background:var(--bg);
-}
-.section-block-title{
-  font-family:var(--display);font-size:.9375rem;font-weight:700;color:var(--navy);
-  display:flex;align-items:center;gap:8px;
-}
-.section-block-title i{color:var(--gold);font-size:.875rem}
-.section-block-body{padding:1.5rem}
-
-/* ══════════════════ STATUS BANNER ══════════════════ */
-.status-banner{
-  display:flex;align-items:flex-start;gap:1rem;
-  border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;
+/* ── BANNER ── */
+.banner{
+  display:flex;align-items:flex-start;gap:.875rem;
+  border-radius:0 var(--r) var(--r) 0;padding:.9rem 1.125rem;
   margin-bottom:1.5rem;border:1px solid;border-left:4px solid;
 }
-.status-banner.blocked{background:var(--red-dim);border-color:rgba(239,68,68,0.25);border-left-color:var(--red)}
-.status-banner.warn{background:var(--amber-dim);border-color:rgba(245,158,11,0.25);border-left-color:var(--amber)}
-.status-banner.ok{background:var(--green-dim);border-color:rgba(16,185,129,0.25);border-left-color:var(--green)}
-.status-banner-icon{font-size:1.25rem;flex-shrink:0;margin-top:2px}
-.status-banner.blocked .status-banner-icon{color:var(--red)}
-.status-banner.warn .status-banner-icon{color:var(--amber)}
-.status-banner.ok .status-banner-icon{color:var(--green)}
-.status-banner-title{font-weight:700;font-size:.9375rem;color:var(--text)}
-.status-banner-sub{font-size:.8125rem;color:var(--muted);margin-top:2px;line-height:1.55}
+.banner.blocked{background:var(--red-dim);border-color:rgba(239,68,68,0.22);border-left-color:var(--red)}
+.banner.warn{background:var(--amber-dim);border-color:rgba(245,158,11,0.22);border-left-color:var(--amber)}
+.banner.ok{background:var(--green-dim);border-color:rgba(16,185,129,0.22);border-left-color:var(--green)}
+.banner i{font-size:1.125rem;flex-shrink:0;margin-top:2px}
+.banner.blocked i{color:var(--red)}
+.banner.warn i{color:var(--amber)}
+.banner.ok i{color:var(--green)}
+.banner-title{font-weight:700;font-size:.9375rem;color:var(--text)}
+.banner-sub{font-size:.8125rem;color:var(--muted);margin-top:2px;line-height:1.55}
 
-/* ══════════════════ SCORE GRID ══════════════════ */
-.score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.5rem}
-.score-card{
-  background:var(--surface);border:1.5px solid var(--rule);border-radius:var(--r);
-  padding:1.125rem 1rem;text-align:center;box-shadow:var(--shadow);
-  transition:all .2s;cursor:default;
-}
-.score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--gold)}
-.sc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;margin:0 auto .625rem}
-.sc-icon.crit{background:var(--red-dim);color:var(--red)}
-.sc-icon.warn{background:var(--amber-dim);color:var(--amber)}
-.sc-icon.pass{background:var(--green-dim);color:var(--green)}
-.sc-icon.info{background:var(--blue-dim);color:var(--blue)}
-.sc-num{font-family:var(--display);font-size:1.75rem;font-weight:800;line-height:1}
-.sc-num.crit{color:var(--red)} .sc-num.warn{color:var(--amber)} .sc-num.pass{color:var(--green)} .sc-num.info{color:var(--blue)}
-.sc-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:4px}
-.sc-bar{height:3px;background:var(--bg2);border-radius:100px;margin-top:6px;overflow:hidden}
-.sc-bar-fill{height:100%;border-radius:100px}
-.sc-bar-fill.crit{background:var(--red)} .sc-bar-fill.warn{background:var(--amber)} .sc-bar-fill.pass{background:var(--green)} .sc-bar-fill.info{background:var(--blue)}
-.sc-status{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;margin-top:5px}
-.sc-status.crit{color:var(--red)} .sc-status.warn{color:var(--amber)} .sc-status.pass{color:var(--green)}
+/* ── SECTION BLOCK ── */
+.block{background:var(--surface);border-radius:var(--r);border:1px solid var(--rule);box-shadow:var(--shadow);margin-bottom:1.375rem;overflow:hidden}
+.block-head{display:flex;justify-content:space-between;align-items:center;padding:.875rem 1.375rem;border-bottom:1px solid var(--rule);background:var(--bg)}
+.block-title{font-family:var(--display);font-size:.9rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:7px}
+.block-title i{color:var(--gold);font-size:.8rem}
+.block-body{padding:1.375rem}
+.block-sub{font-size:.8125rem;color:var(--muted)}
 
-/* ══════════════════ DIM CARDS ══════════════════ */
-.dim-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-.dim-card{
-  border-radius:var(--r);padding:1.125rem;border:1.5px solid var(--rule);
-  background:var(--surface);cursor:pointer;transition:all .2s;position:relative;
-  overflow:hidden;
-}
-.dim-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;transition:opacity .2s;opacity:0}
-.dim-card:hover::before,.dim-card.expanded::before{opacity:1}
-.dim-card.crit::before{background:var(--red)}
-.dim-card.warn::before{background:var(--amber)}
-.dim-card.pass::before{background:var(--green)}
-.dim-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.dim-card.expanded{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
-.dim-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.625rem}
-.dim-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px}
-.dim-icon.crit{background:var(--red-dim);color:var(--red)}
-.dim-icon.warn{background:var(--amber-dim);color:var(--amber)}
-.dim-icon.pass{background:var(--green-dim);color:var(--green)}
-.dim-sev{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:5px}
-.dim-sev.crit{background:var(--red-dim);color:var(--red)}
-.dim-sev.warn{background:var(--amber-dim);color:var(--amber)}
-.dim-sev.pass{background:var(--green-dim);color:var(--green)}
-.dim-name{font-size:.8rem;font-weight:700;color:var(--navy);margin-bottom:2px}
-.dim-score{font-family:var(--display);font-size:1.75rem;font-weight:800;line-height:1}
-.dim-score.crit{color:var(--red)} .dim-score.warn{color:var(--amber)} .dim-score.pass{color:var(--green)}
-.dim-bar-track{height:4px;background:var(--bg2);border-radius:100px;margin:7px 0;overflow:hidden}
-.dim-bar-fill{height:100%;border-radius:100px;transition:width .8s ease}
-.dim-bar-fill.crit{background:var(--red)} .dim-bar-fill.warn{background:var(--amber)} .dim-bar-fill.pass{background:var(--green)}
-.dim-finding{font-size:.7rem;color:var(--muted);line-height:1.4}
-.dim-expand-hint{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--muted2);margin-top:6px;display:flex;align-items:center;gap:4px}
+/* ── SCORE GRID (5 dimensional) ── */
+.dim-grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:.875rem;margin-bottom:1.375rem}
+.dcard{background:var(--surface);border:1.5px solid var(--rule);border-radius:var(--r);padding:1rem;text-align:center;box-shadow:var(--shadow);transition:all .2s;cursor:default}
+.dcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--gold)}
+.dcard-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;margin:0 auto .5rem}
+.dcard-icon.crit{background:var(--red-dim);color:var(--red)}
+.dcard-icon.warn{background:var(--amber-dim);color:var(--amber)}
+.dcard-icon.pass{background:var(--green-dim);color:var(--green)}
+.dcard-num{font-family:var(--display);font-size:1.625rem;font-weight:800;line-height:1}
+.dcard-num.crit{color:var(--red)} .dcard-num.warn{color:var(--amber)} .dcard-num.pass{color:var(--green)}
+.dcard-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:3px}
+.dcard-bar{height:3px;background:var(--bg2);border-radius:100px;margin-top:5px;overflow:hidden}
+.dcard-fill{height:100%;border-radius:100px}
+.dcard-fill.crit{background:var(--red)} .dcard-fill.warn{background:var(--amber)} .dcard-fill.pass{background:var(--green)}
+.dcard-status{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;margin-top:4px}
+.dcard-status.crit{color:var(--red)} .dcard-status.warn{color:var(--amber)} .dcard-status.pass{color:var(--green)}
 
-/* Dim detail drawer */
-.dim-drawer{
-  display:none;grid-column:1/-1;
-  background:linear-gradient(to bottom,var(--bg) 0%,rgba(240,242,248,0.4) 100%);
-  border:1.5px solid var(--gold-line);border-radius:12px;
-  padding:1.5rem;margin-top:.5rem;
-  animation:slideDown .22s ease;
-}
-.dim-drawer.open{display:block}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.drawer-grid{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start}
-.drawer-title{font-family:var(--display);font-size:1.0625rem;font-weight:700;color:var(--navy);margin-bottom:.375rem;display:flex;align-items:center;gap:8px}
-.drawer-desc{font-size:.8125rem;color:var(--muted);line-height:1.65;margin-bottom:1rem}
-.metrics-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.125rem}
-.metric-chip{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.625rem .875rem}
-.metric-chip-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.metric-chip-val{font-family:var(--mono);font-size:1.125rem;font-weight:700;color:var(--navy)}
-.attr-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:.625rem}
-.attr-table th{background:var(--bg2);padding:6px 10px;text-align:left;font-weight:700;font-size:.7rem;color:var(--navy);border-bottom:1.5px solid var(--rule)}
-.attr-table td{padding:7px 10px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:.75rem}
-.attr-table tr:last-child td{border-bottom:none}
-.attr-table tr:hover td{background:var(--bg)}
-.tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:5px;font-family:var(--mono);font-size:.7rem;font-weight:700}
-.tag.pass{background:var(--green-dim);color:var(--green)}
-.tag.fail{background:var(--red-dim);color:var(--red)}
-.tag.warn{background:var(--amber-dim);color:var(--amber)}
+/* ── EVIDENCE SECTION ── */
+/* Gap table */
+.gap-table{width:100%;border-collapse:collapse;font-size:.875rem}
+.gap-table th{background:var(--bg2);padding:7px 12px;text-align:left;font-weight:700;font-size:.75rem;color:var(--navy);border-bottom:1.5px solid var(--rule)}
+.gap-table td{padding:8px 12px;border-bottom:1px solid var(--rule)}
+.gap-table tr:last-child td{border-bottom:none}
+.gap-table tr:hover td{background:var(--bg)}
+.gap-bar-wrap{display:flex;align-items:center;gap:8px}
+.gap-bar-track{flex:1;height:16px;background:var(--bg2);border-radius:4px;overflow:hidden;max-width:180px}
+.gap-bar-fill{height:100%;border-radius:4px}
+.gap-bar-text{font-family:var(--mono);font-size:.7rem;font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:.7rem;font-weight:700}
+.badge.pass{background:var(--green-dim);color:var(--green)}
+.badge.fail{background:var(--red-dim);color:var(--red)}
+.badge.warn{background:var(--amber-dim);color:var(--amber)}
 
-/* Fix box inside drawer */
-.fix-box{
-  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);
-  border-radius:var(--r);padding:1.125rem 1.25rem;
-}
-.fix-box-header{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.875rem;display:flex;align-items:center;gap:6px}
-.fix-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:.625rem;font-size:.8125rem;color:rgba(255,255,255,0.8)}
-.fix-step:last-child{margin-bottom:0}
-.fix-num{background:var(--gold);color:var(--navy);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
-.inline-code{font-family:var(--mono);font-size:.7rem;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;color:#93C5FD}
-
-/* ══════════════════ SHAP SECTION ══════════════════ */
-.shap-layout{display:grid;grid-template-columns:1fr 300px;gap:1.5rem}
-.shap-chart-title{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.875rem}
-.shap-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-.shap-feat{width:175px;flex-shrink:0;font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── SHAP CHART ── */
+.shap-layout{display:grid;grid-template-columns:1fr 280px;gap:1.375rem}
+.shap-label{font-family:var(--mono);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.75rem}
+.shap-row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.shap-feat{width:165px;flex-shrink:0;font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .shap-feat.danger{color:var(--red)}
-.shap-track{flex:1;height:20px;background:var(--bg2);border-radius:4px;overflow:hidden;position:relative}
-.shap-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:var(--mono);font-size:.65rem;font-weight:700;color:white;transition:width .8s ease;min-width:4px}
-.shap-val{font-family:var(--mono);font-size:.7rem;color:var(--muted);width:65px;text-align:right;flex-shrink:0}
-.shap-fills{
-  --c0:linear-gradient(90deg,#EF4444,#F87171);
-  --c1:linear-gradient(90deg,#F59E0B,#FBBF24);
-  --c2:linear-gradient(90deg,#3B82F6,#60A5FA);
-  --c3:linear-gradient(90deg,#8B5CF6,#A78BFA);
-  --c4:linear-gradient(90deg,#10B981,#34D399);
-  --c5:linear-gradient(90deg,#06B6D4,#22D3EE);
-  --c6:linear-gradient(90deg,#EC4899,#F472B6);
-  --cn:linear-gradient(90deg,#94A3B8,#CBD5E1);
-}
-.shap-f0{background:var(--c0)} .shap-f1{background:var(--c1)} .shap-f2{background:var(--c2)}
-.shap-f3{background:var(--c3)} .shap-f4{background:var(--c4)} .shap-f5{background:var(--c5)}
-.shap-f6{background:var(--c6)} .shap-fn{background:var(--cn)}
-.shap-insights{display:flex;flex-direction:column;gap:.75rem}
-.insight-card{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.875rem 1rem}
-.insight-card.danger{background:var(--red-dim);border-color:rgba(239,68,68,0.25)}
-.insight-card.warn{background:var(--amber-dim);border-color:rgba(245,158,11,0.25)}
-.insight-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
-.insight-val{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--navy)}
+.shap-track{flex:1;height:18px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.shap-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:7px;font-family:var(--mono);font-size:.6rem;font-weight:700;color:white;min-width:4px;transition:width .8s ease}
+.shap-val{font-family:var(--mono);font-size:.7rem;color:var(--muted);width:60px;text-align:right;flex-shrink:0}
+.shap-c0{background:linear-gradient(90deg,#EF4444,#F87171)}
+.shap-c1{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
+.shap-c2{background:linear-gradient(90deg,#3B82F6,#60A5FA)}
+.shap-c3{background:linear-gradient(90deg,#8B5CF6,#A78BFA)}
+.shap-c4{background:linear-gradient(90deg,#10B981,#34D399)}
+.shap-c5{background:linear-gradient(90deg,#06B6D4,#22D3EE)}
+.shap-cn{background:linear-gradient(90deg,#94A3B8,#CBD5E1)}
+.insight-box{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.75rem .9rem;margin-bottom:.6rem}
+.insight-box.danger{background:var(--red-dim);border-color:rgba(239,68,68,0.22)}
+.insight-box.warn{background:var(--amber-dim);border-color:rgba(245,158,11,0.22)}
+.insight-label{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px}
+.insight-val{font-family:var(--mono);font-size:.9375rem;font-weight:700;color:var(--navy)}
+.insight-box.danger .insight-val{color:var(--red)}
+.insight-box.warn .insight-val{color:var(--amber)}
 .insight-sub{font-size:.7rem;color:var(--muted);margin-top:2px;line-height:1.4}
-.insight-card.danger .insight-val{color:var(--red)}
-.insight-card.warn .insight-val{color:var(--amber)}
-.proxy-alert{
-  background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);
-  border-radius:8px;padding:.75rem 1rem;margin-top:1rem;
-  display:flex;gap:.5rem;align-items:flex-start;font-size:.8rem;color:#991B1B;
-}
-.proxy-alert i{color:var(--red);flex-shrink:0;margin-top:2px}
+.proxy-alert{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:.7rem .9rem;margin-top:.875rem;display:flex;gap:.5rem;align-items:flex-start;font-size:.8rem;color:#991B1B}
+.proxy-alert i{color:var(--red);flex-shrink:0;margin-top:2px;font-size:.8rem}
 
-/* ══════════════════ CODE BLOCKS ══════════════════ */
-.code-wrap{margin:1rem 0}
-.code-header{
-  display:flex;justify-content:space-between;align-items:center;
-  background:var(--navy-mid);border-radius:8px 8px 0 0;padding:7px 14px;
-  border:1px solid rgba(255,255,255,0.06);border-bottom:none;
-}
-.code-lang{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold)}
-.code-copy{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:5px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.55);font-family:var(--body);transition:all .15s}
-.code-copy:hover{background:rgba(255,255,255,0.14);color:white}
-.code-block{
-  background:var(--navy);border:1px solid rgba(255,255,255,0.06);border-top:none;
-  border-radius:0 0 8px 8px;padding:1rem 1.125rem;overflow-x:auto;
-  margin:0;
-}
-.code-block code{font-family:var(--mono);font-size:.78rem;line-height:1.75;color:#93C5FD;white-space:pre}
-.code-block code .cm{color:#6B7280} /* comment */
-.code-block code .kw{color:#F472B6} /* keyword */
-.code-block code .st{color:#86EFAC} /* string */
-.code-block code .fn{color:#FCD34D} /* function */
-.code-block code .nu{color:#FB923C} /* number */
-.code-block code .cl{color:#67E8F9} /* class/type */
+/* ── COUNTERFACTUAL EVIDENCE ── */
+.cf-list{display:flex;flex-direction:column;gap:1.125rem}
+.cf-card{border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--surface);transition:border-color .2s}
+.cf-card:hover{border-color:var(--gold)}
+.cf-head{background:var(--bg);border-bottom:1px solid var(--rule);padding:.7rem 1.125rem;display:flex;align-items:center;justify-content:space-between}
+.cf-head-title{font-weight:700;font-size:.875rem;color:var(--navy);display:flex;align-items:center;gap:6px}
+.cf-head-title i{color:var(--gold);font-size:.75rem}
+.cf-bias-tag{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;background:var(--red-mid);color:var(--red);padding:3px 8px;border-radius:4px}
+.cf-body{padding:1.125rem}
+.cf-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:.875rem;align-items:start;margin-bottom:.875rem}
+.cf-person{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.8rem .9rem}
+.cf-person-head{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem}
+.cf-person-head.approved{color:var(--green)}
+.cf-person-head.rejected{color:var(--red)}
+.cf-outcome{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-family:var(--mono);font-size:.7rem;font-weight:700;margin-bottom:.5rem}
+.cf-outcome.approved{background:var(--green-dim);color:var(--green)}
+.cf-outcome.rejected{background:var(--red-dim);color:var(--red)}
+.cf-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px dashed var(--rule);font-size:.75rem}
+.cf-row:last-child{border:none}
+.cf-k{color:var(--muted)}
+.cf-v{font-family:var(--mono);font-weight:600;color:var(--navy)}
+.cf-v.diff{color:var(--red);font-weight:700}
+.cf-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding-top:1.5rem;color:var(--red)}
+.cf-divider i{font-size:1rem}
+.cf-divider span{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.cf-explain{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.8rem .9rem}
+.cf-explain-label{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px}
+.cf-explain-text{font-size:.8125rem;color:var(--text);line-height:1.6}
 
-/* ══════════════════ FIX CARDS ══════════════════ */
-.fix-list{display:flex;flex-direction:column;gap:1rem}
+/* ── FIX CARDS ── */
+.fix-list{display:flex;flex-direction:column;gap:.875rem}
 .fix-card{border-radius:var(--r);border:1px solid var(--rule);background:var(--surface);overflow:hidden;transition:border-color .2s}
 .fix-card:hover{border-color:var(--gold)}
 .fix-card.crit{border-left:4px solid var(--red)}
 .fix-card.warn{border-left:4px solid var(--amber)}
 .fix-card.info{border-left:4px solid var(--blue)}
-.fix-header{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;cursor:pointer;user-select:none}
+.fix-header{display:flex;align-items:flex-start;gap:.875rem;padding:.9rem 1.125rem;cursor:pointer;user-select:none}
 .fix-header:hover{background:var(--bg)}
-.fix-rank{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:.9rem;font-weight:800}
+.fix-rank{width:30px;height:30px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:.875rem;font-weight:800}
 .fix-rank.crit{background:var(--red-dim);color:var(--red)}
 .fix-rank.warn{background:var(--amber-dim);color:var(--amber)}
 .fix-rank.info{background:var(--blue-dim);color:var(--blue)}
 .fix-meta{flex:1}
-.fix-title{font-weight:700;font-size:.9375rem;color:var(--navy);margin-bottom:3px}
+.fix-title{font-weight:700;font-size:.9375rem;color:var(--navy);margin-bottom:2px}
 .fix-desc{font-size:.8rem;color:var(--muted);line-height:1.5}
-.fix-tags{display:flex;gap:.375rem;flex-wrap:wrap;margin-top:5px}
-.fix-tag{font-family:var(--mono);font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;border:1px solid var(--rule);color:var(--muted);background:var(--bg2)}
+.fix-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:5px}
+.fix-tag{font-family:var(--mono);font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;border:1px solid var(--rule);color:var(--muted);background:var(--bg2)}
 .fix-tag.dim{background:var(--blue-dim);color:var(--blue);border-color:rgba(59,130,246,0.2)}
 .fix-tag.score{background:var(--green-dim);color:var(--green);border-color:rgba(16,185,129,0.2)}
-.fix-toggle{flex-shrink:0;width:28px;height:28px;border-radius:6px;background:var(--bg2);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);transition:all .15s;align-self:flex-start;margin-top:2px}
-.fix-toggle:hover{background:var(--rule);color:var(--navy)}
-.fix-toggle.open{background:var(--navy);color:white;border-color:var(--navy)}
-.fix-body{display:none;border-top:1px solid var(--rule);padding:1.25rem 1.5rem;background:var(--bg);animation:slideDown .2s ease}
+.fix-toggle-btn{flex-shrink:0;width:26px;height:26px;border-radius:6px;background:var(--bg2);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:all .15s;align-self:flex-start;margin-top:2px}
+.fix-toggle-btn:hover{background:var(--rule);color:var(--navy)}
+.fix-toggle-btn.open{background:var(--navy);color:white;border-color:var(--navy)}
+.fix-body{display:none;border-top:1px solid var(--rule);padding:1.125rem 1.375rem;background:var(--bg);animation:slideDown .2s ease}
 .fix-body.open{display:block}
-.fix-body-grid{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;align-items:start}
-.why-box,.what-box{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.875rem 1rem;margin-bottom:.875rem}
-.why-box strong,.what-box strong{font-size:.8rem;color:var(--navy);display:block;margin-bottom:4px}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.fix-body-grid{display:grid;grid-template-columns:1fr 280px;gap:1.25rem;align-items:start}
+.why-box,.what-box{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.8rem .9rem;margin-bottom:.75rem}
+.why-box strong,.what-box strong{font-size:.8rem;color:var(--navy);display:block;margin-bottom:3px}
 .why-box p,.what-box p{font-size:.8125rem;color:var(--muted);line-height:1.6}
-
-/* Before/After score bar */
-.ba-card{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.875rem 1rem}
-.ba-title{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.75rem}
-.ba-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.ba-lbl{font-size:.75rem;color:var(--muted);width:72px;flex-shrink:0}
-.ba-track{flex:1;height:18px;background:var(--bg2);border-radius:4px;overflow:hidden}
-.ba-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:var(--mono);font-size:.65rem;font-weight:700;color:white;min-width:30px}
+.ba-card{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.8rem .9rem}
+.ba-title{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:.625rem}
+.ba-row{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.ba-lbl{font-size:.7rem;color:var(--muted);width:65px;flex-shrink:0}
+.ba-track{flex:1;height:16px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.ba-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:7px;font-family:var(--mono);font-size:.6rem;font-weight:700;color:white;min-width:28px}
 .ba-fill.before{background:var(--red)}
 .ba-fill.before.amber{background:var(--amber)}
 .ba-fill.after{background:var(--green)}
-.ba-val{font-family:var(--mono);font-size:.75rem;font-weight:700;width:35px;text-align:right;flex-shrink:0;color:var(--navy)}
-.effort-box{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.875rem 1rem;margin-top:.75rem}
+.ba-val{font-family:var(--mono);font-size:.7rem;font-weight:700;width:32px;text-align:right;flex-shrink:0;color:var(--navy)}
+.effort-box{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.8rem .9rem;margin-top:.6rem}
 .effort-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.8rem;border-bottom:1px dashed var(--rule)}
 .effort-row:last-child{border:none;padding-bottom:0}
 .effort-key{color:var(--muted);font-size:.75rem}
-.effort-val{font-weight:700;color:var(--navy);font-size:.75rem}
-.effort-pill{padding:2px 7px;border-radius:4px;font-family:var(--mono);font-size:9px;font-weight:700}
+.effort-pill{padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:9px;font-weight:700}
 .effort-pill.high{background:var(--red-dim);color:var(--red)}
 .effort-pill.medium{background:var(--amber-dim);color:var(--amber)}
 .effort-pill.low{background:var(--green-dim);color:var(--green)}
 
-/* ══════════════════ CF EXAMPLES ══════════════════ */
-.cf-list{display:flex;flex-direction:column;gap:1.25rem}
-.cf-card{border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--surface);transition:border-color .2s}
-.cf-card:hover{border-color:var(--gold)}
-.cf-head{background:var(--bg);border-bottom:1px solid var(--rule);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
-.cf-head-title{font-weight:700;font-size:.875rem;color:var(--navy);display:flex;align-items:center;gap:7px}
-.cf-head-title i{color:var(--gold);font-size:.8rem}
-.cf-attr-badge{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;background:var(--red-dim);color:var(--red);padding:3px 9px;border-radius:4px}
-.cf-body{padding:1.25rem}
-.cf-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start;margin-bottom:1rem}
-.cf-person{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.875rem 1rem}
-.cf-person-head{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
-.cf-person-head.approved{color:var(--green)}
-.cf-person-head.rejected{color:var(--red)}
-.cf-outcome{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;font-family:var(--mono);font-size:.7rem;font-weight:700;margin-bottom:.625rem}
-.cf-outcome.approved{background:var(--green-dim);color:var(--green)}
-.cf-outcome.rejected{background:var(--red-dim);color:var(--red)}
-.cf-attr-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px dashed var(--rule);font-size:.75rem}
-.cf-attr-row:last-child{border:none}
-.cf-k{color:var(--muted)}
-.cf-v{font-family:var(--mono);font-weight:600;color:var(--navy)}
-.cf-v.diff{color:var(--red);font-weight:700}
-.cf-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding-top:1.75rem;color:var(--red)}
-.cf-divider i{font-size:1.125rem}
-.cf-divider-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.cf-explain{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.875rem 1rem}
-.cf-explain-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
-.cf-explain-text{font-size:.8125rem;color:var(--text);line-height:1.6}
-.cf-explain-text strong{color:var(--red)}
+/* Code blocks */
+.code-wrap{margin:.875rem 0}
+.code-header{display:flex;justify-content:space-between;align-items:center;background:var(--navy-mid);border-radius:7px 7px 0 0;padding:6px 12px;border:1px solid rgba(255,255,255,0.06);border-bottom:none}
+.code-lang{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--gold)}
+.code-copy{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.5);font-family:var(--body);transition:all .15s}
+.code-copy:hover{background:rgba(255,255,255,0.13);color:white}
+.code-block{background:var(--navy);border:1px solid rgba(255,255,255,0.06);border-top:none;border-radius:0 0 7px 7px;padding:.875rem 1rem;overflow-x:auto;margin:0}
+.code-block code{font-family:var(--mono);font-size:.775rem;line-height:1.75;color:#93C5FD;white-space:pre}
+.code-block code .cm{color:#6B7280}
+.code-block code .kw{color:#F472B6}
+.code-block code .st{color:#86EFAC}
+.code-block code .nu{color:#FB923C}
 
-/* ══════════════════ PERF SECTION ══════════════════ */
-.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.perf-card{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r);padding:1.25rem;text-align:center}
-.perf-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
-.perf-val{font-family:var(--display);font-size:2rem;font-weight:800;line-height:1}
-.perf-bar-track{height:6px;background:var(--bg2);border-radius:100px;margin:9px 0 5px;overflow:hidden}
-.perf-bar-fill{height:100%;border-radius:100px;transition:width .8s ease}
-.perf-sub{font-size:.7rem;color:var(--muted);line-height:1.4}
-
-/* ══════════════════ INFO BOX ══════════════════ */
-.info-box{
-  background:var(--bg);border:1px solid var(--rule);border-radius:8px;
-  padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.8125rem;color:var(--muted);
-  display:flex;align-items:flex-start;gap:8px;
-}
-.info-box i{color:var(--gold);flex-shrink:0;margin-top:2px}
-
-/* ══════════════════ QUICK WINS ══════════════════ */
-.qw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.qw-card{
-  background:var(--green-dim);border:1.5px solid rgba(16,185,129,0.2);
-  border-radius:var(--r);padding:1.125rem;
-  transition:all .15s;
-}
-.qw-card:hover{border-color:var(--green);box-shadow:var(--shadow);transform:translateY(-2px)}
-.qw-tag{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:4px;margin-bottom:.375rem}
-.qw-title{font-weight:700;font-size:.875rem;color:var(--navy);margin-bottom:3px;line-height:1.35}
-.qw-desc{font-size:.75rem;color:var(--muted);line-height:1.5}
-.qw-score{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--green);margin-top:7px}
-
-/* ══════════════════ DEPLOYMENT GATE ══════════════════ */
-.gate-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
-.gate-card{border-radius:var(--r);padding:1rem;border:1.5px solid var(--rule);background:var(--surface);transition:all .2s}
+/* ── DEPLOYMENT GATE ── */
+.gate-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.875rem}
+.gate-card{border-radius:var(--r);padding:.9rem;border:1.5px solid var(--rule);background:var(--surface);transition:all .2s}
 .gate-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .gate-card.pass{border-color:rgba(16,185,129,0.35)}
 .gate-card.fail{border-color:rgba(239,68,68,0.35)}
 .gate-card.marginal{border-color:rgba(245,158,11,0.35)}
-.gc-top{display:flex;justify-content:space-between;margin-bottom:.5rem}
-.gc-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.gc-top{display:flex;justify-content:space-between;margin-bottom:.4rem}
+.gc-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px}
 .gc-icon.pass{background:var(--green-dim);color:var(--green)}
 .gc-icon.fail{background:var(--red-dim);color:var(--red)}
 .gc-icon.marginal{background:var(--amber-dim);color:var(--amber)}
-.gc-pill{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
+.gc-pill{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px}
 .gc-pill.pass{background:var(--green-dim);color:var(--green)}
 .gc-pill.fail{background:var(--red-dim);color:var(--red)}
 .gc-pill.marginal{background:var(--amber-dim);color:var(--amber)}
-.gc-name{font-size:.775rem;font-weight:700;color:var(--navy);margin-bottom:3px}
-.gc-score{font-family:var(--display);font-size:1.625rem;font-weight:800;line-height:1}
+.gc-name{font-size:.75rem;font-weight:700;color:var(--navy);margin-bottom:2px}
+.gc-score{font-family:var(--display);font-size:1.5rem;font-weight:800;line-height:1}
 .gc-score.pass{color:var(--green)} .gc-score.fail{color:var(--red)} .gc-score.marginal{color:var(--amber)}
-.gc-bar-track{height:4px;background:var(--bg2);border-radius:100px;margin:5px 0;overflow:hidden}
+.gc-bar{height:3px;background:var(--bg2);border-radius:100px;margin:4px 0;overflow:hidden}
 .gc-bar-fill{height:100%;border-radius:100px}
 .gc-bar-fill.pass{background:var(--green)} .gc-bar-fill.fail{background:var(--red)} .gc-bar-fill.marginal{background:var(--amber)}
 .gc-req{font-family:var(--mono);font-size:9px;color:var(--muted)}
 
-/* ══════════════════ GEMINI ANALYSIS ══════════════════ */
-.gemini-output{
-  background:var(--navy);border-radius:var(--r);padding:1.5rem;
-  font-family:var(--mono);font-size:.8125rem;color:#93C5FD;line-height:1.8;
-  white-space:pre-wrap;min-height:120px;
-}
-.gemini-output .gem-section{color:var(--gold);font-weight:700;font-size:.875rem}
-.gemini-output .gem-bullet{color:rgba(255,255,255,0.7)}
-.gemini-output .gem-code{color:#86EFAC;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:3px}
-.gemini-output .gem-warn{color:var(--red-bright)}
-.gemini-output .gem-ok{color:var(--green-bright)}
-.gemini-spinner{display:flex;align-items:center;gap:10px;color:var(--gold);font-size:.875rem;padding:.5rem}
-.gemini-btn{
-  display:inline-flex;align-items:center;gap:7px;padding:9px 20px;
-  background:linear-gradient(135deg,#4285F4,#34A853);color:white;
-  border:none;border-radius:8px;font-size:.875rem;font-weight:700;
-  cursor:pointer;font-family:var(--body);transition:all .2s;margin-top:1rem;
-}
+/* ── GEMINI ── */
+.gemini-output{background:var(--navy);border-radius:var(--r);padding:1.375rem;font-family:var(--mono);font-size:.8rem;color:#93C5FD;line-height:1.8;white-space:pre-wrap;min-height:100px}
+.gemini-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:linear-gradient(135deg,#4285F4,#34A853);color:white;border:none;border-radius:7px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:var(--body);transition:all .2s;margin-top:.875rem}
 .gemini-btn:hover{opacity:.9;transform:translateY(-1px)}
 .gemini-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.gemini-btn svg{width:18px;height:18px;flex-shrink:0}
 
-/* ══════════════════ STATES ══════════════════ */
-.state-wrap{min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;text-align:center}
-.state-icon{font-size:2.5rem;margin-bottom:1rem}
-.state-title{font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:.5rem}
-.state-sub{font-size:.9rem;color:var(--muted);margin-bottom:1.5rem}
+/* ── PERF GRID ── */
+.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem}
+.perf-card{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r);padding:1.125rem;text-align:center}
+.perf-label{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px}
+.perf-val{font-family:var(--display);font-size:1.875rem;font-weight:800;line-height:1}
+.perf-bar-track{height:5px;background:var(--bg2);border-radius:100px;margin:8px 0 4px;overflow:hidden}
+.perf-bar-fill{height:100%;border-radius:100px;transition:width .8s ease}
+.perf-sub{font-size:.7rem;color:var(--muted);line-height:1.4}
 
-/* ══════════════════ PRINT ══════════════════ */
+/* ── INFO BOX ── */
+.info-note{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:.7rem .875rem;margin-bottom:1.125rem;font-size:.8125rem;color:var(--muted);display:flex;align-items:flex-start;gap:7px}
+.info-note i{color:var(--gold);flex-shrink:0;margin-top:2px;font-size:.8rem}
+
+/* ── QUICK WINS ── */
+.qw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem}
+.qw-card{background:var(--green-dim);border:1.5px solid rgba(16,185,129,0.2);border-radius:var(--r);padding:1rem;transition:all .15s}
+.qw-card:hover{border-color:var(--green);box-shadow:var(--shadow);transform:translateY(-2px)}
+.qw-tag{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:4px;margin-bottom:.3rem}
+.qw-title{font-weight:700;font-size:.875rem;color:var(--navy);margin-bottom:2px;line-height:1.35}
+.qw-desc{font-size:.75rem;color:var(--muted);line-height:1.5}
+.qw-score{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--green);margin-top:6px}
+
+/* ── PRINT ── */
 @media print{
   @page{size:A4;margin:12mm}
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
-  .navbar,.sidebar,.hero-actions,.fix-toggle,.gemini-btn{display:none !important}
+  .navbar,.sidebar,.hero-actions,.fix-toggle-btn,.gemini-btn{display:none !important}
   .layout{display:block}
   .main{padding:0}
   .fix-body{display:block !important}
-  .dim-drawer{display:block !important}
-  .report-hero{background:#0F1E38 !important}
-  .report-hero::after{display:none}
+  .hero{background:#0F1E38 !important}
 }
 
-/* ══════════════════ RESPONSIVE ══════════════════ */
-@media(max-width:1100px){.layout{grid-template-columns:1fr}.sidebar{display:none}.score-grid{grid-template-columns:repeat(3,1fr)}.dim-grid{grid-template-columns:repeat(2,1fr)}.shap-layout{grid-template-columns:1fr}.drawer-grid{grid-template-columns:1fr}.fix-body-grid{grid-template-columns:1fr}.gate-grid{grid-template-columns:repeat(3,1fr)}.qw-grid{grid-template-columns:1fr}.perf-grid{grid-template-columns:1fr}}
-@media(max-width:640px){.score-grid{grid-template-columns:repeat(2,1fr)}.dim-grid{grid-template-columns:1fr}.cf-compare{grid-template-columns:1fr}.cf-divider{display:none}.gate-grid{grid-template-columns:repeat(2,1fr)}.main{padding:1.25rem 1rem 4rem}}
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.sidebar{display:none}.dim-grid5{grid-template-columns:repeat(3,1fr)}.shap-layout{grid-template-columns:1fr}.fix-body-grid{grid-template-columns:1fr}.gate-grid{grid-template-columns:repeat(3,1fr)}.qw-grid{grid-template-columns:1fr}.perf-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.dim-grid5{grid-template-columns:repeat(2,1fr)}.cf-compare{grid-template-columns:1fr}.cf-divider{display:none}.gate-grid{grid-template-columns:repeat(2,1fr)}.main{padding:1.25rem 1rem 4rem}}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="navbar">
   <a href="#" class="logo">
     <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
@@ -515,959 +365,787 @@ section[id]{scroll-margin-top:80px}
   </a>
   <div class="nav-links">
     <a href="upload.html">Upload</a>
-    <a href="allReports.html" id="back-all-link">All Reports</a>
+    <a href="allReports.html" id="back-link">All Reports</a>
     <a href="#" class="active">Technical Audit</a>
     <a href="admin.html">Admin</a>
   </div>
 </nav>
 
-<!-- LAYOUT -->
 <div class="layout">
+  <aside class="sidebar">
+    <div class="sb-label">Overview</div>
+    <a class="sb-item active" href="#overview" onclick="nav('#overview')"><i class="fas fa-chart-pie"></i> Deployment status</a>
+    <a class="sb-item" href="#scores" onclick="nav('#scores')"><i class="fas fa-tachometer-alt"></i> Score summary</a>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-section-label">Overview</div>
-    <a class="sidebar-item active" href="#overview" onclick="scrollTo('#overview')"><i class="fas fa-chart-pie"></i> Score Summary</a>
-    <a class="sidebar-item" href="#dimensions" onclick="scrollTo('#dimensions')"><i class="fas fa-th-large"></i> 7 Dimensions</a>
-    <a class="sidebar-item" href="#shap" onclick="scrollTo('#shap')"><i class="fas fa-chart-bar"></i> SHAP Analysis <span class="sidebar-badge warn" id="sb-shap">—</span></a>
+    <div class="sb-label">Evidence</div>
+    <a class="sb-item" href="#bias-reality" onclick="nav('#bias-reality')"><i class="fas fa-users"></i> Group outcome gaps <span class="sb-badge crit" id="sb-gaps">—</span></a>
+    <a class="sb-item" href="#shap" onclick="nav('#shap')"><i class="fas fa-chart-bar"></i> Feature attribution <span class="sb-badge warn" id="sb-shap">—</span></a>
+    <a class="sb-item" href="#counterfactual" onclick="nav('#counterfactual')"><i class="fas fa-not-equal"></i> Counterfactual pairs <span class="sb-badge crit" id="sb-cf">—</span></a>
+    <a class="sb-item" href="#performance" onclick="nav('#performance')"><i class="fas fa-microchip"></i> Model performance</a>
 
-    <div class="sidebar-section-label">Bias Evidence</div>
-    <a class="sidebar-item" href="#counterfactual" onclick="scrollTo('#counterfactual')"><i class="fas fa-not-equal"></i> Counterfactual Pairs <span class="sidebar-badge crit" id="sb-cf">—</span></a>
-    <a class="sidebar-item" href="#performance" onclick="scrollTo('#performance')"><i class="fas fa-tachometer-alt"></i> Model Performance</a>
+    <div class="sb-label">Fix plan</div>
+    <a class="sb-item" href="#fixes" onclick="nav('#fixes')"><i class="fas fa-wrench"></i> Priority fixes <span class="sb-badge crit" id="sb-fixes">—</span></a>
+    <a class="sb-item" href="#quickwins" onclick="nav('#quickwins')"><i class="fas fa-bolt"></i> Quick wins <span class="sb-badge pass" id="sb-qw">—</span></a>
+    <a class="sb-item" href="#gate" onclick="nav('#gate')"><i class="fas fa-traffic-light"></i> CI/CD gate</a>
 
-    <div class="sidebar-section-label">Fix Plan</div>
-    <a class="sidebar-item" href="#remediation" onclick="scrollTo('#remediation')"><i class="fas fa-wrench"></i> Remediation <span class="sidebar-badge crit" id="sb-fixes">—</span></a>
-    <a class="sidebar-item" href="#quickwins" onclick="scrollTo('#quickwins')"><i class="fas fa-bolt"></i> Quick Wins <span class="sidebar-badge pass" id="sb-qw">—</span></a>
-    <a class="sidebar-item" href="#deployment" onclick="scrollTo('#deployment')"><i class="fas fa-traffic-light"></i> Deploy Gate</a>
-
-    <div class="sidebar-section-label">AI Analysis</div>
-    <a class="sidebar-item" href="#gemini" onclick="scrollTo('#gemini')"><i class="fas fa-robot"></i> Gemini Deep Dive</a>
+    <div class="sb-label">AI analysis</div>
+    <a class="sb-item" href="#gemini" onclick="nav('#gemini')"><i class="fas fa-robot"></i> Gemini deep dive</a>
   </aside>
 
-  <!-- MAIN -->
   <main class="main" id="app">
-    <div class="state-wrap">
-      <div class="state-icon"><i class="fas fa-spinner fa-pulse" style="color:var(--gold)"></i></div>
-      <div class="state-title">Loading technical audit…</div>
-      <div class="state-sub">Fetching evaluation data from all endpoints</div>
+    <div style="min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem">
+      <div style="font-size:2rem;margin-bottom:1rem;color:var(--gold)"><i class="fas fa-spinner fa-pulse"></i></div>
+      <div style="font-family:var(--display);font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:.5rem">Loading audit data…</div>
+      <div style="font-size:.875rem;color:var(--muted)">Fetching evaluation results</div>
     </div>
   </main>
 </div>
 
 <script>
 const API = 'http://127.0.0.1:5000';
-const fmt = (v,d=4) => v!=null ? Number(v).toFixed(d) : '—';
-const pct = (v,d=1) => v!=null ? (Number(v)*100).toFixed(d)+'%' : '—';
+const fmt = (v, d=4) => v != null ? Number(v).toFixed(d) : '—';
+const pct = (v, d=1) => v != null ? (Number(v)*100).toFixed(d)+'%' : '—';
 
-// ── helpers ─────────────────────────────────────────────────────────────────
-function sev(score){if(score==null)return 'warn';if(score>=.80)return 'pass';if(score>=.60)return 'warn';return 'crit'}
-function sevLabel(s){return {pass:'PASS',warn:'MARGINAL',crit:'CRITICAL'}[sev(s)]||'—'}
-function sevColor(s){return{pass:'var(--green)',warn:'var(--amber)',crit:'var(--red)'}[sev(s)]||'var(--muted)'}
-function classFor(s){return sev(s)}
-
-function scrollTo(hash){
-  const el=document.querySelector(hash);
-  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
-  document.querySelectorAll('.sidebar-item').forEach(a=>a.classList.remove('active'));
-  const active=document.querySelector(`.sidebar-item[href="${hash}"]`);
-  if(active)active.classList.add('active');
+function nav(hash) {
+  const el = document.querySelector(hash);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.sb-item').forEach(a => a.classList.remove('active'));
+  const a = document.querySelector(`.sb-item[href="${hash}"]`);
+  if (a) a.classList.add('active');
 }
-window.scrollTo=scrollTo;
+window.nav = nav;
 
-function copyCode(btn,code){
-  navigator.clipboard.writeText(code).then(()=>{
-    btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1800);
-  });
+function sev(s) {
+  if (s == null) return 'warn';
+  if (s >= 0.80) return 'pass';
+  if (s >= 0.60) return 'warn';
+  return 'crit';
 }
-window.copyCode=copyCode;
+function sevLabel(s) { return {pass:'PASS',warn:'MARGINAL',crit:'CRITICAL'}[sev(s)] || '—'; }
+function sevColor(s) { return {pass:'var(--green)',warn:'var(--amber)',crit:'var(--red)'}[sev(s)]; }
 
-function toggleFix(id){
-  const body=document.getElementById('fbody-'+id);
-  const tog=document.getElementById('ftog-'+id);
-  if(!body)return;
-  const open=body.classList.toggle('open');
-  tog.innerHTML=open?'<i class="fas fa-chevron-up"></i>':'<i class="fas fa-chevron-down"></i>';
-  tog.classList.toggle('open',open);
-  if(open)setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
-}
-window.toggleFix=toggleFix;
-
-function toggleDim(id){
-  const drawer=document.getElementById('drawer-'+id);
-  if(!drawer)return;
-  const isOpen=drawer.classList.contains('open');
-  document.querySelectorAll('.dim-drawer').forEach(d=>d.classList.remove('open'));
-  document.querySelectorAll('.dim-card').forEach(c=>c.classList.remove('expanded'));
-  if(!isOpen){
-    drawer.classList.add('open');
-    document.getElementById('dimcard-'+id)?.classList.add('expanded');
-    setTimeout(()=>drawer.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
-  }
-}
-window.toggleDim=toggleDim;
-
-// ── highlight code ───────────────────────────────────────────────────────────
-function hl(code){
+function hl(code) {
   return code
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/(#[^\n]*)/g,'<span class="cm">$1</span>')
-    .replace(/\b(from|import|if|for|in|return|def|class|True|False|None|and|or|not|with|as|try|except|print|lambda)\b/g,'<span class="kw">$1</span>')
+    .replace(/\b(from|import|if|for|in|return|def|class|True|False|None|and|or|not|with|as)\b/g,'<span class="kw">$1</span>')
     .replace(/([\'\"]{1,3})(.*?)\1/gs,'<span class="st">$1$2$1</span>')
     .replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="nu">$1</span>');
 }
 
-// ── SHAP chart ───────────────────────────────────────────────────────────────
-function buildShapChart(shap){
-  if(!shap||!shap.feature_importance?.length)return '<p style="color:var(--muted);font-size:.875rem">No SHAP data.</p>';
-  const features=shap.feature_importance.slice(0,12);
-  const maxVal=features[0]?.shap_value||1;
-  const sensKw=['gender','sex','race','caste','age','religion','ethnicity','nationality','caste_proxy'];
-  const fillCls=['shap-f0','shap-f1','shap-f2','shap-f3','shap-f4','shap-f5','shap-f6','shap-fn'];
-  return features.map((f,i)=>{
-    const w=Math.max(2,(f.shap_value/maxVal)*100);
-    const isSens=sensKw.some(k=>f.feature.toLowerCase().includes(k));
-    const lbl=w>20?fmt(f.shap_value,4):'';
+function copyCode(btn, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+window.copyCode = copyCode;
+
+function toggleFix(id) {
+  const body = document.getElementById('fb-'+id);
+  const tog = document.getElementById('ft-'+id);
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  tog.innerHTML = open ? '<i class="fas fa-chevron-up"></i>' : '<i class="fas fa-chevron-down"></i>';
+  tog.classList.toggle('open', open);
+  if (open) setTimeout(() => body.scrollIntoView({ behavior:'smooth', block:'nearest' }), 60);
+}
+window.toggleFix = toggleFix;
+
+/* ── SHAP chart ── */
+function buildShapChart(shap) {
+  if (!shap || !shap.feature_importance?.length) return '<p style="color:var(--muted);font-size:.875rem">No SHAP data available.</p>';
+  const features = shap.feature_importance.slice(0, 10);
+  const maxVal = features[0]?.shap_value || 1;
+  const sensKw = ['gender','sex','race','caste','age','religion','ethnicity','nationality','caste_proxy','surname','candidate_id','hometown'];
+  const cls = ['shap-c0','shap-c1','shap-c2','shap-c3','shap-c4','shap-c5','shap-cn'];
+  return features.map((f, i) => {
+    const w = Math.max(2, (f.shap_value / maxVal) * 100);
+    const isSens = sensKw.some(k => f.feature.toLowerCase().includes(k));
+    const lbl = w > 22 ? fmt(f.shap_value, 4) : '';
     return `<div class="shap-row">
-      <div class="shap-feat ${isSens?'danger':''}" title="${f.feature}">${isSens?'⚠ ':''}${f.feature}</div>
-      <div class="shap-track"><div class="shap-fill ${fillCls[i]||'shap-fn'}" style="width:${w}%">${lbl}</div></div>
+      <div class="shap-feat${isSens?' danger':''}" title="${f.feature}">${isSens?'⚠ ':''}${f.feature}</div>
+      <div class="shap-track"><div class="shap-fill ${cls[i]||'shap-cn'}" style="width:${w}%">${lbl}</div></div>
       <div class="shap-val">${fmt(f.shap_value,4)}</div>
     </div>`;
   }).join('');
 }
 
-// ── dim meta ─────────────────────────────────────────────────────────────────
-const DIM_META={
-  1:{icon:'fa-user-check',name:'Individual Fairness',desc:'Are similar people treated similarly? Uses k-nearest-neighbours consistency check.',fixes:['Apply Lipschitz fairness regularization to training loss','Increase training data diversity near the decision boundary','Use contrastive learning to enforce similarity constraints']},
-  2:{icon:'fa-users',name:'Group Fairness',desc:'Equal opportunity across protected groups — measured as 1 - |equalized_odds_difference|.',fixes:['ThresholdOptimizer with equalized_odds constraint (fairlearn)','ExponentiatedGradient with EqualizedOdds — retrain with fairness constraint','Audit equalized_odds_difference per sensitive attribute; target < 0.05']},
-  3:{icon:'fa-venus-mars',name:'Demographic Bias',desc:'Demographic parity difference — whether positive outcome rates are equal across all groups.',fixes:['Reweight training samples by demographic group using fairlearn.preprocessing.Reweighing','ExponentiatedGradient with DemographicParity constraint','Check for historical label bias in training data — relabelling exercise']},
-  4:{icon:'fa-balance-scale',name:'Calibration',desc:'Are predicted probabilities accurate for all groups? Lower Brier score = better calibration.',fixes:['Apply Platt scaling or isotonic regression calibration per demographic subgroup','Use CalibratedClassifierCV(method="isotonic", cv="prefit")','Audit Brier score separately for each sensitive group — target < 0.05']},
-  5:{icon:'fa-chart-pie',name:'Disparate Impact',desc:'80% rule — ratio of lowest to highest group positive-outcome rate. Must be ≥ 0.80.',fixes:['ThresholdOptimizer(constraints="demographic_parity") — no retraining needed','Reweighing preprocessing from AIF360 — adjust training sample weights','Audit per-group approval rates; bring all within 20% of highest-rate group']},
-  6:{icon:'fa-random',name:'Counterfactual',desc:'Proxy: 1 - std(group prediction rates). Measures sensitivity to protected attribute changes.',fixes:['Identify proxy features: df[col].corr(df[sensitive_attr]) — drop if |r| > 0.3','Adversarial debiasing: train adversary to predict protected attr from model outputs','Causal fairness: use causalml to build a causal model that blocks protected attr paths']},
-  7:{icon:'fa-layer-group',name:'Intersectional',desc:'Worst-case parity gap across all pairwise combinations of sensitive attributes.',fixes:['Stratified resampling — oversample rare intersectional subgroups','Multicalibration: calibrate independently for every subgroup combination','Audit df.groupby([attr1,attr2])["prediction"].mean() — identify worst-case combo']},
-};
+/* ── CF card ── */
+function buildCF(cf) {
+  const pA = cf.person_a || {};
+  const pB = cf.person_b || {};
+  const attr = cf.attribute || 'attr';
+  const oA = (pA.outcome || 'REJECTED').toLowerCase();
+  const oB = (pB.outcome || 'REJECTED').toLowerCase();
 
-const DIM_CODES={
-  5:`from fairlearn.postprocessing import ThresholdOptimizer
-
-# No retraining needed — wraps existing model
-optimizer = ThresholdOptimizer(
-    estimator=your_model,
-    constraints="demographic_parity",
-    objective="balanced_accuracy_score"
-)
-optimizer.fit(X_train, y_train, sensitive_features=train_sensitive)
-y_pred = optimizer.predict(X_test, sensitive_features=test_sensitive)`,
-  3:`from fairlearn.reductions import ExponentiatedGradient, DemographicParity
-
-# Retrain with explicit fairness constraint
-mitigator = ExponentiatedGradient(
-    estimator=base_clf,
-    constraints=DemographicParity(),
-    eps=0.01  # tolerance: lower = stricter
-)
-mitigator.fit(X_train, y_train, sensitive_features=train_sensitive)
-y_pred = mitigator.predict(X_test)`,
-  6:`# Step 1 – Find proxy features
-for col in X.columns:
-    corr = X[col].corr(df['gender'])
-    if abs(corr) > 0.3:
-        print(f"Proxy: {col} — corr={corr:.3f}")
-
-# Step 2 – Drop proxies and re-evaluate
-X_clean = X.drop(columns=proxy_columns)
-
-# Step 3 – Adversarial debiasing (optional)
-from aif360.algorithms.inprocessing import AdversarialDebiasing
-model = AdversarialDebiasing(privileged_groups, unprivileged_groups, sess)`,
-  7:`# Intersectional audit
-results = df.groupby(['gender','caste_proxy'])['_prediction_label'].agg(
-    approval_rate='mean', count='count'
-).reset_index().sort_values('approval_rate')
-print(results)
-
-# Targeted oversampling for worst combo
-from imblearn.over_sampling import SMOTE
-mask = (df['gender'] == worst_g) & (df['caste_proxy'] == worst_c)
-X_aug, y_aug = SMOTE().fit_resample(X[mask], y[mask])`,
-  1:`# Lipschitz individual fairness regularization
-import torch
-lambda_fair = 0.1
-
-def lipschitz_penalty(model, X_batch, sensitive_idx):
-    # Perturb only non-sensitive features
-    X_perturb = X_batch.clone()
-    X_perturb[:, sensitive_idx] = X_perturb[:, sensitive_idx][torch.randperm(len(X_batch))]
-    pred_orig   = model(X_batch)
-    pred_perturb = model(X_perturb)
-    return lambda_fair * torch.mean(torch.abs(pred_orig - pred_perturb))`,
-  4:`from sklearn.calibration import CalibratedClassifierCV
-
-# Per-group calibration
-calibrated_models = {}
-for group in df[sensitive_col].unique():
-    mask = df[sensitive_col] == group
-    cal = CalibratedClassifierCV(base_model, method='isotonic', cv='prefit')
-    cal.fit(X_val[mask], y_val[mask])
-    calibrated_models[group] = cal
-
-# Inference: pick per-group calibrator
-def calibrated_predict(X, groups):
-    preds = np.zeros(len(X))
-    for g, model in calibrated_models.items():
-        m = groups == g
-        preds[m] = model.predict_proba(X[m])[:,1]
-    return preds`,
-};
-
-// ── dimension cards ──────────────────────────────────────────────────────────
-function buildDimCards(dims, perAttr){
-  let cards='', drawers='';
-  dims.forEach(d=>{
-    const meta=DIM_META[d.id]||{icon:'fa-chart-bar',name:`Dim ${d.id}`,desc:'',fixes:[]};
-    const sv=sev(d.score);
-    const p=d.score!=null?Math.round(d.score*100):null;
-    const w=p||0;
-
-    cards+=`<div class="dim-card ${sv}" id="dimcard-${d.id}" onclick="toggleDim(${d.id})">
-      <div class="dim-card-top">
-        <div class="dim-icon ${sv}"><i class="fas ${meta.icon}"></i></div>
-        <span class="dim-sev ${sv}">${sevLabel(d.score)}</span>
-      </div>
-      <div class="dim-name">${meta.name}</div>
-      <div class="dim-score ${sv}">${p!=null?p:'—'}<span style="font-size:1rem;opacity:.45">/100</span></div>
-      <div class="dim-bar-track"><div class="dim-bar-fill ${sv}" style="width:${w}%"></div></div>
-      <div class="dim-finding">${(d.detail?.description||meta.desc).split('.')[0]}.</div>
-      <div class="dim-expand-hint"><i class="fas fa-chevron-down"></i> Click to drill down</div>
-    </div>`;
-
-    // Drawer content
-    const detail=d.detail||{};
-    let attrRows='';
-    const groups=d.id===2?(detail.per_attribute||[]):d.id===3?(detail.disparities||[]).map(dp=>({attribute:dp.attribute,equalized_odds_difference:null,demographic_parity_difference:dp.raw_dp_diff,fairness_score:null})):[];
-    if(groups.length){
-      attrRows=`<table class="attr-table" style="margin-top:.75rem">
-        <thead><tr><th>Attribute</th><th>EOD ↓</th><th>DP Diff ↓</th><th>Status</th></tr></thead>
-        <tbody>${groups.map(g=>{
-          const fs=g.fairness_score!=null?Number(g.fairness_score):null;
-          const t=fs==null?'—':fs>=.8?'<span class="tag pass">✓ Pass</span>':'<span class="tag fail">✗ Fail</span>';
-          return `<tr><td style="font-weight:600">${g.attribute}</td><td>${g.equalized_odds_difference!=null?fmt(g.equalized_odds_difference,4):'—'}</td><td>${g.demographic_parity_difference!=null?fmt(g.demographic_parity_difference,4):'—'}</td><td>${t}</td></tr>`;
-        }).join('')}</tbody>
-      </table>`;
-    }
-    // Special metric displays
-    let metricsHtml='';
-    if(d.id===4&&detail.brier_score!=null){
-      metricsHtml=`<div class="metrics-row"><div class="metric-chip"><div class="metric-chip-lbl">Brier Score ↓</div><div class="metric-chip-val">${fmt(detail.brier_score,4)}</div></div><div class="metric-chip"><div class="metric-chip-lbl">Cal. Score</div><div class="metric-chip-val">${fmt(detail.calibration_score,4)}</div></div></div>`;
-    }else if(d.id===5){
-      const pass=detail.passes_80_rule;
-      metricsHtml=`<div class="metrics-row"><div class="metric-chip" style="${!pass?'border-color:rgba(239,68,68,.3);background:var(--red-dim)':''}"><div class="metric-chip-lbl">Impact Ratio</div><div class="metric-chip-val" style="${!pass?'color:var(--red)':'color:var(--green)'}">${fmt(detail.impact_ratio,4)}</div></div><div class="metric-chip"><div class="metric-chip-lbl">80% Rule</div><div class="metric-chip-val">${pass?'✅ Pass':'❌ Fail'}</div></div></div>`;
-    }
-    const code=DIM_CODES[d.id]||null;
-    const codeHtml=code?`<div class="code-wrap"><div class="code-header"><span class="code-lang">Python Fix</span><button class="code-copy" onclick="event.stopPropagation();copyCode(this,${JSON.stringify(code)})">Copy</button></div><div class="code-block"><code>${hl(code)}</code></div></div>`:'';
-
-    drawers+=`<div class="dim-drawer" id="drawer-${d.id}">
-      <div class="drawer-grid">
-        <div>
-          <div class="drawer-title"><div class="dim-icon ${sv}"><i class="fas ${meta.icon}"></i></div>${meta.name}</div>
-          <div class="drawer-desc">${meta.desc}</div>
-          ${metricsHtml}
-          ${attrRows}
-          ${codeHtml}
-        </div>
-        <div class="fix-box">
-          <div class="fix-box-header"><i class="fas fa-wrench"></i> How to fix this</div>
-          ${meta.fixes.map((f,i)=>`<div class="fix-step"><div class="fix-num">${i+1}</div><div>${f}</div></div>`).join('')}
-        </div>
-      </div>
-    </div>`;
-  });
-  return {cards,drawers};
-}
-
-// ── remediation fix cards ─────────────────────────────────────────────────────
-function buildFixCard(fix,i){
-  const priority=fix.priority||fix.severity||'WARNING';
-  const cls=priority==='CRITICAL'?'crit':priority==='WARNING'?'warn':'info';
-  const why=fix.why||fix.description||'';
-  const what=fix.what||fix.description||'';
-  const code=fix.code||'';
-  const effort=fix.effort||'medium';
-  const dim=fix.dimension||'—';
-  const bp=Math.round((fix.current_score||0)*100);
-  const ap=Math.round((fix.estimated_score_after||0)*100);
-  const short=why?why.split('.')[0]+'.':'';
-  const effortCap=effort.charAt(0).toUpperCase()+effort.slice(1);
-  const codeHtml=code?`<div class="code-wrap"><div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="event.stopPropagation();copyCode(this,${JSON.stringify(code)})">Copy</button></div><div class="code-block"><code>${hl(code)}</code></div></div>`:'';
-  const beforeCls=bp>=80?'pass':bp>=60?'amber':'';
-  return `<div class="fix-card ${cls}">
-    <div class="fix-header" onclick="toggleFix(${i})">
-      <div class="fix-rank ${cls}">${i+1}</div>
-      <div class="fix-meta">
-        <div class="fix-title">${fix.title||'—'}</div>
-        ${short?`<div class="fix-desc">${short}</div>`:''}
-        <div class="fix-tags">
-          <span class="fix-tag dim">${dim}</span>
-          <span class="fix-tag">${effortCap} effort</span>
-          ${ap?`<span class="fix-tag score">${bp}% → ~${ap}%</span>`:''}
-          ${fix.risk?`<span class="fix-tag">Risk: ${fix.risk}</span>`:''}
-        </div>
-      </div>
-      <div class="fix-toggle" id="ftog-${i}"><i class="fas fa-chevron-down"></i></div>
-    </div>
-    <div class="fix-body" id="fbody-${i}">
-      <div class="fix-body-grid">
-        <div>
-          ${why?`<div class="why-box"><strong><i class="fas fa-question-circle" style="color:var(--gold);margin-right:5px"></i> Why this is a problem</strong><p>${why}</p></div>`:''}
-          ${what&&what!==why?`<div class="what-box"><strong><i class="fas fa-wrench" style="color:var(--gold);margin-right:5px"></i> What your team must do</strong><p>${what}</p></div>`:''}
-          ${codeHtml}
-        </div>
-        <div>
-          ${fix.current_score!=null?`<div class="ba-card">
-            <div class="ba-title">Estimated score change</div>
-            <div class="ba-row"><div class="ba-lbl">Current</div><div class="ba-track"><div class="ba-fill before ${beforeCls}" style="width:${Math.max(bp,8)}%">${bp}%</div></div><div class="ba-val">${bp}%</div></div>
-            <div class="ba-row"><div class="ba-lbl">After fix</div><div class="ba-track"><div class="ba-fill after" style="width:${Math.max(ap,8)}%">${ap}%</div></div><div class="ba-val">${ap}%</div></div>
-          </div>`:''}
-          <div class="effort-box">
-            <div class="effort-row"><span class="effort-key">Effort</span><span class="effort-pill ${effort}">${effortCap}</span></div>
-            <div class="effort-row"><span class="effort-key">Needs retraining</span><span class="effort-val">${effort==='high'?'Yes':'No'}</span></div>
-            <div class="effort-row"><span class="effort-key">Implementation risk</span><span class="effort-val">${fix.risk||'Low'}</span></div>
-            <div class="effort-row"><span class="effort-key">Expected improvement</span><span class="effort-val">${fix.expected_improvement||'—'}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ── counterfactual pairs ─────────────────────────────────────────────────────
-function buildCF(cf){
-  const pA=cf.person_a||{};const pB=cf.person_b||{};
-  const attr=cf.attribute||cf.sensitive_attribute||'attr';
-  const oA=(pA.outcome||'REJECTED').toLowerCase();
-  const oB=(pB.outcome||'REJECTED').toLowerCase();
-  function profileRows(p,attr){
-    const profile=p.profile||{};
-    let rows=`<div class="cf-attr-row"><span class="cf-k">index</span><span class="cf-v">${p.index??'—'}</span></div>`;
-    rows+=`<div class="cf-attr-row"><span class="cf-k">prediction</span><span class="cf-v">${p.prediction??'—'}</span></div>`;
-    Object.entries(profile).forEach(([k,v])=>{
-      rows+=`<div class="cf-attr-row"><span class="cf-k">${k.replace(/_/g,' ')}</span><span class="cf-v">${v??'—'}</span></div>`;
+  function rows(p) {
+    const profile = p.profile || {};
+    let r = `<div class="cf-row"><span class="cf-k">index</span><span class="cf-v">${p.index ?? '—'}</span></div>`;
+    r += `<div class="cf-row"><span class="cf-k">prediction</span><span class="cf-v">${p.prediction ?? '—'}</span></div>`;
+    Object.entries(profile).forEach(([k,v]) => {
+      r += `<div class="cf-row"><span class="cf-k">${k.replace(/_/g,' ')}</span><span class="cf-v">${v ?? '—'}</span></div>`;
     });
-    rows+=`<div class="cf-attr-row"><span class="cf-k">${attr}</span><span class="cf-v diff">${p.sensitive_val??'—'}</span></div>`;
-    return rows;
+    r += `<div class="cf-row"><span class="cf-k">${attr}</span><span class="cf-v diff">${p.sensitive_val ?? '—'}</span></div>`;
+    return r;
   }
+
   return `<div class="cf-card">
     <div class="cf-head">
       <div class="cf-head-title"><i class="fas fa-exchange-alt"></i> Pair — attribute: <strong>${attr}</strong></div>
-      <span class="cf-attr-badge">BIAS EVIDENCE</span>
+      <span class="cf-bias-tag">BIAS EVIDENCE</span>
     </div>
     <div class="cf-body">
       <div class="cf-compare">
         <div class="cf-person">
           <div class="cf-person-head ${oA}">Person A</div>
           <div class="cf-outcome ${oA}">${oA==='approved'?'✓':'✗'} ${pA.outcome||'REJECTED'} — ${Math.round((pA.prediction||0)*100)}%</div>
-          ${profileRows(pA,attr)}
+          ${rows(pA)}
         </div>
-        <div class="cf-divider"><i class="fas fa-not-equal"></i><div class="cf-divider-lbl">Bias</div></div>
+        <div class="cf-divider"><i class="fas fa-not-equal"></i><span>Bias</span></div>
         <div class="cf-person">
           <div class="cf-person-head ${oB}">Person B</div>
           <div class="cf-outcome ${oB}">${oB==='approved'?'✓':'✗'} ${pB.outcome||'REJECTED'} — ${Math.round((pB.prediction||0)*100)}%</div>
-          ${profileRows(pB,attr)}
+          ${rows(pB)}
         </div>
       </div>
       <div class="cf-explain">
-        <div class="cf-explain-lbl">Plain-language interpretation</div>
-        <div class="cf-explain-text">${cf.plain_english||'Two applicants with near-identical profiles received different outcomes based solely on their '+attr+'.'}</div>
+        <div class="cf-explain-label">Plain-language interpretation</div>
+        <div class="cf-explain-text">${cf.plain_english || 'Two applicants with near-identical profiles received different outcomes based solely on their '+attr+'.'}</div>
       </div>
     </div>
   </div>`;
 }
 
-// ── fallback fix plan ─────────────────────────────────────────────────────────
-function buildFallbackFixes(ev){
-  const f=ev.fairness||{};const pr=ev.privacy||{};const rb=ev.robustness||{};
-  const fixes=[];
-  if(f.disparateImpact!=null&&f.disparateImpact<.80)fixes.push({priority:'CRITICAL',dimension:'Fairness',effort:'medium',title:'Fix Disparate Impact — Legal 80% Rule Violated',why:`The approval rate for the lowest-approval demographic group is only ${pct(f.disparateImpact)} of the highest group. The EEOC four-fifths rule requires this ratio to be ≥ 0.80. Failure to fix this exposes the organisation to discrimination lawsuits.`,what:'Apply post-processing threshold optimisation per demographic group using fairlearn. This requires NO retraining — it adjusts decision thresholds after the model runs.',code:DIM_CODES[5],current_score:f.disparateImpact,estimated_score_after:Math.min(f.disparateImpact+.2,1),risk:'Low',expected_improvement:'15-25%'});
-  if(f.demographicParity!=null&&f.demographicParity>.05)fixes.push({priority:'CRITICAL',dimension:'Fairness',effort:'high',title:'Reduce Demographic Parity Gap',why:`A ${pct(f.demographicParity)} gap in positive outcome rates exists between groups. The model is systematically advantaging one demographic group over others.`,what:'Retrain with ExponentiatedGradient + DemographicParity constraint from fairlearn. This forces the model to equalise outcome rates during training.',code:DIM_CODES[3],current_score:1-f.demographicParity,estimated_score_after:Math.min((1-f.demographicParity)+.15,1),risk:'Medium',expected_improvement:'10-20%'});
-  if(f.counterfactual!=null&&f.counterfactual<.80)fixes.push({priority:'CRITICAL',dimension:'Fairness',effort:'medium',title:'Remove Proxy Features Sensitive to Protected Attributes',why:`When a protected attribute (gender, caste) is flipped while everything else stays the same, the model changes its decision. Score: ${pct(f.counterfactual)}. This is direct evidence of proxy discrimination.`,what:'Find features highly correlated with sensitive attributes (r > 0.3) and drop or re-weight them. Use adversarial debiasing as a stronger alternative.',code:DIM_CODES[6],current_score:f.counterfactual,estimated_score_after:Math.min(f.counterfactual+.18,1),risk:'Low',expected_improvement:'10-20%'});
-  if(f.intersectional!=null&&f.intersectional<.80)fixes.push({priority:'WARNING',dimension:'Fairness',effort:'medium',title:'Audit and Fix Intersectional Bias',why:`Standard per-attribute fairness misses compounding disadvantages. Intersectional score: ${pct(f.intersectional)}. Women of a specific caste may face a larger disadvantage than either group alone.`,what:'Group data by combinations of sensitive attributes. Find the worst-performing intersectional subgroup and oversample it with SMOTE.',code:DIM_CODES[7],current_score:f.intersectional,estimated_score_after:Math.min(f.intersectional+.12,1),risk:'Low',expected_improvement:'8-15%'});
-  if((pr.pii_columns||[]).length>0)fixes.push({priority:'CRITICAL',dimension:'Privacy',effort:'low',title:'Remove or Pseudonymise PII Columns',why:`${pr.pii_columns.length} column(s) containing personal data were found: ${pr.pii_columns.slice(0,3).join(', ')}. This violates GDPR and the IT Act. PII must not be used as model features.`,what:'Drop direct identifiers. For quasi-identifiers (age, zip), apply generalisation — replace exact age with age band, zip with district.',code:`import pandas as pd\nimport hashlib\n\nDIRECT_PII = ['name','email','phone','national_id']\ndf_clean = df.drop(columns=[c for c in DIRECT_PII if c in df.columns])\n\n# Generalise age\ndf_clean['age_band'] = pd.cut(df_clean['age'], bins=[0,20,30,40,50,60,100],\n    labels=['<20','20-30','30-40','40-50','50-60','60+'])\ndf_clean = df_clean.drop(columns=['age'])`,current_score:pr.privacy_score||.5,estimated_score_after:.85,risk:'None',expected_improvement:'20-40%'});
-  if((rb.boundary_instability||0)>.25)fixes.push({priority:'WARNING',dimension:'Robustness',effort:'low',title:'Apply Probability Calibration to Stabilise Decisions',why:`${Math.round((rb.boundary_instability||0)*100)}% of predictions fall in the uncertain zone (0.4–0.6). Minor input changes would flip these decisions — creating inconsistency at scale.`,what:'Apply Platt scaling or isotonic regression calibration. No retraining needed — post-processing only.',code:`from sklearn.calibration import CalibratedClassifierCV\nimport numpy as np\n\n# Isotonic regression calibration\ncalibrated = CalibratedClassifierCV(\n    base_estimator=your_model, method='isotonic', cv='prefit'\n)\ncalibrated.fit(X_val, y_val)\n\n# Verify improvement\ny_prob = calibrated.predict_proba(X_test)[:,1]\nuncertain = np.mean((y_prob > 0.40) & (y_prob < 0.60))\nprint(f"Uncertain zone: {uncertain:.1%}")`,current_score:rb.robustness_score||.5,estimated_score_after:Math.min((rb.robustness_score||.5)+.2,1),risk:'None',expected_improvement:'15-25%'});
-  if(!fixes.length)fixes.push({priority:'INFO',dimension:'All',effort:'low',title:'No Critical Fixes Required — Implement Continuous Monitoring',why:'The model passes all ethical thresholds. The remaining task is ensuring these scores do not drift in production.',what:'Set up automated fairness monitoring that re-evaluates after each significant data batch. Alert when any dimension drops below 0.75.',code:`import schedule\n\ndef run_fairness_check():\n    # Load fresh batch of production data\n    df_prod = load_production_data()\n    result  = run_full_evaluation(df_prod)\n    for dim, score in result.dimension_scores.items():\n        if score < 0.75:\n            send_alert(f"DRIFT: {dim} = {score:.2%}")\n\n# Run every Monday at 9 AM\nschedule.every().monday.at("09:00").do(run_fairness_check)`,current_score:.85,estimated_score_after:.90,risk:'None',expected_improvement:'Monitoring only'});
+/* ── Fix card ── */
+function buildFixCard(fix, i) {
+  const priority = fix.priority || fix.severity || 'WARNING';
+  const cls = priority === 'CRITICAL' ? 'crit' : priority === 'WARNING' ? 'warn' : 'info';
+  const why = fix.why || fix.description || '';
+  const code = fix.code || '';
+  const effort = fix.effort || 'medium';
+  const dim = fix.dimension || '—';
+  const bp = Math.round((fix.current_score || 0) * 100);
+  const ap = Math.round((fix.estimated_score_after || 0) * 100);
+  const short = why ? why.split('.')[0] + '.' : '';
+  const effortCap = effort.charAt(0).toUpperCase() + effort.slice(1);
+  const codeHtml = code ? `<div class="code-wrap"><div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="event.stopPropagation();copyCode(this,${JSON.stringify(code)})">Copy</button></div><div class="code-block"><code>${hl(code)}</code></div></div>` : '';
+  const beforeCls = bp >= 80 ? 'pass' : bp >= 60 ? 'amber' : '';
+
+  return `<div class="fix-card ${cls}">
+    <div class="fix-header" onclick="toggleFix(${i})">
+      <div class="fix-rank ${cls}">${i+1}</div>
+      <div class="fix-meta">
+        <div class="fix-title">${fix.title || '—'}</div>
+        ${short ? `<div class="fix-desc">${short}</div>` : ''}
+        <div class="fix-tags">
+          <span class="fix-tag dim">${dim}</span>
+          <span class="fix-tag">${effortCap} effort</span>
+          ${ap ? `<span class="fix-tag score">${bp}% → ~${ap}%</span>` : ''}
+          ${fix.risk ? `<span class="fix-tag">Risk: ${fix.risk}</span>` : ''}
+        </div>
+      </div>
+      <div class="fix-toggle-btn" id="ft-${i}"><i class="fas fa-chevron-down"></i></div>
+    </div>
+    <div class="fix-body" id="fb-${i}">
+      <div class="fix-body-grid">
+        <div>
+          ${why ? `<div class="why-box"><strong><i class="fas fa-question-circle" style="color:var(--gold);margin-right:5px"></i>Why this is a problem</strong><p>${why}</p></div>` : ''}
+          ${codeHtml}
+        </div>
+        <div>
+          ${fix.current_score != null ? `<div class="ba-card">
+            <div class="ba-title">Estimated score change</div>
+            <div class="ba-row"><div class="ba-lbl">Current</div><div class="ba-track"><div class="ba-fill before ${beforeCls}" style="width:${Math.max(bp,8)}%">${bp}%</div></div><div class="ba-val">${bp}%</div></div>
+            <div class="ba-row"><div class="ba-lbl">After fix</div><div class="ba-track"><div class="ba-fill after" style="width:${Math.max(ap,8)}%">${ap}%</div></div><div class="ba-val">${ap}%</div></div>
+          </div>` : ''}
+          <div class="effort-box">
+            <div class="effort-row"><span class="effort-key">Effort</span><span class="effort-pill ${effort}">${effortCap}</span></div>
+            <div class="effort-row"><span class="effort-key">Retraining needed</span><span style="font-weight:700;font-size:.75rem;color:var(--navy)">${effort==='high'?'Yes':'No'}</span></div>
+            <div class="effort-row"><span class="effort-key">Implementation risk</span><span style="font-weight:700;font-size:.75rem;color:var(--navy)">${fix.risk||'Low'}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── Fallback fix plan ── */
+function fallbackFixes(ev) {
+  const f = ev.fairness || {};
+  const pr = ev.privacy || {};
+  const rb = ev.robustness || {};
+  const fixes = [];
+
+  if ((pr.pii_columns||[]).length > 0) {
+    fixes.push({
+      priority:'CRITICAL', dimension:'Privacy', effort:'low',
+      title:'Remove or pseudonymise PII columns',
+      why:`${pr.pii_columns.length} column(s) containing personal data detected: ${pr.pii_columns.slice(0,3).join(', ')}. PII in training data violates GDPR and the IT Act, and causes unfair predictions if names/IDs leak into the model.`,
+      code:`import hashlib\n# Drop direct identifiers\ndf.drop(columns=['name','email','candidate_id'], inplace=True)\n# Hash quasi-identifiers\ndf['surname_hash'] = df['surname'].apply(\n    lambda x: hashlib.sha256(str(x).encode()).hexdigest()[:8]\n)`,
+      current_score: pr.privacy_score || 0.45,
+      estimated_score_after: 0.80, risk:'None'
+    });
+  }
+
+  if (f.disparateImpact != null && f.disparateImpact < 0.80) {
+    fixes.push({
+      priority:'CRITICAL', dimension:'Fairness', effort:'medium',
+      title:'Fix disparate impact — 80% rule violation',
+      why:`The approval rate ratio across demographic groups is ${pct(f.disparateImpact)}. Legal EEOC threshold is ≥ 80%. This exposes the organisation to discrimination lawsuits.`,
+      code:`from fairlearn.postprocessing import ThresholdOptimizer\n\noptimizer = ThresholdOptimizer(\n    estimator=your_model,\n    constraints="demographic_parity",\n    objective="balanced_accuracy_score"\n)\noptimizer.fit(X_train, y_train, sensitive_features=sensitive_col)\ny_pred = optimizer.predict(X_test, sensitive_features=test_sensitive)`,
+      current_score: f.disparateImpact,
+      estimated_score_after: Math.min(f.disparateImpact + 0.20, 1), risk:'Low'
+    });
+  }
+
+  if (f.counterfactual != null && f.counterfactual < 0.90) {
+    fixes.push({
+      priority:'CRITICAL', dimension:'Fairness', effort:'medium',
+      title:'Remove proxy features sensitive to protected attributes',
+      why:`When gender or caste_proxy is flipped (everything else identical), the model changes its decision. Score: ${pct(f.counterfactual)}. This is direct evidence of proxy discrimination.`,
+      code:`# Find proxy features correlated with sensitive attributes\nfor col in X.columns:\n    corr = X[col].corr(df['gender'])\n    if abs(corr) > 0.3:\n        print(f"Proxy: {col} — r={corr:.3f}")\n\n# Drop proxies\nX_clean = X.drop(columns=proxy_columns)`,
+      current_score: f.counterfactual,
+      estimated_score_after: Math.min(f.counterfactual + 0.18, 1), risk:'Low'
+    });
+  }
+
+  if ((rb.boundary_instability || 0) > 0.25) {
+    fixes.push({
+      priority:'WARNING', dimension:'Robustness', effort:'low',
+      title:'Calibrate predictions to stabilise boundary decisions',
+      why:`${Math.round((rb.boundary_instability||0)*100)}% of predictions fall in the 0.4–0.6 uncertain zone. Minor input changes flip these decisions, creating operational inconsistency.`,
+      code:`from sklearn.calibration import CalibratedClassifierCV\n\ncalibrated = CalibratedClassifierCV(\n    estimator=your_model, method='isotonic', cv='prefit'\n)\ncalibrated.fit(X_val, y_val)`,
+      current_score: rb.robustness_score || 0.5,
+      estimated_score_after: Math.min((rb.robustness_score||0.5)+0.20, 1), risk:'None'
+    });
+  }
+
+  if (!fixes.length) {
+    fixes.push({
+      priority:'INFO', dimension:'All', effort:'low',
+      title:'Set up continuous fairness monitoring',
+      why:'No critical issues found. Implement weekly re-evaluation as new data arrives to catch drift early.',
+      code:`import schedule\n\ndef fairness_check():\n    df_prod = load_production_batch()\n    result = run_fairness_eval(df_prod)\n    for dim, score in result.items():\n        if score < 0.75:\n            send_alert(f"DRIFT: {dim} = {score:.2%}")\n\nschedule.every().monday.at("09:00").do(fairness_check)`,
+      current_score: 0.85, estimated_score_after: 0.90, risk:'None'
+    });
+  }
   return fixes;
 }
 
-// ── deployment gate ──────────────────────────────────────────────────────────
-function buildGate(ev,fixes){
-  const overall=ev.ethical_score||ev.fairness?.fairness_score||0;
-  const threshold=.75;
-  const hasCrit=fixes.filter(f=>(f.priority||f.severity||'')==='CRITICAL').length>0;
-  const safeScore=v=>(v!=null&&v>0)?v:overall;
-  const checks=[
-    {name:'Fairness Score',icon:'fa-balance-scale',score:safeScore(ev.fairness_score||ev.fairness?.fairness_score),threshold,what:'Overall fairness across all 7 dimensions'},
-    {name:'Privacy Score',icon:'fa-lock',score:safeScore(ev.privacy_score),threshold,what:'No PII in training data'},
-    {name:'Robustness Score',icon:'fa-shield-alt',score:safeScore(ev.robustness_score),threshold,what:'Stable decisions at threshold'},
-    {name:'Transparency',icon:'fa-eye',score:safeScore(ev.transparency_score),threshold,what:'Explainable via SHAP'},
-    {name:'No Critical Issues',icon:'fa-flag',score:hasCrit?0:1,threshold:.5,what:'All critical issues resolved'},
-  ];
-  const gatePass=checks.every(c=>c.score>=c.threshold);
-  const gateClass=gatePass?'ok':checks.filter(c=>c.score<c.threshold).length<=1?'warn':'blocked';
-  const gateMsg=gatePass?{icon:'fa-check-circle',title:'All deployment checks pass — model is ready for production.',sub:'No critical fairness, privacy, or robustness issues blocking deployment.'}
-    :gateClass==='warn'?{icon:'fa-exclamation-circle',title:'One check failing — conditional deployment only.',sub:'Resolve the failing check before pushing to production.'}
-    :{icon:'fa-times-circle',title:`${checks.filter(c=>c.score<c.threshold).length} checks failing — deployment is BLOCKED.`,sub:'Multiple ethical thresholds not met. Do not ship until all fixes in the remediation plan above are applied.'};
+/* ── Gate checks ── */
+function buildGate(ev, hasCritFixes) {
+  const overall = ev.ethical_score || 0;
+  const threshold = 0.75;
+  const safeScore = v => (v != null && v > 0) ? v : overall;
 
-  const checkCards=checks.map(c=>{
-    const cls=c.score>=c.threshold?'pass':c.score>=c.threshold*.8?'marginal':'fail';
-    const p=Math.round(c.score*100);
-    return `<div class="gate-card ${cls}">
-      <div class="gc-top"><div class="gc-icon ${cls}"><i class="fas ${c.icon}"></i></div><span class="gc-pill ${cls}">${cls==='pass'?'PASS':cls==='marginal'?'MARGINAL':'FAIL'}</span></div>
-      <div class="gc-name">${c.name}</div>
-      <div class="gc-score ${cls}">${p}<span style="font-size:.9rem;opacity:.4">/100</span></div>
-      <div class="gc-bar-track"><div class="gc-bar-fill ${cls}" style="width:${p}%"></div></div>
-      <div class="gc-req">Required: ${Math.round(c.threshold*100)}+ · ${c.what}</div>
-    </div>`;
-  }).join('');
-  return {checkCards,gateClass,gateMsg};
+  const checks = [
+    { name:'Fairness score', icon:'fa-balance-scale', score: safeScore(ev.fairness_score || ev.fairness?.fairness_score), threshold, what:'All 7 fairness dimensions' },
+    { name:'Privacy score',  icon:'fa-lock',          score: safeScore(ev.privacy_score),    threshold, what:'No PII in training data' },
+    { name:'Robustness',     icon:'fa-shield-alt',    score: safeScore(ev.robustness_score), threshold, what:'Stable boundary decisions' },
+    { name:'Transparency',   icon:'fa-eye',           score: safeScore(ev.transparency_score), threshold, what:'Explainable via SHAP' },
+    { name:'No critical issues', icon:'fa-flag',      score: hasCritFixes ? 0 : 1, threshold:0.5, what:'All critical fixes resolved' },
+  ];
+  return checks;
 }
 
-// ── Gemini AI analysis ────────────────────────────────────────────────────────
-async function runGeminiAnalysis(ev,fixes,evalId){
-  const btn=document.getElementById('gemini-btn');
-  const out=document.getElementById('gemini-output');
-  const keyInput=document.getElementById('gemini-key');
-  if(!btn||!out)return;
-
-  // Get key from input or localStorage
-  const apiKey=(keyInput?.value||'').trim() || localStorage.getItem('gemini_api_key')||'';
-  if(!apiKey){
-    out.style.display='block';
-    out.innerHTML=`<span style="color:var(--red-bright)">⚠ Please enter your Gemini API key above first.\nGet one free at: https://aistudio.google.com/app/apikey</span>`;
+/* ── Gemini analysis ── */
+let _cfCount = 0, _sensCount = 0;
+async function runGemini(ev, fixes, evalId) {
+  const btn = document.getElementById('gemini-btn');
+  const out = document.getElementById('gemini-out');
+  const key = (document.getElementById('gemini-key')?.value || '').trim() || localStorage.getItem('gemini_api_key') || '';
+  if (!key) {
+    out.style.display = 'block';
+    out.innerHTML = '<span style="color:#F87171">⚠ Enter your Gemini API key first.\nGet one free at: https://aistudio.google.com/app/apikey</span>';
     return;
   }
-  // Save key for convenience (user opted in by typing it)
-  localStorage.setItem('gemini_api_key', apiKey);
+  localStorage.setItem('gemini_api_key', key);
+  btn.disabled = true;
+  out.style.display = 'block';
+  out.innerHTML = '<span style="color:var(--gold)">⟳ Sending to Gemini 2.5 Flash…</span>';
 
-  btn.disabled=true;
-  out.style.display='block';
-  out.innerHTML=`<div class="gemini-spinner"><i class="fas fa-spinner fa-spin"></i> Sending evaluation data to Gemini 2.5 Flash…</div>`;
+  const f = ev.fairness || {};
+  const shap = ev.shap || {};
+  const topFeats = (shap.feature_importance||[]).slice(0,8).map(x=>x.feature).join(', ');
+  const piiCols = (ev.privacy?.pii_columns||[]).slice(0,5).join(', ') || 'none';
 
-  const fairness=ev.fairness||{};
-  const shap=ev.shap||{};
-  const piiCols=(ev.privacy?.pii_columns||[]).slice(0,5).join(', ')||'none detected';
-  const topShapFeats=(shap.feature_importance||[]).slice(0,8).map(f=>f.feature).join(', ');
+  const prompt = `You are a senior ML fairness engineer reviewing a technical bias audit.
 
-  const prompt=`You are a senior ML fairness engineer writing a technical audit review for an AI hiring model.
-Given the following real evaluation data, produce a structured technical analysis.
+EVALUATION DATA
+- Records: ${ev.records||0}
+- Overall ethics: ${Math.round((ev.ethical_score||0)*100)}/100
 
-## EVALUATION DATA
-- Evaluation ID: ${evalId||'unknown'}
-- Records evaluated: ${ev.records||0}
-- Overall Ethics Score: ${Math.round((ev.ethical_score||0)*100)}/100
+FAIRNESS METRICS
+- Disparate impact: ${fmt(f.disparateImpact,4)} (need ≥0.80, status: ${(f.disparateImpact||0)<0.8?'FAILING':'PASSING'})
+- Demographic parity gap: ${fmt(f.demographicParity,4)} (need ≤0.05)
+- Counterfactual: ${fmt(f.counterfactual,4)}
+- Individual fairness: ${fmt(f.individualFairness,4)}
+- Intersectional: ${fmt(f.intersectional,4)}
 
-## FAIRNESS METRICS (7 dimensions, all should be ≥ 0.80)
-- Individual Fairness: ${fmt(fairness.individualFairness,4)}
-- Group Fairness: ${fmt(fairness.groupFairness,4)}
-- Demographic Parity Gap: ${fmt(fairness.demographicParity,4)} (raw gap — lower is better, threshold ≤ 0.05)
-- Disparate Impact: ${fmt(fairness.disparateImpact,4)} (must be ≥ 0.80, current: ${(fairness.disparateImpact||0)<0.8?'FAILING':'PASSING'})
-- Calibration Error (Brier): ${fmt(fairness.calibrationError,4)} (lower is better, threshold ≤ 0.05)
-- Counterfactual Score: ${fmt(fairness.counterfactual,4)}
-- Intersectional Score: ${fmt(fairness.intersectional,4)}
+DIMENSION SCORES
+- Fairness: ${Math.round((ev.fairness_score||0)*100)}/100
+- Privacy: ${Math.round((ev.privacy_score||0)*100)}/100
+- Robustness: ${Math.round((ev.robustness_score||0)*100)}/100
 
-## DIMENSION SCORES (0-100 scale)
-- Fairness: ${Math.round((ev.fairness_score||0)*100)}
-- Privacy: ${Math.round((ev.privacy_score||0)*100)} ← CRITICAL (45/100)
-- Robustness: ${Math.round((ev.robustness_score||0)*100)}
-- Transparency: ${Math.round((ev.transparency_score||0)*100)}
-- Accountability: ${Math.round((ev.accountability_score||0)*100)}
+BIAS EVIDENCE
+- Counterfactual pairs found: ${_cfCount} (identical profiles, different outcomes)
+- Protected attrs in SHAP top-5: ${_sensCount} (should be 0)
+- Top SHAP features: ${topFeats}
+- PII columns in dataset: ${piiCols}
+- ROC-AUC: ${fmt(ev.model_metrics?.roc_auc,4)}
 
-## BIAS EVIDENCE
-- Counterfactual pairs found: ${cfExamplesCount} (identical profiles, different outcomes by gender/caste)
-- Protected attributes in SHAP top features: ${sensInShapCount} (should be 0)
-- Top SHAP features: ${topShapFeats}
-- PII columns detected in dataset: ${piiCols}
+TOP FIXES IDENTIFIED
+${fixes.slice(0,3).map((f,i)=>`${i+1}. [${f.priority||'WARNING'}] ${f.title} (${f.dimension}, ${f.effort} effort)`).join('\n')}
 
-## MODEL PERFORMANCE
-- ROC-AUC: ${fmt(ev.model_metrics?.roc_auc,4)} ${(ev.model_metrics?.roc_auc||1)<0.5?'← BELOW RANDOM (serious problem)':''}
-- Accuracy: ${fmt(ev.model_metrics?.accuracy,4)}
-- F1-Score: ${fmt(ev.model_metrics?.f1_score,4)}
-
-## TOP ${Math.min(fixes.length,3)} PRIORITY FIXES IDENTIFIED
-${fixes.slice(0,3).map((f,i)=>`${i+1}. [${f.priority||f.severity||'WARNING'}] ${f.title||'—'} (${f.dimension}, ${f.effort} effort)`).join('\n')}
-
----
-Please provide EXACTLY this structure (use these exact headers):
+Produce EXACTLY this structure:
 
 **ROOT CAUSE ANALYSIS**
-- [2-3 bullet points on the most likely root causes of bias patterns]
+- [2–3 bullets on most likely root causes]
 
 **RISK RANKING**
-- [Rank top 3 issues by deployment risk — label each LEGAL/REPUTATIONAL/OPERATIONAL with severity HIGH/MEDIUM/LOW]
+- [Top 3 risks labelled LEGAL/REPUTATIONAL/OPERATIONAL with HIGH/MEDIUM/LOW severity]
 
 **48-HOUR INTERVENTION**
-- [Single most impactful thing the ML team can do RIGHT NOW — be specific with library names and function names]
+- [Single most impactful action — be specific with library names and function names]
 
-**WEEKLY MONITORING METRICS**
-- [4-5 specific metrics to track in production — include threshold values]
+**PRODUCTION MONITORING METRICS**
+- [4–5 specific metrics with threshold values to track weekly]
 
 **TECHNICAL DEBT**
-- [1-2 structural issues in the data pipeline or feature engineering that need fixing at the next retrain]
+- [1–2 structural data pipeline or feature engineering issues to fix at next retrain]
 
-Be technical, direct, and specific. No generic advice. Reference the actual numbers above.`;
+Be direct and technical. Reference actual numbers above. No generic advice.`;
 
-  try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[{parts:[{text:prompt}]}],
-        generationConfig:{temperature:0.3,maxOutputTokens:1200}
-      })
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.3,maxOutputTokens:1200}})
     });
-    if(!res.ok){
-      const err=await res.json().catch(()=>({}));
-      throw new Error(err.error?.message||`HTTP ${res.status}`);
-    }
-    const data=await res.json();
-    const text=data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if(!text) throw new Error('Empty response from Gemini');
-
-    // Format markdown → styled HTML
-    const formatted=text
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Empty response');
+    const formatted = text
       .replace(/\*\*(.*?)\*\*/g,'<span style="color:var(--gold);font-weight:700">$1</span>')
-      .replace(/^#{1,3}\s+(.+)$/gm,'<span class="gem-section">$1</span>')
-      .replace(/^[-•*]\s+(.+)$/gm,'<span class="gem-bullet">▸ $1</span>')
-      .replace(/`([^`]+)`/g,'<span class="gem-code">$1</span>')
-      .replace(/\[([A-Z]+)\]/g,'<span style="color:var(--amber);font-weight:700">[$1]</span>')
-      .replace(/\b(CRITICAL|BLOCKING|FAIL|FAILING)\b/g,'<span style="color:var(--red-bright);font-weight:700">$1</span>')
-      .replace(/\b(PASS|PASSING|OK)\b/g,'<span style="color:var(--green-bright);font-weight:700">$1</span>');
-    out.innerHTML=formatted;
-  }catch(err){
-    out.innerHTML=`<span style="color:var(--red-bright)">⚠ Gemini API error: ${err.message}\n\nCheck that your API key is valid and has the Generative Language API enabled.\nGet a free key at: https://aistudio.google.com/app/apikey</span>`;
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Regenerate Analysis`;
+      .replace(/^[-•*]\s+(.+)$/gm,'<span style="color:rgba(255,255,255,.7)">▸ $1</span>')
+      .replace(/`([^`]+)`/g,'<span style="color:#86EFAC;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px">$1</span>')
+      .replace(/\b(CRITICAL|BLOCKING|FAIL|FAILING)\b/g,'<span style="color:#F87171;font-weight:700">$1</span>')
+      .replace(/\b(PASS|PASSING|LOW RISK)\b/g,'<span style="color:#34D399;font-weight:700">$1</span>');
+    out.innerHTML = formatted;
+  } catch(e) {
+    out.innerHTML = `<span style="color:#F87171">⚠ Gemini error: ${e.message}\n\nCheck your API key at: https://aistudio.google.com/app/apikey</span>`;
+  } finally {
+    btn.disabled = false;
   }
 }
-// expose these counts to the gemini closure
-let cfExamplesCount=0, sensInShapCount=0;
+window.runGemini = runGemini;
 
-// ══════════════════ MAIN RENDER ══════════════════
-function render(ev,fixes,cfExamples,evalId){
-  const overall=ev.ethical_score||ev.fairness?.fairness_score||0;
-  const p=Math.round(overall*100);
-  const sv=sev(overall);
-  const col=sevColor(overall);
-  const fairness=ev.fairness||{};
-  const shap=ev.shap||{};
-  // Build dims from raw fairness data if developer endpoint returned none
-  let dims=ev.dimensions||[];
-  if(!dims.length && fairness && Object.keys(fairness).length){
-    const dpRaw=fairness.demographicParity||0;
-    const calErr=fairness.calibrationError||0;
-    dims=[
-      {id:1,score:fairness.individualFairness,detail:{description:'Measures whether similar individuals receive similar predictions. Uses k-NN consistency check (k=5).'}},
-      {id:2,score:fairness.groupFairness,      detail:{description:'Evaluates equal opportunity across protected groups. Reports equalized-odds difference per sensitive attribute.',per_attribute:Object.entries(fairness.per_attribute||{}).map(([attr,m])=>({attribute:attr,equalized_odds_difference:m.equalized_odds_difference,demographic_parity_difference:m.demographic_parity_difference,fairness_score:m.fairness_score}))}},
-      {id:3,score:Math.max(0,1-dpRaw),         detail:{description:`Demographic parity difference: ${(dpRaw).toFixed(4)} raw gap (lower is better). Score = 1 - gap.`,disparities:Object.entries(fairness.per_attribute||{}).map(([attr,m])=>({attribute:attr,raw_dp_diff:m.demographic_parity_difference,gap_pct:Math.abs(m.demographic_parity_difference||0)*100}))}},
-      {id:4,score:Math.max(0,1-calErr),         detail:{description:'Calibration measures whether predicted probabilities match observed frequencies.',brier_score:calErr,calibration_score:Math.max(0,1-calErr)}},
-      {id:5,score:fairness.disparateImpact,    detail:{description:'80% rule: ratio of lowest to highest group positive-outcome rate. Must be ≥ 0.80.',impact_ratio:fairness.disparateImpact,threshold:0.80,passes_80_rule:(fairness.disparateImpact||0)>=0.80}},
-      {id:6,score:fairness.counterfactual,     detail:{description:'Proxy: 1 - std(group prediction rates). Measures sensitivity to protected attribute changes.'}},
-      {id:7,score:fairness.intersectional,     detail:{description:'Worst-case parity gap across all pairwise combinations of sensitive attributes.',worst_case_gap:Math.max(0,1-(fairness.intersectional||0))}},
-    ];
-  }
-  const perf=ev.model_metrics||ev.model_performance||{};
+/* ── NORMALISE ── */
+function normalise(raw) {
+  const pick = (...paths) => { for (const p of paths) { const v = p.split('.').reduce((o,k)=>o?.[k], raw); if (v != null && Number(v) >= 0) return Number(v); } return null; };
+  const fairness = raw.fairness || {};
+  const shap = raw.shap ? {
+    topFeature: raw.shap.topFeature || raw.shap.top_feature,
+    shapMax: raw.shap.shapMax || raw.shap.shap_max,
+    shapMin: raw.shap.shapMin || raw.shap.shap_min,
+    featureStability: raw.shap.featureStability || raw.shap.feature_stability,
+    feature_importance: raw.shap.feature_importance
+      ? (Array.isArray(raw.shap.feature_importance)
+         ? raw.shap.feature_importance
+         : Object.entries(raw.shap.feature_importance).sort((a,b)=>b[1]-a[1]).map(([feature,shap_value])=>({feature,shap_value})))
+      : [],
+  } : {};
+  return {
+    ethical_score: pick('ethical_score','fairness_score','fairness.fairness_score'),
+    fairness_score: pick('fairness_score','fairness.fairness_score'),
+    privacy_score: pick('privacy_score','privacy.privacy_score'),
+    robustness_score: pick('robustness_score','robustness.robustness_score'),
+    transparency_score: pick('transparency_score','transparency.transparency_score'),
+    accountability_score: pick('accountability_score','accountability.accountability_score'),
+    fairness, shap,
+    privacy: raw.privacy || {},
+    robustness: raw.robustness || {},
+    model_metrics: raw.model_metrics || raw.model_performance || {},
+    remediation: raw.remediation || {},
+    records: raw.records || 0,
+  };
+}
 
-  // Update sidebar badges
-  const critFixes=fixes.filter(f=>(f.priority||f.severity||'')==='CRITICAL');
-  const qw=fixes.filter(f=>f.effort==='low');
-  const sensInShap=(shap.feature_importance||[]).filter(f=>['gender','sex','race','caste','age','religion','ethnicity','nationality'].some(k=>f.feature.toLowerCase().includes(k)));
-  // Set globals for Gemini closure
-  cfExamplesCount = cfExamples.length;
-  sensInShapCount = sensInShap.length;
-  document.getElementById('sb-fixes').textContent=critFixes.length;
-  document.getElementById('sb-qw').textContent=qw.length;
-  document.getElementById('sb-shap').textContent=sensInShap.length>0?sensInShap.length+'⚠':'OK';
-  if(sensInShap.length>0){document.getElementById('sb-shap').className='sidebar-badge crit';}
-  document.getElementById('sb-cf').textContent=cfExamples.length;
+/* ── RENDER ── */
+function render(ev, fixes, cfExamples, evalId) {
+  const overall = ev.ethical_score || 0;
+  const p = Math.round(overall * 100);
+  const f = ev.fairness || {};
+  const shap = ev.shap || {};
+  const perf = ev.model_metrics || {};
+  const pr = ev.privacy || {};
+  const rb = ev.robustness || {};
 
-  const {cards:dimCards,drawers}=buildDimCards(dims,fairness.per_attribute||{});
-  const {checkCards,gateClass,gateMsg}=buildGate(ev,fixes);
+  const critFixes = fixes.filter(x => (x.priority||x.severity||'') === 'CRITICAL');
+  const qwFixes = fixes.filter(x => x.effort === 'low');
+  const sensInShap = (shap.feature_importance||[]).filter(x =>
+    ['gender','sex','race','caste','age','religion','ethnicity','nationality','caste_proxy','surname','candidate_id','hometown'].some(k => x.feature.toLowerCase().includes(k))
+  );
 
-  // ── Status banner: always driven by the gate result, never by raw score alone ──
-  // This prevents the contradiction where ethics score says "approved" but gate says "blocked"
+  _cfCount = cfExamples.length;
+  _sensCount = sensInShap.length;
+
+  // Build per-attribute gap data from raw fairness
+  const perAttr = f.per_attribute || {};
+  const gapRows = Object.entries(perAttr).map(([attr, m]) => ({
+    attr,
+    gap: Math.abs(m.demographic_parity_difference || 0),
+    eo: Math.abs(m.equalized_odds_difference || 0),
+    score: m.fairness_score,
+  })).sort((a,b) => b.gap - a.gap);
+
+  // Gate checks
+  const gateChecks = buildGate(ev, critFixes.length > 0);
+  const gatePassAll = gateChecks.every(c => c.score >= c.threshold);
+  const gateFails = gateChecks.filter(c => c.score < c.threshold).length;
+
+  // Banner
+  const isBlocked = !gatePassAll;
   const hasCritFixes = critFixes.length > 0;
-  const privacyFail  = (ev.privacy_score != null) && ev.privacy_score < 0.75;
-  const robusFail    = (ev.robustness_score != null) && ev.robustness_score < 0.75;
-  const isBlocked    = gateClass === 'blocked';
-  const isConditional= gateClass === 'warn';
+  const privFail = (ev.privacy_score != null) && ev.privacy_score < 0.75;
 
   let bannerCls, bannerIcon, bannerTitle, bannerSub;
   if (isBlocked) {
-    bannerCls   = 'blocked';
-    bannerIcon  = 'fa-times-circle';
+    bannerCls = 'blocked'; bannerIcon = 'fa-times-circle';
     bannerTitle = 'Deployment is BLOCKED — critical issues must be resolved first.';
     const reasons = [];
-    if (hasCritFixes)  reasons.push(`${critFixes.length} critical fix${critFixes.length!==1?'es':''} outstanding`);
-    if (privacyFail)   reasons.push(`Privacy score ${Math.round((ev.privacy_score||0)*100)}/100 — PII detected in dataset`);
-    if (robusFail)     reasons.push(`Robustness score ${Math.round((ev.robustness_score||0)*100)}/100 — decision instability`);
+    if (hasCritFixes) reasons.push(`${critFixes.length} critical fix${critFixes.length!==1?'es':''} outstanding`);
+    if (privFail) reasons.push(`Privacy score ${Math.round((ev.privacy_score||0)*100)}/100 — PII detected in dataset`);
     if (cfExamples.length) reasons.push(`${cfExamples.length} counterfactual bias pair${cfExamples.length!==1?'s':''} found in real data`);
     bannerSub = `Overall Ethics Score: ${p}/100. Blocking reasons: ${reasons.join(' · ')}.`;
-  } else if (isConditional) {
-    bannerCls   = 'warn';
-    bannerIcon  = 'fa-exclamation-circle';
-    bannerTitle = 'Conditional deployment only — one or more checks need attention.';
-    bannerSub   = `Overall Ethics Score: ${p}/100. Resolve the failing check(s) in the CI/CD gate below before pushing to production.`;
   } else {
-    // Only show "approved" if gate actually passes AND no critical fixes
-    bannerCls   = 'ok';
-    bannerIcon  = 'fa-check-circle';
+    bannerCls = 'ok'; bannerIcon = 'fa-check-circle';
     bannerTitle = 'All deployment checks pass — model is approved for production.';
-    bannerSub   = `Overall Ethics Score: ${p}/100. All 5 gate checks pass. Continue monitoring fairness metrics weekly.`;
+    bannerSub = `Overall Ethics Score: ${p}/100. All 5 gate checks pass. Continue monitoring weekly.`;
   }
 
-  const proxyWarn=sensInShap.length>0?`<div class="proxy-alert"><i class="fas fa-exclamation-triangle"></i><div><strong>Protected attributes detected in top SHAP features:</strong> ${sensInShap.map(f=>`<code style="background:rgba(239,68,68,.1);padding:1px 5px;border-radius:3px;font-family:var(--mono)">${f.feature}</code>`).join(', ')} — these should NOT be predictive features. This is direct evidence of bias.</div></div>`:'' ;
+  // Update sidebar badges
+  document.getElementById('sb-gaps').textContent = gapRows.length > 0 ? gapRows.length : 'OK';
+  document.getElementById('sb-shap').textContent = sensInShap.length > 0 ? sensInShap.length+'⚠' : 'OK';
+  if (sensInShap.length > 0) document.getElementById('sb-shap').className = 'sb-badge crit';
+  document.getElementById('sb-cf').textContent = cfExamples.length;
+  document.getElementById('sb-fixes').textContent = critFixes.length;
+  document.getElementById('sb-qw').textContent = qwFixes.length;
+  document.getElementById('back-link').href = `allReports.html?eval_id=${evalId}`;
 
-  document.getElementById('back-all-link').href=`allReports.html?eval_id=${evalId}`;
+  // Proxy warning
+  const proxyWarn = sensInShap.length > 0
+    ? `<div class="proxy-alert"><i class="fas fa-exclamation-triangle"></i><div><strong>Protected attributes detected in top SHAP features:</strong> ${sensInShap.map(f=>`<code style="background:rgba(239,68,68,.1);padding:1px 5px;border-radius:3px;font-family:var(--mono)">${f.feature}</code>`).join(', ')} — these should NOT be predictive features. This is direct evidence of bias.</div></div>`
+    : '';
 
-  document.getElementById('app').innerHTML=`
-  <!-- ══ HERO ══ -->
-  <div class="report-hero" id="overview">
+  document.getElementById('app').innerHTML = `
+
+  <!-- HERO -->
+  <div class="hero" id="overview">
     <div class="hero-badge"><i class="fas fa-code"></i> Technical Bias Audit Report</div>
-    <div class="hero-layout">
+    <div class="hero-body">
       <div>
         <div class="hero-title">Engineer's Bias<br>Audit &amp; Fix Guide</div>
-        <div class="hero-desc">Deep technical analysis of every fairness dimension — what went wrong, why it went wrong, and exactly how to fix it. Copy-paste code included.</div>
+        <div class="hero-sub">Evidence-first analysis — what bias exists, where the proof is, and exactly how to fix it. Copy-paste code included.</div>
         <div class="hero-chips">
-          <span class="hero-chip"><i class="fas fa-database"></i> ${(ev.records||0).toLocaleString()} records</span>
-          <span class="hero-chip"><i class="fas fa-th-large"></i> 7 dimensions</span>
-          <span class="hero-chip ${critFixes.length>0?'warn':'ok'}"><i class="fas fa-bug"></i> ${critFixes.length} critical issues</span>
-          <span class="hero-chip ${sensInShap.length>0?'warn':'ok'}"><i class="fas fa-chart-bar"></i> ${sensInShap.length} protected attrs in SHAP</span>
-          <span class="hero-chip"><i class="fas fa-fingerprint"></i> ${evalId?evalId.slice(0,12)+'…':'—'}</span>
+          <span class="chip"><i class="fas fa-database"></i> ${(ev.records||0).toLocaleString()} records</span>
+          <span class="chip chip${critFixes.length>0?'warn':''}">${critFixes.length>0?'<i class="fas fa-times-circle" style="color:#F87171"></i>':''} ${critFixes.length} critical issue${critFixes.length!==1?'s':''}</span>
+          <span class="chip chip${cfExamples.length>0?'warn':''}">${cfExamples.length > 0 ? '<i class="fas fa-exclamation-triangle" style="color:#F87171"></i>' : ''} ${cfExamples.length} bias pair${cfExamples.length!==1?'s':''} found</span>
+          <span class="chip"><i class="fas fa-fingerprint"></i> ${evalId ? evalId.slice(0,12)+'…' : '—'}</span>
         </div>
         <div class="hero-actions">
           <button class="btn btn-gold" onclick="window.print()"><i class="fas fa-file-pdf"></i> Export PDF</button>
-          <button class="btn btn-ghost" onclick="dlJson()"><i class="fas fa-download"></i> Export JSON</button>
+          <button class="btn btn-ghost" onclick="dlJson()"><i class="fas fa-download"></i> JSON</button>
           <a href="allReports.html?eval_id=${evalId}" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> All Reports</a>
         </div>
       </div>
-      <div class="hero-score-panel">
-        <div class="score-num" style="color:${col}">${p}<span class="score-denom">/100</span></div>
-        <div class="score-lbl">Overall Ethics Score</div>
-        <div class="score-verdict" style="color:${col}">${sevLabel(overall)}</div>
+      <div class="score-panel">
+        <div class="score-num" style="color:${sevColor(overall)}">${p}<span class="score-denom">/100</span></div>
+        <div class="score-label">Overall Ethics Score</div>
+        <div class="score-verdict" style="color:${sevColor(overall)}">${sevLabel(overall)}</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ STATUS BANNER ══ -->
-  <div class="status-banner ${bannerCls}">
-    <div class="status-banner-icon"><i class="fas ${bannerIcon}"></i></div>
+  <!-- STATUS BANNER -->
+  <div class="banner ${bannerCls}">
+    <i class="fas ${bannerIcon}"></i>
     <div>
-      <div class="status-banner-title">${bannerTitle}</div>
-      <div class="status-banner-sub">${bannerSub}</div>
+      <div class="banner-title">${bannerTitle}</div>
+      <div class="banner-sub">${bannerSub}</div>
     </div>
   </div>
 
-  <!-- ══ SCORE GRID ══ -->
-  <div class="score-grid">
+  <!-- SCORE GRID (5 dimensions) -->
+  <div class="dim-grid5" id="scores">
     ${[
-      {icon:'fa-balance-scale',score:ev.fairness_score||fairness.fairness_score,label:'Fairness',weight:'40%'},
-      {icon:'fa-lock',score:ev.privacy_score,label:'Privacy',weight:'20%'},
-      {icon:'fa-shield-alt',score:ev.robustness_score,label:'Robustness',weight:'15%'},
-      {icon:'fa-eye',score:ev.transparency_score,label:'Transparency',weight:'15%'},
-      {icon:'fa-clipboard-check',score:ev.accountability_score,label:'Accountability',weight:'10%'},
-    ].map(d=>{
-      const s=d.score!=null?d.score:null;const sv2=sev(s);const sp=s!=null?Math.round(s*100):null;
-      return `<div class="score-card"><div class="sc-icon ${sv2}"><i class="fas ${d.icon}"></i></div>
-        <div class="sc-num ${sv2}">${sp!=null?sp:'—'}</div>
-        <div class="sc-lbl">${d.label}</div>
-        <div class="sc-bar"><div class="sc-bar-fill ${sv2}" style="width:${sp||0}%"></div></div>
-        <div class="sc-status ${sv2}">${sevLabel(s)} · ${d.weight}</div>
+      {icon:'fa-balance-scale', score:ev.fairness_score||f.fairness_score, label:'Fairness', weight:'40%'},
+      {icon:'fa-lock',          score:ev.privacy_score,                    label:'Privacy',  weight:'20%'},
+      {icon:'fa-shield-alt',    score:ev.robustness_score,                 label:'Robustness',weight:'15%'},
+      {icon:'fa-eye',           score:ev.transparency_score,               label:'Transparency',weight:'15%'},
+      {icon:'fa-clipboard-check',score:ev.accountability_score,            label:'Accountability',weight:'10%'},
+    ].map(d => {
+      const s = d.score != null ? d.score : null;
+      const sv2 = sev(s);
+      const sp = s != null ? Math.round(s * 100) : null;
+      return `<div class="dcard">
+        <div class="dcard-icon ${sv2}"><i class="fas ${d.icon}"></i></div>
+        <div class="dcard-num ${sv2}">${sp != null ? sp : '—'}</div>
+        <div class="dcard-label">${d.label}</div>
+        <div class="dcard-bar"><div class="dcard-fill ${sv2}" style="width:${sp||0}%"></div></div>
+        <div class="dcard-status ${sv2}">${sevLabel(s)} · ${d.weight}</div>
       </div>`;
     }).join('')}
   </div>
 
-  <!-- ══ 7 DIMENSIONS ══ -->
-  <div class="section-block" id="dimensions">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-th-large"></i> 7 Fairness Dimensions — Click Any Card to Drill Down</div>
-      <span style="font-size:.8125rem;color:var(--muted)">${dims.filter(d=>sev(d.score)==='crit').length} critical · ${dims.filter(d=>sev(d.score)==='warn').length} marginal · ${dims.filter(d=>sev(d.score)==='pass').length} passing</span>
+  <!-- SECTION: BIAS REALITY — GROUP GAPS -->
+  <div class="block" id="bias-reality">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-users"></i> Group outcome gaps — who is affected</div>
+      <span class="block-sub">${gapRows.length} attribute${gapRows.length!==1?'s':''} audited · per-group approval rates</span>
     </div>
-    <div class="section-block-body">
-      <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:.875rem 1rem;margin-bottom:1.25rem;font-size:.8125rem;line-height:1.6;">
-        <strong style="color:var(--navy);display:block;margin-bottom:3px"><i class="fas fa-lightbulb" style="color:var(--amber);margin-right:6px"></i>Why can these scores be high while Privacy is 45?</strong>
-        <span style="color:var(--muted)">These 7 dimensions only measure <strong style="color:var(--navy)">statistical fairness</strong> — equal treatment across groups. They don't measure privacy, robustness or accountability. Your model is actually statistically fair (97/100 fairness) but has <strong style="color:var(--red)">PII data leaking into training</strong> (surname, candidate_id, hometown_type appear as predictive features in SHAP). That's a data pipeline problem, not a fairness algorithm problem — which is why the 7 dimensions look clean but the overall score is lower.</span>
-      </div>
-      <div class="info-box"><i class="fas fa-info-circle"></i> <span><strong style="color:var(--navy)">Click any dimension card</strong> to see the technical breakdown, per-attribute data, and a copy-paste Python fix.</span></div>
-      <div class="dim-grid">
-        ${dimCards}
-        ${drawers}
-      </div>
+    <div class="block-body">
+      <div class="info-note"><i class="fas fa-info-circle"></i><span>This table shows the real-world impact: how much higher or lower each group's approval rate is relative to the best-performing group. A gap above 20% violates the legal 80% rule.</span></div>
+      ${gapRows.length ? `<table class="gap-table">
+        <thead><tr><th>Attribute</th><th>DP Gap ↓</th><th>EO Diff ↓</th><th>Group Score</th><th>80% Rule</th></tr></thead>
+        <tbody>${gapRows.map(g => {
+          const passes80 = (1 - g.gap) >= 0.80;
+          const sv3 = sev(g.score);
+          return `<tr>
+            <td style="font-weight:700">${g.attr}</td>
+            <td>
+              <div class="gap-bar-wrap">
+                <div class="gap-bar-track"><div class="gap-bar-fill" style="width:${Math.min(g.gap*500,100)}%;background:${g.gap>0.20?'var(--red)':g.gap>0.10?'var(--amber)':'var(--green)'}"></div></div>
+                <span class="gap-bar-text" style="color:${g.gap>0.20?'var(--red)':g.gap>0.10?'var(--amber)':'var(--green)'}">${(g.gap*100).toFixed(1)}%</span>
+              </div>
+            </td>
+            <td><span style="font-family:var(--mono);font-size:.75rem">${fmt(g.eo,4)}</span></td>
+            <td><span class="badge ${sv3}">${g.score!=null?Math.round(g.score*100)+'/100':'—'}</span></td>
+            <td><span class="badge ${passes80?'pass':'fail'}">${passes80?'✓ Pass':'✗ Fail'}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>` : `<p style="text-align:center;padding:1.5rem;color:var(--muted)">No per-attribute breakdown available. Add sensitive_attributes to your evaluation config.</p>`}
     </div>
   </div>
 
-  <!-- ══ SHAP ══ -->
-  <div class="section-block" id="shap">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-chart-bar"></i> SHAP Global Feature Attribution</div>
-      <span style="font-size:.8125rem;color:var(--muted)">Stability: ${fmt(shap.featureStability,4)} · ${(shap.feature_importance||[]).length} features</span>
+  <!-- SECTION: SHAP FEATURE ATTRIBUTION -->
+  <div class="block" id="shap">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-chart-bar"></i> SHAP feature attribution — what drives decisions</div>
+      <span class="block-sub">Stability: ${fmt(shap.featureStability,4)} · ${(shap.feature_importance||[]).length} features</span>
     </div>
-    <div class="section-block-body">
-      <div class="shap-layout shap-fills">
+    <div class="block-body">
+      <div class="shap-layout">
         <div>
-          <div class="shap-chart-title">Mean |SHAP| value — proportional influence across all predictions</div>
+          <div class="shap-label">Mean |SHAP| value — proportional influence across all predictions</div>
           ${buildShapChart(shap)}
           ${proxyWarn}
         </div>
-        <div class="shap-insights">
-          <div class="insight-card ${shap.topFeature&&['gender','sex','race','caste'].some(k=>(shap.topFeature||'').toLowerCase().includes(k))?'danger':''}">
-            <div class="insight-lbl">Top Predictive Feature</div>
-            <div class="insight-val" style="font-size:.875rem">${shap.topFeature||'—'}</div>
+        <div>
+          <div class="insight-box ${shap.topFeature && ['gender','sex','race','caste'].some(k=>(shap.topFeature||'').toLowerCase().includes(k)) ? 'danger' : ''}">
+            <div class="insight-label">Top predictive feature</div>
+            <div class="insight-val" style="font-size:.9rem">${shap.topFeature||'—'}</div>
             <div class="insight-sub">SHAP max: ${fmt(shap.shapMax,5)} · min: ${fmt(shap.shapMin,5)}</div>
           </div>
-          <div class="insight-card">
-            <div class="insight-lbl">Feature Stability</div>
+          <div class="insight-box">
+            <div class="insight-label">Feature stability</div>
             <div class="insight-val">${fmt(shap.featureStability,4)}</div>
-            <div class="insight-sub">Top-5 feature consistency across samples. Near 1.0 = stable model.</div>
+            <div class="insight-sub">Top-5 consistency across samples. Near 1.0 = stable.</div>
           </div>
-          <div class="insight-card ${sensInShap.length>0?'danger':''}">
-            <div class="insight-lbl">Protected Attrs in Top-5</div>
+          <div class="insight-box ${sensInShap.length > 0 ? 'danger' : ''}">
+            <div class="insight-label">Protected attrs in top features</div>
             <div class="insight-val">${sensInShap.length}</div>
-            <div class="insight-sub">Should be 0. Each one here is direct bias evidence.</div>
+            <div class="insight-sub">Should be 0. Each one is direct bias evidence.</div>
           </div>
-          <div class="insight-card">
-            <div class="insight-lbl">SHAP Range</div>
+          <div class="insight-box">
+            <div class="insight-label">SHAP range</div>
             <div class="insight-val" style="font-size:.875rem">[${fmt(shap.shapMin,4)}, ${fmt(shap.shapMax,4)}]</div>
-            <div class="insight-sub">Min to max feature contribution spread</div>
+            <div class="insight-sub">Min to max feature contribution spread.</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══ COUNTERFACTUAL EVIDENCE ══ -->
-  <div class="section-block" id="counterfactual">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-not-equal"></i> Counterfactual Bias Evidence — Real Dataset Pairs</div>
-      <span style="font-size:.8125rem;color:var(--muted)">${cfExamples.length} pair${cfExamples.length!==1?'s':''} found · Identical profiles, different outcomes</span>
+  <!-- SECTION: COUNTERFACTUAL EVIDENCE -->
+  <div class="block" id="counterfactual">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-not-equal"></i> Counterfactual bias evidence — real dataset pairs</div>
+      <span class="block-sub">${cfExamples.length} pair${cfExamples.length!==1?'s':''} found · identical profiles, different outcomes</span>
     </div>
-    <div class="section-block-body">
-      <div class="info-box"><i class="fas fa-info-circle"></i><span><strong style="color:var(--navy)">What is a counterfactual pair?</strong> Two real records from the dataset where all features are nearly identical, but a protected attribute differs — and the model gives them different outcomes. This is the most direct evidence of discriminatory behaviour in the model.</span></div>
-      ${cfExamples.length?`<div class="cf-list">${cfExamples.map(buildCF).join('')}</div>`:`<div style="text-align:center;padding:2rem;color:var(--muted)"><i class="fas fa-check-circle" style="color:var(--green);font-size:2rem;margin-bottom:.75rem;display:block"></i>No counterfactual bias pairs found — model appears counterfactually fair across the tested pairs.</div>`}
+    <div class="block-body">
+      <div class="info-note"><i class="fas fa-info-circle"></i><span><strong style="color:var(--navy)">What is a counterfactual pair?</strong> Two real records where all features are nearly identical, but a protected attribute differs — and the model gives them different outcomes. This is the most direct evidence of discriminatory behaviour.</span></div>
+      ${cfExamples.length
+        ? `<div class="cf-list">${cfExamples.map(buildCF).join('')}</div>`
+        : `<div style="text-align:center;padding:2rem;color:var(--muted)"><i class="fas fa-check-circle" style="color:var(--green);font-size:2rem;display:block;margin-bottom:.75rem"></i>No counterfactual pairs found — model appears counterfactually fair.</div>`}
     </div>
   </div>
 
-  <!-- ══ MODEL PERFORMANCE ══ -->
-  <div class="section-block" id="performance">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-tachometer-alt"></i> Model Performance Metrics</div>
-      <span style="font-size:.8125rem;color:var(--muted)">Accuracy ≠ Fairness</span>
+  <!-- SECTION: MODEL PERFORMANCE -->
+  <div class="block" id="performance">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-microchip"></i> Model performance metrics</div>
+      <span class="block-sub">Accuracy ≠ fairness</span>
     </div>
-    <div class="section-block-body">
+    <div class="block-body">
       <div class="perf-grid">
         ${[
-          {label:'ROC-AUC',key:'roc_auc',desc:'Ranking quality. > 0.85 is strong. Does not capture group fairness.'},
-          {label:'Accuracy',key:'accuracy',desc:'Overall correct prediction rate. A model can be 90% accurate and still be unfair.'},
-          {label:'F1-Score',key:'f1_score',desc:'Harmonic mean of precision and recall — useful when classes are imbalanced.'}
-        ].map(m=>{
-          const v=perf[m.key]!=null?Number(perf[m.key]):null;
-          const w=v!=null?v*100:0;
-          const col2=v==null?'var(--muted)':v>=.85?'var(--green)':v>=.70?'var(--amber)':'var(--red)';
-          return `<div class="perf-card"><div class="perf-lbl">${m.label}</div><div class="perf-val" style="color:${col2}">${v!=null?v.toFixed(4):'—'}</div><div class="perf-bar-track"><div class="perf-bar-fill" style="width:${w}%;background:${col2}"></div></div><div class="perf-sub">${m.desc}</div></div>`;
+          {label:'ROC-AUC',  key:'roc_auc',   desc:'Ranking quality. > 0.85 is strong. Does not capture group fairness.'},
+          {label:'Accuracy', key:'accuracy',  desc:'Overall correct prediction rate. A model can be 90% accurate and still be unfair.'},
+          {label:'F1-Score', key:'f1_score',  desc:'Harmonic mean of precision and recall — useful when classes are imbalanced.'},
+        ].map(m => {
+          const v = perf[m.key] != null ? Number(perf[m.key]) : null;
+          const w = v != null ? v * 100 : 0;
+          const col = v == null ? 'var(--muted)' : v >= 0.85 ? 'var(--green)' : v >= 0.70 ? 'var(--amber)' : 'var(--red)';
+          return `<div class="perf-card">
+            <div class="perf-label">${m.label}</div>
+            <div class="perf-val" style="color:${col}">${v != null ? v.toFixed(4) : '—'}</div>
+            <div class="perf-bar-track"><div class="perf-bar-fill" style="width:${w}%;background:${col}"></div></div>
+            <div class="perf-sub">${m.desc}</div>
+          </div>`;
         }).join('')}
       </div>
-      <div class="info-box" style="margin-top:1.25rem"><i class="fas fa-exclamation-circle" style="color:var(--amber)"></i><span><strong style="color:var(--navy)">Important:</strong> High accuracy does not mean fair. A model can be highly accurate by learning historical bias patterns. Always evaluate accuracy AND fairness metrics together before any deployment decision.</span></div>
+      <div class="info-note" style="margin-top:1.125rem"><i class="fas fa-exclamation-circle" style="color:var(--amber)"></i><span><strong style="color:var(--navy)">Important:</strong> High accuracy does not mean fair. A model can be highly accurate by learning historical bias patterns. Always evaluate accuracy AND fairness metrics together before any deployment decision.</span></div>
     </div>
   </div>
 
-  <!-- ══ REMEDIATION ══ -->
-  <div class="section-block" id="remediation">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-wrench"></i> Priority Fix Plan — ${fixes.length} Issue${fixes.length!==1?'s':''}</div>
-      <span style="font-size:.8125rem;color:var(--muted)">${critFixes.length} critical · ${fixes.filter(f=>(f.priority||f.severity||'')==='WARNING').length} warnings · Ordered by priority</span>
+  <!-- SECTION: PRIORITY FIXES -->
+  <div class="block" id="fixes">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-wrench"></i> Priority fix plan — ${fixes.length} issue${fixes.length!==1?'s':''}</div>
+      <span class="block-sub">${critFixes.length} critical · ${fixes.filter(x=>(x.priority||x.severity||'')==='WARNING').length} warnings · ordered by priority</span>
     </div>
-    <div class="section-block-body">
-      <div class="info-box"><i class="fas fa-info-circle"></i><span>Each card below contains: <strong style="color:var(--navy)">why the problem exists</strong>, <strong style="color:var(--navy)">exactly what to do</strong>, copy-paste Python code, and an estimated before/after score. Expand any card to see full details.</span></div>
-      <div class="fix-list">${fixes.map((f,i)=>buildFixCard(f,i)).join('')}</div>
+    <div class="block-body">
+      <div class="info-note"><i class="fas fa-info-circle"></i><span>Each card: why the problem exists, exactly what to do, copy-paste Python code, and before/after score estimate. Expand any card for full details.</span></div>
+      <div class="fix-list">${fixes.map((fix,i) => buildFixCard(fix,i)).join('')}</div>
     </div>
   </div>
 
-  <!-- ══ QUICK WINS ══ -->
-  ${qw.length?`<div class="section-block" id="quickwins">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-bolt"></i> Quick Wins — ${qw.length} Low-Effort Fixes You Can Ship Today</div>
-      <span style="font-size:.8125rem;color:var(--muted)">No retraining required · Post-processing only</span>
+  <!-- SECTION: QUICK WINS -->
+  ${qwFixes.length ? `<div class="block" id="quickwins">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-bolt"></i> Quick wins — ${qwFixes.length} low-effort fix${qwFixes.length!==1?'es':''} you can ship today</div>
+      <span class="block-sub">No retraining required · post-processing only</span>
     </div>
-    <div class="section-block-body">
-      <div class="qw-grid">${qw.map(f=>{
-        const ap=Math.round((f.estimated_score_after||0)*100);
-        const short=(f.what||f.description||'').split('.')[0]+'.';
-        return `<div class="qw-card"><div class="qw-tag"><i class="fas fa-bolt"></i> Low Effort — No Retraining</div><div class="qw-title">${f.title||'—'}</div>${short?`<div class="qw-desc">${short}</div>`:''}<div class="qw-score">Score after fix: ~${ap}%</div></div>`;
+    <div class="block-body">
+      <div class="qw-grid">${qwFixes.map(fix => {
+        const ap = Math.round((fix.estimated_score_after||0)*100);
+        const short = (fix.why||fix.description||'').split('.')[0]+'.';
+        return `<div class="qw-card">
+          <div class="qw-tag"><i class="fas fa-bolt"></i> Low effort — no retraining</div>
+          <div class="qw-title">${fix.title||'—'}</div>
+          ${short ? `<div class="qw-desc">${short}</div>` : ''}
+          <div class="qw-score">Score after fix: ~${ap}%</div>
+        </div>`;
       }).join('')}</div>
     </div>
-  </div>`:''}
+  </div>` : ''}
 
-  <!-- ══ DEPLOYMENT GATE ══ -->
-  <div class="section-block" id="deployment">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-traffic-light"></i> CI/CD Deployment Gate — 5 Checks</div>
-      <span style="font-size:.8125rem;color:var(--muted)">${['pass','marginal','fail'].map(c=>`${document.querySelectorAll?0:0}`).join(' · ')}</span>
+  <!-- SECTION: CI/CD DEPLOYMENT GATE -->
+  <div class="block" id="gate">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-traffic-light"></i> CI/CD deployment gate — 5 checks</div>
+      <span class="block-sub">${gateFails} failing · ${gateChecks.length - gateFails} passing</span>
     </div>
-    <div class="section-block-body">
-      <div class="status-banner ${gateClass}" style="margin-bottom:1.25rem">
-        <div class="status-banner-icon"><i class="fas ${gateMsg.icon}"></i></div>
-        <div><div class="status-banner-title">${gateMsg.title}</div><div class="status-banner-sub">${gateMsg.sub}</div></div>
-      </div>
-      <div class="gate-grid">${checkCards}</div>
-    </div>
-  </div>
-
-  <!-- ══ GEMINI ANALYSIS ══ -->
-  <div class="section-block" id="gemini">
-    <div class="section-block-head">
-      <div class="section-block-title"><i class="fas fa-robot"></i> Gemini AI Deep Dive Analysis</div>
-      <span style="font-size:.8125rem;color:var(--muted)">Powered by Gemini 2.5 Flash</span>
-    </div>
-    <div class="section-block-body">
-      <div class="info-box"><i class="fas fa-info-circle"></i><span>Gemini analyses the full evaluation data and returns: root cause analysis, risk ranking, 48-hour intervention, production monitoring plan, and technical debt notes.</span></div>
-
-      <div style="background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:1rem 1.125rem;margin-bottom:1rem;">
-        <div style="font-size:.8125rem;font-weight:700;color:var(--navy);margin-bottom:.5rem">
-          <i class="fas fa-key" style="color:var(--gold);margin-right:6px"></i>Gemini API Key
-        </div>
-        <div style="display:flex;gap:.625rem;align-items:center;flex-wrap:wrap">
-          <input
-            id="gemini-key"
-            type="password"
-            placeholder="Paste your Gemini API key here (AIza...)"
-            style="flex:1;min-width:260px;padding:8px 12px;border:1.5px solid var(--rule);border-radius:7px;font-family:var(--mono);font-size:.8125rem;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s"
-            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--rule)'"
-          />
-          <button class="gemini-btn" id="gemini-btn" onclick="runGeminiAnalysis(window._ev,window._fixes,window._evalId)" style="margin-top:0">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            Analyse with Gemini
-          </button>
-        </div>
-        <div style="margin-top:.5rem;font-size:.75rem;color:var(--muted)">
-          Free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--blue)">aistudio.google.com/app/apikey</a> · Key is saved locally in your browser, never sent anywhere except Google's API.
+    <div class="block-body">
+      <div class="banner ${isBlocked?'blocked':'ok'}" style="margin-bottom:1.125rem">
+        <i class="fas fa-${isBlocked?'times-circle':'check-circle'}"></i>
+        <div>
+          <div class="banner-title">${isBlocked ? `${gateFails} check${gateFails!==1?'s':''} failing — deployment is BLOCKED.` : 'All deployment checks pass.'}</div>
+          <div class="banner-sub">${isBlocked ? 'Multiple ethical thresholds not met. Do not ship until all fixes in the remediation plan above are applied.' : 'Model meets all ethical standards and is approved for deployment.'}</div>
         </div>
       </div>
-
-      <div class="gemini-output" id="gemini-output" style="display:none"></div>
+      <div class="gate-grid">${gateChecks.map(c => {
+        const cls = c.score >= c.threshold ? 'pass' : c.score >= c.threshold * 0.8 ? 'marginal' : 'fail';
+        const sp2 = Math.round(c.score * 100);
+        return `<div class="gate-card ${cls}">
+          <div class="gc-top"><div class="gc-icon ${cls}"><i class="fas ${c.icon}"></i></div><span class="gc-pill ${cls}">${cls==='pass'?'PASS':cls==='marginal'?'MARGINAL':'FAIL'}</span></div>
+          <div class="gc-name">${c.name}</div>
+          <div class="gc-score ${cls}">${sp2}<span style="font-size:.875rem;opacity:.4">/100</span></div>
+          <div class="gc-bar"><div class="gc-bar-fill ${cls}" style="width:${sp2}%"></div></div>
+          <div class="gc-req">Required: ${Math.round(c.threshold*100)}+ · ${c.what}</div>
+        </div>`;
+      }).join('')}</div>
     </div>
-  </div>
-  `;
+  </div>  `;
 
-  // Restore saved Gemini key if any
-  const savedKey=localStorage.getItem('gemini_api_key');
-  if(savedKey){const ki=document.getElementById('gemini-key');if(ki)ki.value=savedKey;}
+  // Restore Gemini key
+  const saved = localStorage.getItem('gemini_api_key');
+  if (saved) { const k = document.getElementById('gemini-key'); if (k) k.value = saved; }
 
-  // Observe sections for sidebar active state
-  const observer=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const id='#'+e.target.id;
-        document.querySelectorAll('.sidebar-item').forEach(a=>a.classList.remove('active'));
-        const active=document.querySelector(`.sidebar-item[href="${id}"]`);
-        if(active)active.classList.add('active');
+  // Intersection observer for sidebar
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = '#' + e.target.id;
+        document.querySelectorAll('.sb-item').forEach(a => a.classList.remove('active'));
+        const a = document.querySelector(`.sb-item[href="${id}"]`);
+        if (a) a.classList.add('active');
       }
     });
-  },{rootMargin:'-20% 0px -70% 0px'});
-  ['overview','dimensions','shap','counterfactual','performance','remediation','quickwins','deployment','gemini'].forEach(id=>{
-    const el=document.getElementById(id);if(el)observer.observe(el);
+  }, { rootMargin:'-20% 0px -70% 0px' });
+
+  ['overview','scores','bias-reality','shap','counterfactual','performance','fixes','quickwins','gate','gemini'].forEach(id => {
+    const el = document.getElementById(id); if (el) obs.observe(el);
   });
+
+  window._ev = ev; window._fixes = fixes; window._evalId = evalId;
 }
 
-function dlJson(){
-  const cached=sessionStorage.getItem('eval_result');
-  if(!cached){alert('No data to export.');return;}
-  const blob=new Blob([cached],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='technical_audit.json';a.click();
+function dlJson() {
+  const cached = sessionStorage.getItem('eval_result');
+  if (!cached) { alert('No data to export.'); return; }
+  const blob = new Blob([cached], { type:'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'technical_audit.json'; a.click();
 }
-window.dlJson=dlJson;
+window.dlJson = dlJson;
 
-// ── normalise ─────────────────────────────────────────────────────────────────
-function normalise(raw){
-  const pick=(...paths)=>{for(const p of paths){const v=p.split('.').reduce((o,k)=>o?.[k],raw);if(v!=null&&Number(v)>=0)return Number(v);}return null};
-  const fairness=raw.fairness||{};
-  const shap=raw.shap?{
-    topFeature:raw.shap.topFeature||raw.shap.top_feature,
-    shapMax:raw.shap.shapMax||raw.shap.shap_max,
-    shapMin:raw.shap.shapMin||raw.shap.shap_min,
-    featureStability:raw.shap.featureStability||raw.shap.feature_stability,
-    feature_importance:raw.shap.feature_importance
-      ?(Array.isArray(raw.shap.feature_importance)
-         ?raw.shap.feature_importance
-         :Object.entries(raw.shap.feature_importance).sort((a,b)=>b[1]-a[1]).map(([feature,shap_value])=>({feature,shap_value})))
-      :[],
-  }:{};
-  return {
-    ethical_score:pick('ethical_score','fairness_score','fairness.fairness_score','scores.overall'),
-    fairness_score:pick('fairness_score','fairness.fairness_score','scores.fairness'),
-    privacy_score:pick('privacy_score','privacy.privacy_score','scores.privacy'),
-    robustness_score:pick('robustness_score','robustness.robustness_score','scores.robustness'),
-    transparency_score:pick('transparency_score','transparency.transparency_score','scores.transparency'),
-    accountability_score:pick('accountability_score','accountability.accountability_score','scores.accountability'),
-    fairness,shap,
-    privacy:raw.privacy||{},robustness:raw.robustness||{},
-    model_metrics:raw.model_metrics||raw.model_performance||{},
-    remediation:raw.remediation||{},
-    records:raw.records||0,
-    dimensions:raw.dimensions||[],
-  };
-}
-
-// ── init ─────────────────────────────────────────────────────────────────────
-(async function init(){
-  const evalId=new URLSearchParams(location.search).get('eval_id')||sessionStorage.getItem('eval_id');
-  if(!evalId){
-    document.getElementById('app').innerHTML=`<div class="state-wrap"><div class="state-icon" style="color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div><div class="state-title">No evaluation found</div><div class="state-sub">Complete an evaluation on the upload page first.</div><a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:1rem;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a></div>`;
+/* ── INIT ── */
+(async function init() {
+  const evalId = new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+  if (!evalId) {
+    document.getElementById('app').innerHTML = `<div style="min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem"><div style="font-size:2.5rem;margin-bottom:1rem;color:var(--amber)"><i class="fas fa-exclamation-circle"></i></div><div style="font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:.5rem">No evaluation found</div><div style="font-size:.9rem;color:var(--muted);margin-bottom:1.5rem">Complete an evaluation on the upload page first.</div><a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem"><i class="fas fa-play-circle"></i> Start evaluation</a></div>`;
     return;
   }
 
-  // Fetch from all endpoints in parallel
-  try{
-    const [devRes,remRes,evalRes]=await Promise.allSettled([
+  try {
+    const [devRes, remRes, evlRes] = await Promise.allSettled([
       fetch(`${API}/report/developer/${evalId}`).then(r=>r.json()),
       fetch(`${API}/remediation/${evalId}`).then(r=>r.json()),
       fetch(`${API}/evaluate/${evalId}`).then(r=>r.json()),
     ]);
+    const dev = devRes.status === 'fulfilled' && devRes.value.status === 'complete' ? devRes.value : {};
+    const rem = remRes.status === 'fulfilled' && remRes.value.status === 'complete' ? remRes.value : {};
+    const evl = evlRes.status === 'fulfilled' && evlRes.value.status === 'complete' ? evlRes.value : {};
 
-    // Merge data from all 3 endpoints
-    const dev=devRes.status==='fulfilled'&&devRes.value.status==='complete'?devRes.value:{};
-    const rem=remRes.status==='fulfilled'&&remRes.value.status==='complete'?remRes.value:{};
-    const evl=evalRes.status==='fulfilled'&&evalRes.value.status==='complete'?evalRes.value:{};
+    const merged = { ...evl, ...rem, ...dev };
+    const ev = normalise(merged);
 
-    const merged={...evl,...rem,...dev};
-    const ev=normalise(merged);
-
-    // Pull from session cache for extra fields
-    const cached=sessionStorage.getItem('eval_result');
-    if(cached){
-      const raw=JSON.parse(cached);
-      if(!ev.ethical_score&&raw.ethical_score)ev.ethical_score=raw.ethical_score;
-      if(!ev.shap?.topFeature&&raw.shap)ev.shap=normalise(raw).shap;
-      if((!ev.fairness||!Object.keys(ev.fairness).length)&&raw.fairness)ev.fairness=raw.fairness;
-      if(!ev.model_metrics?.accuracy&&raw.model_metrics)ev.model_metrics=raw.model_metrics;
-      // Load dimensions from dev report if available
-      if(!ev.dimensions?.length&&dev.dimensions?.length)ev.dimensions=dev.dimensions;
+    // Load from session cache for extra fields
+    const cached = sessionStorage.getItem('eval_result');
+    if (cached) {
+      const raw = JSON.parse(cached);
+      if (!ev.ethical_score && raw.ethical_score) ev.ethical_score = raw.ethical_score;
+      if (!ev.shap?.topFeature && raw.shap) ev.shap = normalise(raw).shap;
+      if ((!ev.fairness || !Object.keys(ev.fairness).length) && raw.fairness) ev.fairness = raw.fairness;
+      if (!ev.model_metrics?.accuracy && raw.model_metrics) ev.model_metrics = raw.model_metrics;
     }
 
-    const fixes=(rem.remediation?.all_fixes?.length?rem.remediation.all_fixes:null)||buildFallbackFixes(ev);
-    const cfExamples=rem.counterfactual_examples||evl.counterfactual_examples||[];
+    const fixes = (rem.remediation?.all_fixes?.length ? rem.remediation.all_fixes : null) || fallbackFixes(ev);
+    const cfExamples = rem.counterfactual_examples || evl.counterfactual_examples || [];
 
-    window._ev=ev;window._fixes=fixes;window._evalId=evalId;
-    render(ev,fixes,cfExamples,evalId);
-
-  }catch(err){
-    // Fall back to session cache only
-    const cached=sessionStorage.getItem('eval_result');
-    if(cached){
-      const raw=JSON.parse(cached);
-      const ev=normalise(raw);
-      const fixes=raw.remediation?.all_fixes||buildFallbackFixes(ev);
-      const cfExamples=raw.counterfactual_examples||[];
-      window._ev=ev;window._fixes=fixes;window._evalId=evalId;
-      render(ev,fixes,cfExamples,evalId);
-    }else{
-      document.getElementById('app').innerHTML=`<div class="state-wrap"><div class="state-icon" style="color:var(--red)"><i class="fas fa-times-circle"></i></div><div class="state-title">Could not load report</div><div class="state-sub">Evaluation not found or still processing.</div><a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:1rem;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem"><i class="fas fa-redo"></i> Try again</a></div>`;
+    render(ev, fixes, cfExamples, evalId);
+  } catch (err) {
+    const cached = sessionStorage.getItem('eval_result');
+    if (cached) {
+      const raw = JSON.parse(cached);
+      const ev = normalise(raw);
+      const fixes = raw.remediation?.all_fixes || fallbackFixes(ev);
+      const cfExamples = raw.counterfactual_examples || [];
+      render(ev, fixes, cfExamples, evalId);
+    } else {
+      document.getElementById('app').innerHTML = `<div style="min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem"><div style="font-size:2.5rem;margin-bottom:1rem;color:var(--red)"><i class="fas fa-times-circle"></i></div><div style="font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:.5rem">Could not load report</div><div style="font-size:.9rem;color:var(--muted);margin-bottom:1.5rem">Evaluation not found or still processing.</div><a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem"><i class="fas fa-redo"></i> Try again</a></div>`;
     }
   }
 })();
