@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  DEVELOPER
+  VIEWER
+}
+
+enum ReportType {
+  DEVELOPER
+  REGULATOR
+  ENDUSER
+  ALL
+}
+
+enum UserTier {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum ModelStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum AlertSeverity {
+  CRITICAL
+  WARNING
+  INFO
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      UserRole
+  tier      UserTier
+  apiKey    String?  @unique
+  createdAt DateTime @default(now())
+
+  datasets Dataset[]
+  models   Model[]
+}
+
+model Dataset {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  filePath    String
+  records     Int
+
+  targetVariable String?
+
+  uploadedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  evaluations Evaluation[]
+  // predictionFiles PredictionFile[]
+}
+
+model PredictionFile {
+  id         String   @id @default(uuid())
+  filePath   String
+  uploadedAt DateTime @default(now())
+
+  // datasetId String
+  // dataset   Dataset @relation(fields: [datasetId], references: [id])
+
+  // evaluations Evaluation[]
+}
+
+model Model {
+  id        String      @id @default(uuid())
+  name      String
+  version   String
+  status    ModelStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  evaluations Evaluation[]
+}
+
+model SensitiveAttribute {
+  id String @id @default(uuid())
+
+  name String
+
+  evaluationId String
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+}
+
+model FairnessWeight {
+  id String @id @default(uuid())
+
+  dimension String
+  weight    Int
+
+  evaluationId String
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+}
+
+model Evaluation {
+  id           String   @id @default(uuid())
+  ethicalScore Float
+  status       String
+  createdAt    DateTime @default(now())
+
+  reportType ReportType
+
+  datasetId String
+  dataset   Dataset @relation(fields: [datasetId], references: [id])
+
+  modelId String
+  model   Model  @relation(fields: [modelId], references: [id])
+
+  // REMOVE prediction:
+  // predictionId String
+  // prediction   PredictionFile @relation(fields: [predictionId], references: [id])
+
+  fairnessMetrics FairnessMetrics?
+  shapExplanation SHAPExplanation?
+  certificate     Certificate?
+  alerts          Alert[]
+
+  sensitiveAttributes SensitiveAttribute[]
+  fairnessWeights     FairnessWeight[]
+}
+
+model FairnessMetrics {
+  id String @id @default(uuid())
+
+  individualFairness Float
+  groupFairness      Float
+  demographicParity  Float
+  disparateImpact    Float
+  calibrationError   Float
+  counterfactual     Float
+  intersectional     Float
+
+  evaluationId String     @unique
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+}
+
+model SHAPExplanation {
+  id String @id @default(uuid())
+
+  topFeature       String
+  shapMax          Float
+  shapMin          Float
+  featureStability Float
+
+  evaluationId String     @unique
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+}
+
+model Certificate {
+  id String @id @default(uuid())
+
+  organization  String
+  modelName     String
+  fairnessScore Float
+  issuedAt      DateTime
+  validUntil    DateTime
+
+  evaluationId String     @unique
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+}
+
+model Alert {
+  id String @id @default(uuid())
+
+  message  String
+  severity AlertSeverity
+  resolved Boolean       @default(false)
+
+  createdAt DateTime @default(now())
+
+  evaluationId String
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+}
+
+model SystemSetting {
+  id String @id @default(uuid())
+
+  minEthicalScore       Float
+  individualFairnessMin Float
+  disparateImpactMin    Float
+
+  emailNotifications Boolean
+  slackIntegration   Boolean
+}

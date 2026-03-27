@@ -1,0 +1,19 @@
+[
+  "age",
+  "education_num",
+  "hours_per_week",
+  "employment_years",
+  "dependents",
+  "dependents_per_income",
+  "age_squared",
+  "education_squared",
+  "hours_squared",
+  "age_education_interaction",
+  "age_hours_interaction",
+  "education_hours_interaction",
+  "applicant_PC1",
+  "applicant_PC2",
+  "applicant_PC3",
+  "applicant_PC4",
+  "applicant_PC5"
+]
