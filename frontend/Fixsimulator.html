@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fix Simulator — FairTrust AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --navy:#0F1E38; --gold:#EBB255; --gold-dim:rgba(235,178,85,0.12);
+            --green:#10B981; --green-dim:rgba(16,185,129,0.1);
+            --amber:#F59E0B; --amber-dim:rgba(245,158,11,0.1);
+            --red:#EF4444; --red-dim:rgba(239,68,68,0.1);
+            --bg:#F1F3F8; --bg2:#E8EBF2; --surface:#FFFFFF; --rule:#DDE1EC; --muted:#64748B;
+            --mono:'IBM Plex Mono',monospace; --display:'Plus Jakarta Sans',sans-serif;
+            --shadow:0 2px 12px rgba(15,30,56,0.07); --radius:12px;
+        }
+        body { font-family:var(--display); background:var(--bg); color:var(--navy); padding:2rem; }
+
+        /* ── SIMULATOR SECTION ── */
+        .sim-section { background:var(--surface); border-radius:var(--radius); border:1px solid var(--rule); box-shadow:var(--shadow); overflow:hidden; margin-bottom:1.5rem; }
+        .sim-head { display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.75rem; border-bottom:1px solid var(--rule); background:var(--bg); }
+        .sim-title { font-weight:700; font-size:1rem; color:var(--navy); display:flex; align-items:center; gap:8px; }
+        .sim-title i { color:var(--gold); }
+        .sim-body { padding:1.75rem; }
+
+        /* Fix picker */
+        .fix-select-wrap { display:flex; gap:0.75rem; align-items:flex-end; margin-bottom:1.5rem; }
+        .fix-select-wrap label { font-size:0.8125rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; display:block; margin-bottom:5px; }
+        .fix-select-wrap select { flex:1; padding:0.625rem 0.875rem; border:1.5px solid var(--rule); border-radius:8px; background:var(--surface); font-family:var(--display); font-size:0.875rem; color:var(--navy); outline:none; cursor:pointer; transition:border-color 0.15s; }
+        .fix-select-wrap select:focus { border-color:var(--gold); }
+        .btn-simulate { display:inline-flex; align-items:center; gap:6px; padding:0.625rem 1.25rem; background:var(--navy); color:white; border:none; border-radius:8px; font-family:var(--display); font-size:0.875rem; font-weight:700; cursor:pointer; transition:all 0.2s; flex-shrink:0; }
+        .btn-simulate:hover { background:var(--navy-mid,#1A2D4E); transform:translateY(-1px); }
+        .btn-simulate:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+        /* Result layout */
+        .sim-result { display:none; animation:fadeUp 0.3s ease; }
+        .sim-result.visible { display:block; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Verdict banner */
+        .verdict-banner { border-radius:10px; padding:1rem 1.25rem; border:1.5px solid; margin-bottom:1.5rem; display:flex; align-items:flex-start; gap:0.75rem; }
+        .verdict-banner.improved { background:var(--green-dim); border-color:rgba(16,185,129,0.3); }
+        .verdict-banner.critical { background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.5); }
+        .verdict-icon { font-size:1.25rem; }
+        .verdict-banner.improved .verdict-icon { color:var(--green); }
+        .verdict-banner.critical .verdict-icon { color:var(--green); }
+        .verdict-title { font-weight:700; font-size:0.9375rem; color:var(--navy); }
+        .verdict-sub { font-size:0.8125rem; color:var(--muted); margin-top:3px; line-height:1.55; }
+
+        /* Score delta row — the main before/after visual */
+        .delta-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; }
+        .delta-card { border-radius:10px; border:1.5px solid var(--rule); overflow:hidden; }
+        .delta-card-head { padding:0.75rem 1rem; font-size:0.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; }
+        .delta-card.before .delta-card-head { background:rgba(239,68,68,0.07); color:var(--red); border-bottom:1px solid rgba(239,68,68,0.15); }
+        .delta-card.after  .delta-card-head { background:rgba(16,185,129,0.07); color:var(--green); border-bottom:1px solid rgba(16,185,129,0.15); }
+        .delta-card-body { padding:1rem; }
+        .delta-score-main { font-size:3rem; font-weight:800; line-height:1; font-family:var(--display); }
+        .delta-card.before .delta-score-main { color:var(--red); }
+        .delta-card.after  .delta-score-main { color:var(--green); }
+        .delta-score-label { font-size:0.75rem; color:var(--muted); margin-top:4px; }
+
+        /* Dimension comparison bars */
+        .dim-comparison { margin-top:0.875rem; }
+        .dim-comp-row { margin-bottom:0.625rem; }
+        .dim-comp-name { font-size:0.75rem; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; }
+        .dim-comp-name span { font-family:var(--mono); font-size:0.7rem; }
+        .dim-comp-tracks { display:flex; flex-direction:column; gap:3px; }
+        .dim-track-row { display:flex; align-items:center; gap:6px; }
+        .dim-track-lbl { font-size:0.6rem; color:var(--muted); width:48px; flex-shrink:0; }
+        .dim-track { flex:1; height:10px; background:var(--bg2); border-radius:2px; overflow:hidden; }
+        .dim-fill { height:100%; border-radius:2px; transition:width 1s ease; }
+        .dim-fill.before { background:var(--red); }
+        .dim-fill.after  { background:var(--green); }
+        .dim-fill.before.ok { background:var(--green); }
+        .dim-fill.after.better { background:var(--green); }
+        .dim-val { font-family:var(--mono); font-size:0.7rem; width:36px; text-align:right; flex-shrink:0; }
+
+        /* Overall delta arrow */
+        .overall-delta { display:flex; align-items:center; justify-content:center; gap:1rem; padding:1.25rem; background:var(--bg); border-radius:10px; border:1px solid var(--rule); margin-bottom:1.25rem; }
+        .od-score { text-align:center; }
+        .od-score-val { font-size:2rem; font-weight:800; line-height:1; font-family:var(--display); }
+        .od-score-lbl { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; margin-top:3px; }
+        .od-arrow { display:flex; flex-direction:column; align-items:center; gap:4px; }
+        .od-arrow-line { width:80px; height:2px; background:linear-gradient(90deg,var(--red),var(--green)); border-radius:1px; position:relative; }
+        .od-arrow-line::after { content:'▶'; position:absolute; right:-6px; top:-7px; color:var(--green); font-size:0.75rem; }
+        .od-delta-badge { padding:4px 14px; border-radius:999px; font-size:0.875rem; font-weight:700; background:var(--green-dim); color:var(--green); border:1.5px solid rgba(16,185,129,0.3); font-family:var(--mono); }
+
+        /* Meta info */
+        .meta-row { display:flex; gap:1rem; font-size:0.8125rem; }
+        .meta-item { flex:1; background:var(--bg); border:1px solid var(--rule); border-radius:8px; padding:0.75rem; }
+        .meta-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
+        .meta-val { font-weight:700; color:var(--navy); }
+
+        /* Loading state */
+        .sim-loading { display:none; text-align:center; padding:2rem; color:var(--muted); }
+        .sim-loading.visible { display:block; }
+        .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--bg2); border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin-right:8px; vertical-align:middle; }
+        @keyframes spin { to { transform:rotate(360deg) } }
+
+        /* Disclaimer */
+        .disclaimer { font-size:0.75rem; color:var(--muted); padding:0.75rem 1rem; background:var(--bg); border-radius:8px; border:1px solid var(--rule); margin-top:1rem; display:flex; align-items:flex-start; gap:6px; }
+        .disclaimer i { color:var(--gold); flex-shrink:0; margin-top:2px; }
+    </style>
+</head>
+<body>
+
+<!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  HOW TO EMBED THIS INTO remediationReport.html                   ║
+    ║                                                                  ║
+    ║  1. Copy the CSS from <style> into remediationReport.html's      ║
+    ║     <style> block (look for "/* ── SIMULATOR SECTION ── */")     ║
+    ║                                                                  ║
+    ║  2. Copy the HTML section #fix-simulator-section and insert it   ║
+    ║     AFTER the Quick Wins section in remediationReport.html       ║
+    ║                                                                  ║
+    ║  3. Copy the <script> block and insert before </body>            ║
+    ║     The function is named initFixSimulator() and should be       ║
+    ║     called inside your existing init() function after the        ║
+    ║     remediation data is loaded, passing the evalId and fixes.    ║
+    ╚══════════════════════════════════════════════════════════════════╝
+-->
+
+<!-- STANDALONE DEMO (works on its own for testing) -->
+<div id="fix-simulator-section" class="sim-section">
+    <div class="sim-head">
+        <div class="sim-title">
+            <i class="fas fa-flask"></i> Before / After Fix Simulator
+        </div>
+        <span style="font-size:0.8125rem;color:var(--muted)">Select a fix · see the projected impact</span>
+    </div>
+    <div class="sim-body">
+        <div style="background:rgba(235,178,85,0.07);border:1px solid rgba(235,178,85,0.2);border-radius:8px;padding:0.875rem 1rem;margin-bottom:1.25rem;font-size:0.8125rem;color:var(--muted);display:flex;align-items:flex-start;gap:8px;">
+            <i class="fas fa-info-circle" style="color:var(--gold);margin-top:2px;flex-shrink:0"></i>
+            <span>Pick any fix from your remediation plan. The simulator calls <code style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-family:var(--mono)">POST /remediation/{id}/simulate-fix</code> and shows a before/after comparison with projected score improvements. These are conservative estimates based on published fairness research benchmarks.</span>
+        </div>
+
+        <div class="fix-select-wrap">
+            <div style="flex:1">
+                <label>Choose a fix to simulate</label>
+                <select id="fixSelector" onchange="onFixSelected()">
+                    <option value="">— loading fixes…</option>
+                </select>
+            </div>
+            <button class="btn-simulate" id="simBtn" onclick="runSimulation()" disabled>
+                <i class="fas fa-play-circle"></i> Simulate Fix
+            </button>
+        </div>
+
+        <div class="sim-loading" id="simLoading">
+            <span class="spinner"></span> Computing projected impact…
+        </div>
+
+        <div class="sim-result" id="simResult">
+            <!-- Populated by runSimulation() -->
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = 'http://127.0.0.1:5000';
+
+// Get evalId from URL or sessionStorage
+const evalId = new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+
+// ── Load fixes into selector ─────────────────────────────────────────────────
+async function initFixSimulator(evalIdOverride, fixesOverride) {
+    const eid   = evalIdOverride || evalId;
+    const sel   = document.getElementById('fixSelector');
+    const btn   = document.getElementById('simBtn');
+
+    // If fixes are passed directly (embedded mode), use them
+    if (fixesOverride && fixesOverride.length > 0) {
+        populateSelector(sel, fixesOverride);
+        btn.disabled = false;
+        return;
+    }
+
+    // Otherwise fetch from API
+    if (!eid) {
+        sel.innerHTML = '<option value="">No evaluation found</option>';
+        return;
+    }
+
+    try {
+        const res  = await fetch(`${API_BASE}/remediation/${eid}`);
+        const data = await res.json();
+        const fixes = data.remediation?.all_fixes || [];
+        populateSelector(sel, fixes);
+        if (fixes.length > 0) btn.disabled = false;
+    } catch (e) {
+        sel.innerHTML = '<option value="">Could not load fixes</option>';
+    }
+}
+
+function populateSelector(sel, fixes) {
+    if (!fixes.length) {
+        sel.innerHTML = '<option value="">No fixes available</option>';
+        return;
+    }
+    const SEVERITY_ORDER = { CRITICAL: 0, WARNING: 1, INFO: 2 };
+    const sorted = [...fixes].sort((a,b) =>
+        (SEVERITY_ORDER[a.severity||a.priority||'INFO']||2) -
+        (SEVERITY_ORDER[b.severity||b.priority||'INFO']||2)
+    );
+    sel.innerHTML = '<option value="">— select a fix to simulate —</option>' +
+        sorted.map(f => {
+            const sev  = f.severity || f.priority || 'INFO';
+            const icon = sev === 'CRITICAL' ? '🔴' : sev === 'WARNING' ? '⚠️' : '💡';
+            const dim  = f.dimension || f.dimension_key || '';
+            return `<option value="${f.id}">${icon} [${dim}] ${f.title}</option>`;
+        }).join('');
+}
+
+function onFixSelected() {
+    const val = document.getElementById('fixSelector').value;
+    document.getElementById('simBtn').disabled = !val;
+    if (!val) document.getElementById('simResult').classList.remove('visible');
+}
+
+// ── Run simulation ────────────────────────────────────────────────────────────
+async function runSimulation() {
+    const eid    = evalId;
+    const fixId  = document.getElementById('fixSelector').value;
+    if (!eid || !fixId) return;
+
+    const loading = document.getElementById('simLoading');
+    const result  = document.getElementById('simResult');
+    const btn     = document.getElementById('simBtn');
+
+    loading.classList.add('visible');
+    result.classList.remove('visible');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Simulating…';
+
+    try {
+        const res  = await fetch(`${API_BASE}/remediation/${eid}/simulate-fix`, {
+            method:  'POST',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify({ fix_id: fixId }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Simulation failed');
+        renderSimResult(data);
+    } catch (e) {
+        result.innerHTML = `<div style="padding:1rem;color:var(--red);font-size:0.875rem">Error: ${e.message}</div>`;
+        result.classList.add('visible');
+    } finally {
+        loading.classList.remove('visible');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-play-circle"></i> Simulate Fix';
+    }
+}
+
+// ── Render result ─────────────────────────────────────────────────────────────
+function renderSimResult(data) {
+    const before = data.before || {};
+    const after  = data.after  || {};
+    const imp    = data.improvement || {};
+
+    const beforeScore = Math.round((before.ethical_score || 0) * 100);
+    const afterScore  = Math.round((after.ethical_score  || 0) * 100);
+    const delta       = afterScore - beforeScore;
+    const deltaLabel  = delta >= 0 ? `+${delta}%` : `${delta}%`;
+    const deltaColor  = delta > 0 ? 'var(--green)' : 'var(--red)';
+
+    const isThresholdCrossed = before.ethical_score < 0.75 && after.ethical_score >= 0.75;
+
+    const verdictClass = isThresholdCrossed ? 'critical' : 'improved';
+
+    // Dimension comparison
+    const DIM_LABELS = {
+        ethical_score:     'Overall Ethics',
+        fairness_score:    'Fairness',
+        disparateImpact:   'Disparate Impact',
+        demographicParity: 'Demographic Parity',
+        counterfactual:    'Counterfactual',
+        intersectional:    'Intersectional',
+        individualFairness:'Individual Fairness',
+        groupFairness:     'Group Fairness',
+    };
+
+    const dims = Object.keys(DIM_LABELS).filter(k => before[k] != null && after[k] != null);
+
+    const dimsHtml = dims.map(k => {
+        const bv = Math.round((before[k] || 0) * 100);
+        const av = Math.round((after[k]  || 0) * 100);
+        const changed = av !== bv;
+        const improved = av > bv;
+        return `<div class="dim-comp-row">
+            <div class="dim-comp-name">
+                ${DIM_LABELS[k]}
+                ${changed ? `<span style="color:${improved?'var(--green)':'var(--red)'};font-weight:700">${improved?'▲':'▼'} ${improved?'+':''}${av-bv}%</span>` : '<span style="color:var(--muted)">—</span>'}
+            </div>
+            <div class="dim-comp-tracks">
+                <div class="dim-track-row">
+                    <div class="dim-track-lbl">Before</div>
+                    <div class="dim-track"><div class="dim-fill before ${bv>=80?'ok':''}" style="width:${bv}%"></div></div>
+                    <div class="dim-val" style="color:${bv>=80?'var(--green)':bv>=65?'var(--amber)':'var(--red)'}">${bv}%</div>
+                </div>
+                <div class="dim-track-row">
+                    <div class="dim-track-lbl">After</div>
+                    <div class="dim-track"><div class="dim-fill after" style="width:${av}%"></div></div>
+                    <div class="dim-val" style="color:${av>=80?'var(--green)':av>=65?'var(--amber)':'var(--red)'}">${av}%</div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const result = document.getElementById('simResult');
+    result.innerHTML = `
+        <!-- VERDICT -->
+        <div class="verdict-banner ${verdictClass}">
+            <div class="verdict-icon"><i class="fas ${isThresholdCrossed ? 'fa-star' : 'fa-chart-line'}"></i></div>
+            <div>
+                <div class="verdict-title">${imp.verdict || 'Simulation complete'}</div>
+                <div class="verdict-sub">${data.accuracy_impact || ''}</div>
+            </div>
+        </div>
+
+        <!-- OVERALL BEFORE → AFTER -->
+        <div class="overall-delta">
+            <div class="od-score">
+                <div class="od-score-val" style="color:${beforeScore>=80?'var(--green)':beforeScore>=65?'var(--amber)':'var(--red)'}">${beforeScore}%</div>
+                <div class="od-score-lbl">Before</div>
+            </div>
+            <div class="od-arrow">
+                <div class="od-delta-badge">${deltaLabel}</div>
+                <div class="od-arrow-line"></div>
+            </div>
+            <div class="od-score">
+                <div class="od-score-val" style="color:${afterScore>=80?'var(--green)':afterScore>=65?'var(--amber)':'var(--red)'}">${afterScore}%</div>
+                <div class="od-score-lbl">After Fix</div>
+            </div>
+        </div>
+
+        <!-- PER-DIMENSION COMPARISON -->
+        <div class="delta-grid">
+            <div class="delta-card before">
+                <div class="delta-card-head">📉 Before — Current State</div>
+                <div class="delta-card-body">
+                    <div class="delta-score-main">${beforeScore}%</div>
+                    <div class="delta-score-label">Overall Ethics Score</div>
+                    <div class="dim-comparison">${dimsHtml}</div>
+                </div>
+            </div>
+            <div class="delta-card after">
+                <div class="delta-card-head">📈 After — Projected State</div>
+                <div class="delta-card-body">
+                    <div class="delta-score-main">${afterScore}%</div>
+                    <div class="delta-score-label">Projected Ethics Score</div>
+                    <div class="dim-comparison">${dimsHtml.replace(/dim-fill before/g,'dim-fill before hidden').replace(/dim-fill after/g,'dim-fill after')}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- META -->
+        <div class="meta-row">
+            <div class="meta-item">
+                <div class="meta-label">Fix Applied</div>
+                <div class="meta-val" style="font-size:0.8125rem">${data.fix_title || '—'}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Dimension</div>
+                <div class="meta-val">${data.dimension || '—'}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Effort</div>
+                <div class="meta-val" style="text-transform:capitalize">${data.effort || '—'}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Score Improvement</div>
+                <div class="meta-val" style="color:${delta>=0?'var(--green)':'var(--red)'};font-family:var(--mono)">${deltaLabel}</div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <i class="fas fa-info-circle"></i>
+            <span>${data.disclaimer || 'These are conservative estimates. Actual improvement requires retraining or post-processing.'}</span>
+        </div>
+    `;
+    result.classList.add('visible');
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+initFixSimulator();
+</script>
+</body>
+</html>

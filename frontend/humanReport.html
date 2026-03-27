@@ -58,12 +58,12 @@
         .nav-links a:hover { color: var(--navy); background: #F1EDE8; }
 
         /* ── PAGE ── */
-        .page { max-width: 1100px; margin: 0 auto; padding: 3rem 2.5rem 6rem; }
+        .page { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 6rem; }
 
         /* ── VERDICT HERO ── */
         .verdict-hero {
             border-radius: 20px;
-            padding: 2.75rem 3rem 2.25rem;
+            padding: 2.5rem 2.5rem 2rem;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
@@ -82,7 +82,7 @@
         .concern .verdict-eyebrow { color: var(--red); }
 
         .verdict-icon-row { display: flex; align-items: flex-start; gap: 1.25rem; }
-        .verdict-emoji { display: flex; align-items: center; flex-shrink: 0; margin-top: 4px; }
+        .verdict-emoji { font-size: 3rem; line-height: 1; flex-shrink: 0; margin-top: 4px; }
         .verdict-headline { font-family: var(--serif); font-size: 1.875rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.625rem; }
         .fair    .verdict-headline { color: #065F46; }
         .partial .verdict-headline { color: #78350F; }
@@ -187,7 +187,7 @@
             padding: 1.125rem; text-align: center; transition: transform 0.15s, box-shadow 0.15s;
         }
         .action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(15,30,56,0.08); }
-        .action-card-icon { display: flex; justify-content: center; margin-bottom: 0.5rem; }
+        .action-card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
         .action-card-title { font-weight: 700; font-size: 0.875rem; color: var(--navy); margin-bottom: 4px; }
         .action-card-text  { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
 
@@ -205,7 +205,7 @@
             color: white; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center; margin-top: 1px;
         }
-        .rec-icon { display: flex; align-items: center; flex-shrink: 0; margin-top: 2px; }
+        .rec-icon { font-size: 1.25rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
         .rec-title  { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
         .rec-detail { font-size: 0.8125rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
 
@@ -296,7 +296,6 @@
         <a href="index.html">Home</a>
         <a href="upload.html">Upload</a>
         <a href="docs.html">Docs</a>
-        <a href="aboutUs.html">Where AI Goes Wrong</a>
         <a href="admin.html">Admin</a>
     </div>
 </nav>
@@ -321,36 +320,6 @@ function outcomeClass(score) {
 
 function checkSev(ok) { return ok ? 'ok' : 'warn'; }
 
-
-// ── SVG icon helpers ─────────────────────────────────────────────────────────
-const SVG = {
-    fair:    `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="rgba(5,150,105,0.15)"/><path d="M7.5 12.5L10.5 15.5L16.5 9.5" stroke="#059669" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    partial: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="rgba(217,119,6,0.15)" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#D97706" stroke-width="2.25" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="#D97706"/></svg>`,
-    concern: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="rgba(220,38,38,0.15)"/><path d="M15 9L9 15M9 9l6 6" stroke="#DC2626" stroke-width="2.25" stroke-linecap="round"/></svg>`,
-    check:   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    warn:    `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="currentColor"/></svg>`,
-    scales:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 7h18" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M5 7l-2 5c0 1.66 1.79 3 4 3s4-1.34 4-3L9 7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7l-2 5c0 1.66 1.79 3 4 3s4-1.34 4-3l-2-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    shuffle: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="16 3 21 3 21 8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="20" x2="21" y2="3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><polyline points="21 16 21 21 16 21" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="15" x2="21" y2="21" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><line x1="4" y1="4" x2="9" y2="9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
-    clipboard:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M16 4H18C19.1 4 20 4.9 20 6V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V6C4 4.9 4.9 4 6 4H8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><line x1="8" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
-    chart:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="13" width="4" height="8" rx="1" stroke="currentColor" stroke-width="1.75"/><rect x="10" y="8" width="4" height="13" rx="1" stroke="currentColor" stroke-width="1.75"/><rect x="17" y="3" width="4" height="18" rx="1" stroke="currentColor" stroke-width="1.75"/></svg>`,
-    group:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.75"/><path d="M3 21v-1a6 6 0 0112 0v1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><circle cx="17" cy="7" r="3" stroke="currentColor" stroke-width="1.75"/><path d="M22 21v-1a6 6 0 00-5-5.91" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
-    trending_down: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16 17 22 17 22 11" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    target:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.75"/><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.75"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>`,
-    refresh: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="23 4 23 10 17 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><polyline points="1 20 1 14 7 14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-};
-
-function emojiToSvg(emoji, size) {
-    const map = {
-        '✅': SVG.fair, '⚠️': SVG.partial, '🔴': SVG.concern,
-        '⚖️': SVG.scales, '🔀': SVG.shuffle, '📋': SVG.clipboard,
-        '📊': SVG.chart, '👥': SVG.group, '📉': SVG.trending_down,
-        '🎯': SVG.target, '🔄': SVG.refresh,
-    };
-    let svg = map[emoji] || `<span style="font-size:${size||'1.25rem'}">${emoji}</span>`;
-    if (size) svg = svg.replace(/width="\d+"/, `width="${size}"`).replace(/height="\d+"/, `height="${size}"`);
-    return svg;
-}
-
 // ── Render ────────────────────────────────────────────────────────────────────
 function renderReport(data, evalId) {
     const score    = data.ethical_score || 0;
@@ -367,7 +336,7 @@ function renderReport(data, evalId) {
     <div class="verdict-hero ${cls} anim anim-1">
         <div class="verdict-eyebrow"><i class="fas fa-shield-alt"></i> FairTrust AI · Fairness Assessment</div>
         <div class="verdict-icon-row">
-            <div class="verdict-emoji">${emojiToSvg(summary.icon || (cls === 'fair' ? '✅' : cls === 'partial' ? '⚠️' : '🔴'), 48)}</div>
+            <div class="verdict-emoji">${summary.icon || (cls === 'fair' ? '✅' : cls === 'partial' ? '⚠️' : '🔴')}</div>
             <div>
                 <div class="verdict-headline">${summary.verdict || 'Assessment Complete'}</div>
                 <div class="verdict-sub">${summary.sub || ''}</div>
@@ -438,7 +407,7 @@ function renderReport(data, evalId) {
     // ── What this means ───────────────────────────────────────────────────
     const actionCards = (wtm.action_cards || []).map(c => `
         <div class="action-card">
-            <div class="action-card-icon">${emojiToSvg(c.icon, 32)}</div>
+            <div class="action-card-icon">${c.icon}</div>
             <div class="action-card-title">${c.title}</div>
             <div class="action-card-text">${c.text}</div>
         </div>`).join('');
@@ -455,7 +424,7 @@ function renderReport(data, evalId) {
     const recItems = recs.map((r, i) => `
         <div class="rec-item">
             <div class="rec-num">${i + 1}</div>
-            <div class="rec-icon">${emojiToSvg(r.icon, 24)}</div>
+            <div class="rec-icon">${r.icon}</div>
             <div>
                 <div class="rec-title">${r.title}</div>
                 <div class="rec-detail">${r.detail}</div>

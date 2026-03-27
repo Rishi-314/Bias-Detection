@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Monitoring — FairTrust AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --navy:#0F1E38; --navy-mid:#1A2D4E; --gold:#EBB255;
+            --gold-dim:rgba(235,178,85,0.12); --gold-line:rgba(235,178,85,0.3);
+            --green:#10B981; --green-dim:rgba(16,185,129,0.1);
+            --amber:#F59E0B; --amber-dim:rgba(245,158,11,0.1);
+            --red:#EF4444; --red-dim:rgba(239,68,68,0.1);
+            --blue:#3B82F6; --blue-dim:rgba(59,130,246,0.1);
+            --bg:#F1F3F8; --bg2:#E8EBF2; --surface:#FFFFFF;
+            --rule:#DDE1EC; --muted:#64748B; --text:#0F1E38;
+            --mono:'IBM Plex Mono',monospace;
+            --display:'Plus Jakarta Sans',sans-serif;
+            --shadow:0 2px 12px rgba(15,30,56,0.07);
+            --shadow-md:0 8px 32px rgba(15,30,56,0.10);
+            --radius:12px;
+        }
+        body { font-family:var(--display); background:var(--bg); color:var(--text); line-height:1.6; }
+
+        /* NAV */
+        .navbar { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.97); backdrop-filter:blur(12px); border-bottom:1px solid var(--rule); height:60px; display:flex; align-items:center; justify-content:space-between; padding:0 2.5rem; box-shadow:var(--shadow); }
+        .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .nav-logo-icon { width:34px; height:34px; background:var(--navy); border-radius:9px; display:flex; align-items:center; justify-content:center; color:white; font-size:15px; }
+        .nav-logo-name { font-weight:800; font-size:1.0625rem; color:var(--navy); }
+        .nav-logo-name span { color:var(--gold); }
+        .nav-links a { text-decoration:none; font-size:0.875rem; font-weight:600; color:var(--muted); padding:6px 12px; border-radius:7px; transition:color 0.15s,background 0.15s; }
+        .nav-links a:hover { color:var(--navy); background:var(--bg); }
+
+        /* PAGE */
+        .page { max-width:1200px; margin:0 auto; padding:2rem 2rem 5rem; }
+
+        /* HERO */
+        .hero { background:var(--navy); border-radius:16px; padding:2rem 2.5rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+        .hero::before { content:''; position:absolute; top:-80px; right:-80px; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle,rgba(235,178,85,0.08) 0%,transparent 70%); }
+        .hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(235,178,85,0.15); border:1px solid var(--gold-line); color:var(--gold); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; padding:4px 12px; border-radius:999px; margin-bottom:0.75rem; }
+        .hero-title { font-size:1.75rem; font-weight:800; color:white; margin-bottom:0.5rem; }
+        .hero-sub { color:rgba(255,255,255,0.45); font-size:0.875rem; margin-bottom:1.25rem; }
+        .hero-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+        .hero-stats { display:flex; gap:2rem; }
+        .h-stat-val { font-size:1.5rem; font-weight:800; color:var(--gold); font-family:var(--display); }
+        .h-stat-lbl { font-size:10px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.08em; }
+        .hero-actions { display:flex; gap:0.75rem; }
+        .btn-hero { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; font-family:var(--display); transition:all 0.2s; }
+        .btn-gold { background:var(--gold); color:var(--navy); }
+        .btn-gold:hover { background:#f0bc60; transform:translateY(-1px); }
+        .btn-ghost { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.15); }
+        .btn-ghost:hover { background:rgba(255,255,255,0.14); color:white; }
+
+        /* PULSE indicator */
+        .live-dot { display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; color:var(--green); }
+        .live-dot::before { content:''; display:block; width:8px; height:8px; border-radius:50%; background:var(--green); animation:livepulse 1.5s ease-in-out infinite; }
+        @keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+        /* STAT CARDS */
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .stat-card { background:var(--surface); border:1.5px solid var(--rule); border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow); transition:border-color 0.2s,transform 0.2s; }
+        .stat-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+        .stat-label { font-size:0.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; }
+        .stat-value { font-size:2rem; font-weight:800; line-height:1; }
+        .stat-sub { font-size:0.75rem; color:var(--muted); margin-top:5px; }
+
+        /* SECTION */
+        .section { background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius); margin-bottom:1.25rem; overflow:hidden; box-shadow:var(--shadow); }
+        .sec-head { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; background:var(--bg); border-bottom:1px solid var(--rule); }
+        .sec-title { font-weight:700; font-size:0.9375rem; color:var(--navy); display:flex; align-items:center; gap:8px; }
+        .sec-title i { color:var(--gold); font-size:0.875rem; }
+        .sec-body { padding:1.5rem; }
+
+        /* CI/CD GATE */
+        .gate-banner { border-radius:10px; padding:1.25rem 1.5rem; border:1.5px solid; display:flex; align-items:flex-start; gap:1rem; margin-bottom:1.25rem; }
+        .gate-banner.pass  { background:var(--green-dim); border-color:rgba(16,185,129,0.3); }
+        .gate-banner.block { background:var(--red-dim);   border-color:rgba(239,68,68,0.3); }
+        .gate-banner.pend  { background:var(--amber-dim); border-color:rgba(245,158,11,0.3); }
+        .gate-icon { font-size:1.5rem; flex-shrink:0; }
+        .gate-banner.pass  .gate-icon { color:var(--green); }
+        .gate-banner.block .gate-icon { color:var(--red); }
+        .gate-banner.pend  .gate-icon { color:var(--amber); }
+        .gate-title { font-weight:700; font-size:1rem; color:var(--navy); margin-bottom:3px; }
+        .gate-reason { font-size:0.8125rem; color:var(--muted); line-height:1.55; }
+        .gate-checks { display:grid; grid-template-columns:repeat(5,1fr); gap:0.75rem; margin-top:1rem; }
+        .gate-check { background:var(--surface); border:1px solid var(--rule); border-radius:9px; padding:0.875rem; text-align:center; }
+        .gate-check.pass-c { border-color:rgba(16,185,129,0.3); }
+        .gate-check.fail-c { border-color:rgba(239,68,68,0.3); }
+        .gate-check-icon { font-size:1.25rem; margin-bottom:5px; }
+        .gate-check.pass-c .gate-check-icon { color:var(--green); }
+        .gate-check.fail-c .gate-check-icon { color:var(--red); }
+        .gate-check-name { font-size:0.7rem; font-weight:600; color:var(--navy); margin-bottom:3px; }
+        .gate-check-val { font-family:var(--mono); font-size:0.875rem; font-weight:700; }
+        .gate-check.pass-c .gate-check-val { color:var(--green); }
+        .gate-check.fail-c .gate-check-val { color:var(--red); }
+        .gate-check-thresh { font-size:0.65rem; color:var(--muted); margin-top:2px; }
+
+        /* SPARKLINE / TREND CHART */
+        .trend-wrap { display:flex; align-items:flex-end; gap:5px; height:100px; padding:0 4px; }
+        .t-bar-group { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; min-width:0; }
+        .t-bar { width:100%; border-radius:4px 4px 0 0; transition:height 0.7s ease,background 0.3s; cursor:pointer; position:relative; }
+        .t-bar:hover::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); background:var(--navy); color:white; font-size:0.7rem; padding:4px 10px; border-radius:6px; white-space:nowrap; z-index:10; pointer-events:none; }
+        .t-bar.good { background:linear-gradient(180deg,var(--green) 0%,#34D399 100%); }
+        .t-bar.warn { background:linear-gradient(180deg,var(--amber) 0%,#FCD34D 100%); }
+        .t-bar.bad  { background:linear-gradient(180deg,var(--red) 0%,#F87171 100%); }
+        .t-label { font-size:0.6rem; color:var(--muted); text-align:center; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:100%; }
+
+        /* Threshold line overlay */
+        .trend-container { position:relative; }
+        .threshold-line { position:absolute; left:0; right:0; border-top:2px dashed rgba(239,68,68,0.4); pointer-events:none; }
+        .threshold-label { position:absolute; right:0; font-size:0.6rem; font-weight:700; color:var(--red); background:var(--surface); padding:1px 4px; border-radius:3px; transform:translateY(-50%); }
+
+        /* DRIFT INDICATOR */
+        .drift-row { display:flex; align-items:center; gap:1rem; padding:0.75rem 1rem; border-radius:8px; border:1px solid var(--rule); margin-bottom:0.5rem; transition:border-color 0.15s; }
+        .drift-row:hover { border-color:var(--gold); }
+        .drift-row.regression { border-left:4px solid var(--red); background:var(--red-dim); }
+        .drift-row.improvement { border-left:4px solid var(--green); background:var(--green-dim); }
+        .drift-row.stable { border-left:4px solid var(--muted); }
+        .drift-name { font-weight:600; font-size:0.875rem; width:160px; flex-shrink:0; }
+        .drift-bars { flex:1; display:flex; flex-direction:column; gap:4px; }
+        .drift-bar-row { display:flex; align-items:center; gap:8px; font-size:0.7rem; }
+        .drift-bar-label { width:60px; flex-shrink:0; color:var(--muted); }
+        .drift-bar-track { flex:1; height:12px; background:var(--bg2); border-radius:3px; overflow:hidden; }
+        .drift-bar-fill { height:100%; border-radius:3px; transition:width 0.8s ease; }
+        .drift-bar-val { width:40px; text-align:right; font-family:var(--mono); font-weight:700; font-size:0.7rem; flex-shrink:0; }
+        .drift-delta { width:80px; flex-shrink:0; text-align:right; font-family:var(--mono); font-size:0.8rem; font-weight:700; }
+        .drift-delta.up   { color:var(--green); }
+        .drift-delta.down { color:var(--red); }
+        .drift-delta.flat { color:var(--muted); }
+        .drift-badge { font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:999px; flex-shrink:0; }
+        .drift-badge.regression  { background:var(--red-dim);   color:var(--red); }
+        .drift-badge.improvement { background:var(--green-dim); color:var(--green); }
+        .drift-badge.stable      { background:var(--bg2);       color:var(--muted); }
+
+        /* ALERT ROWS */
+        .alert-row { display:flex; justify-content:space-between; align-items:center; padding:0.875rem 1rem; border-radius:8px; border:1px solid var(--rule); margin-bottom:0.5rem; }
+        .alert-row.crit { border-left:4px solid var(--red);   background:rgba(239,68,68,0.03); }
+        .alert-row.warn { border-left:4px solid var(--amber); background:rgba(245,158,11,0.03); }
+        .alert-row.info { border-left:4px solid var(--green); background:rgba(16,185,129,0.03); }
+        .alert-msg { font-size:0.875rem; font-weight:600; }
+        .alert-sub { font-size:0.75rem; color:var(--muted); margin-top:2px; }
+        .badge { padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:700; }
+        .badge.red   { background:var(--red-dim);   color:var(--red); }
+        .badge.amber { background:var(--amber-dim); color:var(--amber); }
+        .badge.green { background:var(--green-dim); color:var(--green); }
+
+        /* TIMELINE TABLE */
+        table { width:100%; border-collapse:collapse; font-size:0.875rem; }
+        th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:700; font-size:0.75rem; border-bottom:1.5px solid var(--rule); color:var(--navy); }
+        td { padding:0.75rem 12px; border-bottom:1px solid var(--rule); vertical-align:middle; }
+        tr:last-child td { border:none; }
+        tr:hover td { background:var(--bg); }
+        .score-pill { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:700; }
+        .score-pill.good  { background:var(--green-dim); color:var(--green); }
+        .score-pill.warn  { background:var(--amber-dim); color:var(--amber); }
+        .score-pill.bad   { background:var(--red-dim);   color:var(--red); }
+
+        /* AUTO-REFRESH */
+        .refresh-bar { height:3px; background:var(--gold); border-radius:3px; width:100%; transform-origin:left; transition:transform 0.1s linear; }
+        .refresh-strip { background:var(--bg2); border-radius:999px; height:3px; overflow:hidden; margin-top:8px; }
+
+        .empty-state { text-align:center; padding:3rem; color:var(--muted); font-size:0.9rem; }
+
+        @media (max-width:900px) {
+            .stats-grid { grid-template-columns:repeat(2,1fr); }
+            .gate-checks { grid-template-columns:repeat(3,1fr); }
+        }
+        @media (max-width:560px) {
+            .stats-grid { grid-template-columns:1fr; }
+            .gate-checks { grid-template-columns:repeat(2,1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon"><i class="fas fa-shield-alt"></i></div>
+        <span class="nav-logo-name">Fair<span>Trust</span></span>
+    </a>
+    <div class="nav-links" style="display:flex;gap:4px">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin.html">Admin</a>
+        <a href="allReports.html" id="reportsLink" style="display:none">Latest Report</a>
+    </div>
+</nav>
+
+<div class="page">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div style="position:relative;z-index:1">
+            <div class="hero-badge"><i class="fas fa-satellite-dish"></i> Live Monitoring</div>
+            <div class="hero-title">Continuous Fairness Monitoring</div>
+            <div class="hero-sub">Track ethical score drift · CI/CD gate status · Regression detection across all evaluations</div>
+            <div class="hero-row">
+                <div class="hero-stats">
+                    <div><div class="h-stat-val" id="hTotalEvals">—</div><div class="h-stat-lbl">Evaluations</div></div>
+                    <div><div class="h-stat-val" id="hLatestScore">—</div><div class="h-stat-lbl">Latest Score</div></div>
+                    <div><div class="h-stat-val" id="hTrend">—</div><div class="h-stat-lbl">Trend</div></div>
+                    <div><div class="h-stat-val" id="hGate" style="font-size:1rem">—</div><div class="h-stat-lbl">Gate Status</div></div>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn-hero btn-gold" onclick="loadAll()"><i class="fas fa-sync-alt"></i> Refresh Now</button>
+                    <button class="btn-hero btn-ghost" onclick="toggleAutoRefresh(this)"><i class="fas fa-clock"></i> Auto-refresh: OFF</button>
+                </div>
+            </div>
+            <div class="refresh-strip"><div class="refresh-bar" id="refreshBar" style="transform:scaleX(0)"></div></div>
+            <div style="margin-top:6px;display:flex;align-items:center;gap:1rem">
+                <span class="live-dot" id="liveIndicator">Connected</span>
+                <span style="font-size:0.7rem;color:rgba(255,255,255,0.3)" id="lastRefresh">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-label">Latest Ethics Score</div><div class="stat-value" id="sc1">—</div><div class="stat-sub" id="sc1s">—</div></div>
+        <div class="stat-card"><div class="stat-label">Score Change vs Prev</div><div class="stat-value" id="sc2">—</div><div class="stat-sub" id="sc2s">—</div></div>
+        <div class="stat-card"><div class="stat-label">Active Alerts</div><div class="stat-value" id="sc3">—</div><div class="stat-sub" id="sc3s">—</div></div>
+        <div class="stat-card"><div class="stat-label">Deployment Gate</div><div class="stat-value" id="sc4" style="font-size:1.25rem">—</div><div class="stat-sub" id="sc4s">—</div></div>
+    </div>
+
+    <!-- CI/CD GATE -->
+    <div class="section">
+        <div class="sec-head">
+            <div class="sec-title"><i class="fas fa-traffic-light"></i> CI/CD Deployment Gate</div>
+            <span style="font-size:0.8rem;color:var(--muted)">Latest evaluation · threshold 75%</span>
+        </div>
+        <div class="sec-body" id="gateBody">
+            <div class="empty-state">Run an evaluation to see deployment gate status.</div>
+        </div>
+    </div>
+
+    <!-- SCORE HISTORY / DRIFT -->
+    <div class="section">
+        <div class="sec-head">
+            <div class="sec-title"><i class="fas fa-chart-area"></i> Ethics Score History — Drift Detection</div>
+            <span style="font-size:0.8rem;color:var(--muted)">Dashed red line = 80% threshold</span>
+        </div>
+        <div class="sec-body">
+            <div class="trend-container" id="trendContainer" style="height:120px;margin-bottom:0.5rem">
+                <div class="trend-wrap" id="trendBars" style="height:100%"></div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:4px" id="trendLabels"></div>
+            <div style="display:flex;align-items:center;gap:1.5rem;margin-top:0.875rem;font-size:0.75rem;color:var(--muted)">
+                <span><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px"></span>≥ 80% (Pass)</span>
+                <span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px"></span>65–79% (Marginal)</span>
+                <span><span style="display:inline-block;width:10px;height:10px;background:var(--red);border-radius:2px;margin-right:4px"></span>&lt; 65% (Fail)</span>
+                <span><span style="display:inline-block;width:18px;height:2px;border-top:2px dashed rgba(239,68,68,0.5);margin-right:4px;vertical-align:middle"></span>Deployment threshold</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGRESSION ANALYSIS -->
+    <div class="section">
+        <div class="sec-head">
+            <div class="sec-title"><i class="fas fa-code-branch"></i> Regression Analysis — Latest vs Baseline</div>
+            <span style="font-size:0.8rem;color:var(--muted)" id="regressionLabel">—</span>
+        </div>
+        <div class="sec-body" id="regressionBody">
+            <div class="empty-state">Run at least 2 evaluations to see regression analysis.</div>
+        </div>
+    </div>
+
+    <!-- ACTIVE ALERTS -->
+    <div class="section">
+        <div class="sec-head">
+            <div class="sec-title"><i class="fas fa-exclamation-triangle"></i> Active Fairness Alerts</div>
+            <div style="display:flex;gap:0.5rem" id="alertSummary"></div>
+        </div>
+        <div class="sec-body" id="alertsBody"><div class="empty-state">Loading…</div></div>
+    </div>
+
+    <!-- EVALUATION TIMELINE -->
+    <div class="section">
+        <div class="sec-head">
+            <div class="sec-title"><i class="fas fa-history"></i> Evaluation Timeline</div>
+        </div>
+        <div class="sec-body" id="timelineBody"><div class="empty-state">No evaluations found.</div></div>
+    </div>
+
+</div>
+
+<script>
+const API = 'http://127.0.0.1:5000';
+let autoRefreshTimer = null;
+let refreshCountdown = null;
+let refreshSeconds = 30;
+let countdownLeft = 30;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function scoreColor(s) {
+    if (s == null) return 'var(--muted)';
+    if (s >= 0.80) return 'var(--green)';
+    if (s >= 0.65) return 'var(--amber)';
+    return 'var(--red)';
+}
+function scoreClass(s) {
+    if (s >= 0.80) return 'good';
+    if (s >= 0.65) return 'warn';
+    return 'bad';
+}
+function scorePillClass(s) {
+    if (s >= 0.80) return 'good';
+    if (s >= 0.65) return 'warn';
+    return 'bad';
+}
+function fmt(v) { return v != null ? Math.round(v * 100) + '%' : '—'; }
+
+// ── Auto-refresh ──────────────────────────────────────────────────────────────
+function toggleAutoRefresh(btn) {
+    if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        clearInterval(refreshCountdown);
+        autoRefreshTimer = null;
+        btn.innerHTML = '<i class="fas fa-clock"></i> Auto-refresh: OFF';
+        btn.style.opacity = '';
+        document.getElementById('refreshBar').style.transform = 'scaleX(0)';
+    } else {
+        countdownLeft = refreshSeconds;
+        autoRefreshTimer = setInterval(() => { loadAll(); countdownLeft = refreshSeconds; }, refreshSeconds * 1000);
+        refreshCountdown = setInterval(() => {
+            countdownLeft--;
+            const pct = 1 - (countdownLeft / refreshSeconds);
+            document.getElementById('refreshBar').style.transform = `scaleX(${pct})`;
+            btn.innerHTML = `<i class="fas fa-clock"></i> Refresh in ${countdownLeft}s`;
+        }, 1000);
+        btn.innerHTML = `<i class="fas fa-clock"></i> Refresh in ${refreshSeconds}s`;
+    }
+}
+
+// ── Main load ─────────────────────────────────────────────────────────────────
+async function loadAll() {
+    document.getElementById('lastRefresh').textContent = 'Refreshing…';
+    document.getElementById('liveIndicator').style.opacity = '0.5';
+
+    const evalId = new URLSearchParams(location.search).get('eval_id') || sessionStorage.getItem('eval_id');
+    if (evalId) {
+        document.getElementById('reportsLink').style.display = '';
+        document.getElementById('reportsLink').href = `allReports.html?eval_id=${evalId}`;
+    }
+
+    await Promise.allSettled([
+        loadHistory(),
+        loadAlerts(),
+        evalId ? loadGate(evalId) : Promise.resolve(),
+        loadRegression(),
+    ]);
+
+    const now = new Date();
+    document.getElementById('lastRefresh').textContent = `Last updated: ${now.toLocaleTimeString()}`;
+    document.getElementById('liveIndicator').style.opacity = '1';
+}
+
+// ── CI/CD Gate ────────────────────────────────────────────────────────────────
+async function loadGate(evalId) {
+    try {
+        const res  = await fetch(`${API}/deploy/check/${evalId}?threshold=0.75`);
+        const data = await res.json();
+        renderGate(data);
+    } catch (e) {
+        document.getElementById('gateBody').innerHTML = '<div class="empty-state">Could not load gate status.</div>';
+    }
+}
+
+function renderGate(data) {
+    if (data.gate_status === 'PENDING') {
+        document.getElementById('gateBody').innerHTML = `<div class="gate-banner pend"><div class="gate-icon"><i class="fas fa-hourglass-half"></i></div><div><div class="gate-title">Evaluation pending</div><div class="gate-reason">${data.reason}</div></div></div>`;
+        return;
+    }
+
+    const isPassed = data.gate_status === 'PASS';
+    const cls      = isPassed ? 'pass' : 'block';
+    const icon     = isPassed ? 'fa-check-circle' : 'fa-times-circle';
+
+    const checksHtml = (data.checks || []).map(c => `
+        <div class="gate-check ${c.passed ? 'pass-c' : 'fail-c'}">
+            <div class="gate-check-icon"><i class="fas ${c.passed ? 'fa-check-circle' : 'fa-times-circle'}"></i></div>
+            <div class="gate-check-name">${c.name}</div>
+            <div class="gate-check-val">${c.value}${c.unit === '%' ? '%' : ''}</div>
+            <div class="gate-check-thresh">Need: ${c.threshold}${c.unit === '%' ? '%' : ''}</div>
+        </div>`).join('');
+
+    document.getElementById('gateBody').innerHTML = `
+        <div class="gate-banner ${cls}">
+            <div class="gate-icon"><i class="fas ${icon}"></i></div>
+            <div style="flex:1">
+                <div class="gate-title">${isPassed ? '✅ Deployment Approved' : '🔴 Deployment Blocked'} — Score: ${data.overall_score}% (threshold: ${data.threshold_used}%)</div>
+                <div class="gate-reason">${data.reason}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+                <div style="font-size:0.75rem;color:var(--muted)">Checks: ${data.checks_passed}/${(data.checks||[]).length} passed</div>
+                <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);margin-top:2px">${data.timestamp ? new Date(data.timestamp).toLocaleTimeString() : ''}</div>
+            </div>
+        </div>
+        <div class="gate-checks">${checksHtml}</div>`;
+
+    // Update hero gate stat
+    document.getElementById('hGate').textContent = isPassed ? '✅ PASS' : '🔴 BLOCK';
+    document.getElementById('hGate').style.color = isPassed ? 'var(--green)' : 'var(--red)';
+    document.getElementById('sc4').textContent  = isPassed ? '✅ PASS' : '🔴 BLOCK';
+    document.getElementById('sc4').style.color  = isPassed ? 'var(--green)' : 'var(--red)';
+    document.getElementById('sc4s').textContent = `${data.checks_passed}/${(data.checks||[]).length} checks pass`;
+}
+
+// ── History + Trend chart ─────────────────────────────────────────────────────
+async function loadHistory() {
+    try {
+        const res  = await fetch(`${API}/compare/history`);
+        const data = await res.json();
+        renderHistory(data);
+    } catch (e) { /* silent */ }
+}
+
+function renderHistory(data) {
+    const history = data.history || [];
+    const trend   = data.trend   || [];
+
+    // Hero stats
+    document.getElementById('hTotalEvals').textContent = history.length;
+    document.getElementById('totalEvals').textContent  = history.length;
+
+    if (trend.length) {
+        const latest = trend[trend.length - 1];
+        const prev   = trend.length >= 2 ? trend[trend.length - 2] : null;
+        const delta  = prev != null ? latest - prev : null;
+
+        document.getElementById('hLatestScore').textContent = fmt(latest);
+        document.getElementById('hLatestScore').style.color = scoreColor(latest);
+        document.getElementById('sc1').textContent = fmt(latest);
+        document.getElementById('sc1').style.color = scoreColor(latest);
+        document.getElementById('sc1s').textContent = latest >= 0.80 ? 'Above threshold ✓' : latest >= 0.65 ? 'Below threshold ⚠' : 'Critical — below 65%';
+
+        if (delta != null) {
+            const sign = delta > 0 ? '+' : '';
+            document.getElementById('hTrend').textContent = `${sign}${Math.round(delta*100)}%`;
+            document.getElementById('hTrend').style.color = delta > 0.005 ? 'var(--green)' : delta < -0.005 ? 'var(--red)' : 'var(--gold)';
+            document.getElementById('sc2').textContent = `${sign}${Math.round(delta*100)}%`;
+            document.getElementById('sc2').style.color = delta > 0.005 ? 'var(--green)' : delta < -0.005 ? 'var(--red)' : 'var(--muted)';
+            document.getElementById('sc2s').textContent = delta > 0.005 ? 'Improved ↑' : delta < -0.005 ? 'Declined ↓' : 'Stable →';
+        } else {
+            document.getElementById('hTrend').textContent = '—';
+            document.getElementById('sc2').textContent = '—';
+            document.getElementById('sc2s').textContent = 'First evaluation';
+        }
+    }
+
+    // Trend bars with threshold line
+    const container = document.getElementById('trendContainer');
+    const maxH = 100;
+    const maxVal = Math.max(...trend, 0.01);
+    const thresholdPct = 0.80 / maxVal;
+
+    const barsHtml = trend.map((v, i) => {
+        const h = Math.max(8, Math.round((v / maxVal) * (maxH - 10)));
+        const id = (history[history.length - 1 - i] || {}).evaluation_id || '';
+        return `<div class="t-bar-group">
+            <div class="t-bar ${scoreClass(v)}" style="height:${h}px"
+                 data-tip="${fmt(v)} — Eval ${i+1}"
+                 onclick="jumpToEval('${id}')"></div>
+            <div class="t-label">E${i+1}</div>
+        </div>`;
+    }).join('');
+
+    // Position threshold line at 80% of maxVal height
+    const threshLineBottom = Math.round(thresholdPct * (maxH - 10));
+    container.innerHTML = `
+        <div style="position:relative;height:${maxH}px">
+            <div class="trend-wrap" style="height:${maxH - 18}px;padding-bottom:0">${barsHtml}</div>
+            <div class="threshold-line" style="bottom:${threshLineBottom + 18}px">
+                <span class="threshold-label">80%</span>
+            </div>
+        </div>`;
+
+    // Timeline table
+    const tb = document.getElementById('timelineBody');
+    if (!history.length) { tb.innerHTML = '<div class="empty-state">No evaluations yet. <a href="upload.html" style="color:var(--gold)">Run one now →</a></div>'; return; }
+
+    tb.innerHTML = `<table>
+        <thead><tr><th>Eval ID</th><th>Ethics Score</th><th>Records</th><th>Trigger</th><th>vs Previous</th><th>Action</th></tr></thead>
+        <tbody>${history.map((h) => {
+            const delta = h.improvement;
+            const dHtml = delta == null
+                ? '<span style="color:var(--muted);font-size:0.8rem">Baseline</span>'
+                : delta > 0
+                    ? `<span style="color:var(--green);font-weight:700">↑ +${(delta*100).toFixed(1)}%</span>`
+                : delta < 0
+                    ? `<span style="color:var(--red);font-weight:700">↓ ${(delta*100).toFixed(1)}%</span>`
+                : '<span style="color:var(--muted)">— stable</span>';
+            const s = h.ethical_score || 0;
+            return `<tr>
+                <td style="font-family:var(--mono);font-size:0.8rem;color:var(--muted)">${(h.evaluation_id||'').slice(0,12)}…</td>
+                <td><span class="score-pill ${scorePillClass(s)}"><i class="fas ${s>=0.80?'fa-check':'s>=0.65'?'fa-exclamation':'fa-times'}"></i> ${fmt(s)}</span></td>
+                <td style="color:var(--muted);font-size:0.8rem">${(h.records||0).toLocaleString()}</td>
+                <td style="font-size:0.8rem;color:var(--muted)">${h.trigger||'—'}</td>
+                <td>${dHtml}</td>
+                <td><a href="allReports.html?eval_id=${h.evaluation_id}" style="font-size:0.8rem;font-weight:600;color:var(--gold);text-decoration:none">View →</a></td>
+            </tr>`;
+        }).join('')}</tbody>
+    </table>`;
+}
+
+function jumpToEval(evalId) {
+    if (evalId) window.location.href = `allReports.html?eval_id=${evalId}`;
+}
+
+// ── Regression ────────────────────────────────────────────────────────────────
+async function loadRegression() {
+    try {
+        const listRes = await fetch(`${API}/compare/list`);
+        const listData = await listRes.json();
+        const evals = listData.evaluations || [];
+        if (evals.length < 2) {
+            document.getElementById('regressionLabel').textContent = 'Need ≥ 2 evaluations';
+            return;
+        }
+        const latest   = evals[evals.length - 1].evaluation_id;
+        const baseline = evals[evals.length - 2].evaluation_id;
+        const regRes   = await fetch(`${API}/deploy/regression/${latest}?baseline=${baseline}`);
+        const regData  = await regRes.json();
+        renderRegression(regData, latest, baseline);
+    } catch (e) { /* silent */ }
+}
+
+function renderRegression(data, latestId, baselineId) {
+    const rb = document.getElementById('regressionBody');
+    document.getElementById('regressionLabel').textContent =
+        `${(latestId||'').slice(0,8)}… vs ${(baselineId||'').slice(0,8)}…`;
+
+    if (!data.has_baseline) {
+        rb.innerHTML = '<div class="empty-state">Run at least 2 evaluations to see regression analysis.</div>';
+        return;
+    }
+
+    const verdictBg = data.has_regression ? 'rgba(239,68,68,0.06)' : 'rgba(16,185,129,0.06)';
+    const verdictBorder = data.has_regression ? 'rgba(239,68,68,0.25)' : 'rgba(16,185,129,0.25)';
+    const verdictColor  = data.has_regression ? 'var(--red)' : 'var(--green)';
+
+    const dims = data.all_dimensions || [];
+    const dimsHtml = dims.map(d => {
+        const dirCls = d.direction === 'improvement' ? 'improvement' : d.direction === 'regression' ? 'regression' : 'stable';
+        const deltaCls = d.direction === 'improvement' ? 'up' : d.direction === 'regression' ? 'down' : 'flat';
+        const baseW = Math.round((d.baseline || 0) * 100);
+        const currW = Math.round((d.current || 0) * 100);
+        const baseColor = scoreColor(d.baseline);
+        const currColor = scoreColor(d.current);
+        return `<div class="drift-row ${dirCls}">
+            <div class="drift-name">${d.dimension}</div>
+            <div class="drift-bars">
+                <div class="drift-bar-row">
+                    <div class="drift-bar-label" style="color:var(--muted);font-size:0.65rem">Baseline</div>
+                    <div class="drift-bar-track"><div class="drift-bar-fill" style="width:${baseW}%;background:${baseColor}"></div></div>
+                    <div class="drift-bar-val" style="color:${baseColor}">${baseW}%</div>
+                </div>
+                <div class="drift-bar-row">
+                    <div class="drift-bar-label" style="color:var(--muted);font-size:0.65rem">Current</div>
+                    <div class="drift-bar-track"><div class="drift-bar-fill" style="width:${currW}%;background:${currColor}"></div></div>
+                    <div class="drift-bar-val" style="color:${currColor}">${currW}%</div>
+                </div>
+            </div>
+            <div class="drift-delta ${deltaCls}">${d.delta_label}</div>
+            <div class="drift-badge ${dirCls}">${d.direction}</div>
+        </div>`;
+    }).join('');
+
+    rb.innerHTML = `
+        <div style="padding:1rem;border-radius:8px;border:1px solid ${verdictBorder};background:${verdictBg};margin-bottom:1.25rem">
+            <strong style="color:${verdictColor}">${data.verdict}</strong>
+            ${data.block_deployment ? '<div style="font-size:0.8125rem;color:var(--red);margin-top:4px">🔴 Deployment should be blocked — significant regression detected.</div>' : ''}
+        </div>
+        ${dimsHtml}`;
+}
+
+// ── Alerts ────────────────────────────────────────────────────────────────────
+async function loadAlerts() {
+    try {
+        const res  = await fetch(`${API}/compare/alerts`);
+        const data = await res.json();
+        renderAlerts(data);
+    } catch (e) {
+        document.getElementById('alertsBody').innerHTML = '<div class="empty-state">Could not load alerts.</div>';
+    }
+}
+
+function renderAlerts(data) {
+    const alerts  = data.alerts  || [];
+    const summary = data.summary || {};
+    const ab = document.getElementById('alertsBody');
+
+    // Alert count stat card
+    const activeAlerts = alerts.filter(a => !a.resolved).length;
+    document.getElementById('sc3').textContent = activeAlerts;
+    document.getElementById('sc3').style.color = activeAlerts === 0 ? 'var(--green)' : activeAlerts >= 3 ? 'var(--red)' : 'var(--amber)';
+    document.getElementById('sc3s').textContent = activeAlerts === 0 ? 'All clear ✓' : `${summary.critical||0} critical · ${summary.warning||0} warning`;
+
+    // Summary chips
+    document.getElementById('alertSummary').innerHTML = [
+        summary.critical ? `<span class="badge red"><i class="fas fa-times-circle"></i> ${summary.critical} Critical</span>` : '',
+        summary.warning  ? `<span class="badge amber"><i class="fas fa-exclamation-circle"></i> ${summary.warning} Warning</span>` : '',
+        summary.resolved ? `<span class="badge green"><i class="fas fa-check-circle"></i> ${summary.resolved} Resolved</span>` : '',
+        `<span class="badge" style="background:var(--bg2);color:var(--muted)">Total: ${summary.total||0}</span>`,
+    ].filter(Boolean).join('');
+
+    if (!alerts.length) {
+        ab.innerHTML = '<div class="empty-state">✅ No active alerts — all models within thresholds.</div>';
+        return;
+    }
+
+    ab.innerHTML = alerts.slice(0, 10).map(a => {
+        const cls  = a.severity === 'CRITICAL' ? 'crit' : a.severity === 'WARNING' ? 'warn' : 'info';
+        const bcls = a.severity === 'CRITICAL' ? 'red'  : a.severity === 'WARNING' ? 'amber' : 'green';
+        return `<div class="alert-row ${cls}">
+            <div>
+                <div class="alert-msg">${a.message}</div>
+                <div class="alert-sub">Eval: ${(a.eval_id||'').slice(0,16)}…</div>
+            </div>
+            <span class="badge ${bcls}">${a.resolved ? 'Resolved' : a.severity}</span>
+        </div>`;
+    }).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadAll();
+</script>
+</body>
+</html>

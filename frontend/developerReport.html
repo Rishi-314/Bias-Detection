@@ -373,7 +373,6 @@
         <a href="index.html">Home</a>
         <a href="upload.html">Upload</a>
         <a href="docs.html">Docs</a>
-        <a href="aboutUs.html">Where AI Goes Wrong</a>
         <a href="admin.html">Admin</a>
     </div>
 </nav>
@@ -726,8 +725,36 @@ function renderReport(data, evalId) {
     } else if (warningDims.length > 0) {
         alertHtml = `<div class="alert-banner warn"><div class="alert-icon warn"><i class="fas fa-exclamation-circle"></i></div><div><div class="alert-title">${warningDims.length} Marginal Issue${warningDims.length > 1 ? 's' : ''} — Review Before Deploying</div><div class="alert-sub">Marginal performance in: ${warningDims.map(d => DIM_META[d.id]?.name || '').join(', ')}.</div></div></div>`;
     } else {
-        alertHtml = `<div class="alert-banner ok"><div class="alert-icon ok"><i class="fas fa-check-circle"></i></div><div><div class="alert-title">All Fairness Checks Passing</div><div class="alert-sub">Model meets all 7 fairness dimension thresholds. Continue monitoring for drift in production.</div></div></div>`;
+    if (data.bias_detected) {
+        alertHtml = `
+        <div class="alert-banner warn">
+            <div class="alert-icon warn">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <div class="alert-title">Bias Detected in Model Decisions</div>
+                <div class="alert-sub">
+                    Counterfactual analysis found cases where identical candidates 
+                    received different outcomes based on sensitive attributes 
+                    (e.g., gender, caste).
+                </div>
+            </div>
+        </div>`;
+    } else {
+        alertHtml = `
+        <div class="alert-banner ok">
+            <div class="alert-icon ok">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+                <div class="alert-title">All Fairness Checks Passing</div>
+                <div class="alert-sub">
+                    Model meets all fairness thresholds and shows no bias signals.
+                </div>
+            </div>
+        </div>`;
     }
+}
 
     const dimCardsHtml   = dims.map(d => renderDimCard(d, DIM_META[d.id] || { icon: 'fa-chart-bar', name: `Dim ${d.id}`, desc: '' })).join('');
     const dimDetailsHtml = dims.map(d => renderDimDetail(d, DIM_META[d.id] || { icon: 'fa-chart-bar', name: `Dim ${d.id}`, desc: '' }, data.per_attribute)).join('');

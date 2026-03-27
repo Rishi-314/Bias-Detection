@@ -156,7 +156,6 @@
         <a href="index.html">Home</a>
         <a href="upload.html">Upload</a>
         <a href="docs.html">Docs</a>
-        <a href="aboutUs.html">Where AI Goes Wrong</a>
         <a href="admin.html">Admin</a>
     </div>
 </nav>
@@ -248,48 +247,6 @@ function renderHub(evalId, data) {
             </div>
         </div>
 
-        <!-- TOP ROW: 3 original reports -->
-        <div class="reports-grid-top anim anim-3">
-            <div class="report-card dev">
-                <div class="card-icon-wrap">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                </div>
-                <div class="card-eyebrow">Engineers &amp; Data Scientists</div>
-                <div class="card-title">Developer Report</div>
-                <div class="card-desc">SHAP feature importance, 7 fairness dimensions, action plan, radar chart, and copy-paste code fixes.</div>
-                <div class="card-tags"><span class="card-tag">SHAP</span><span class="card-tag">7 Dimensions</span><span class="card-tag">Code Fixes</span></div>
-                <div class="card-footer">
-                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
-                    <a href="developerReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
-                </div>
-            </div>
-            <div class="report-card reg">
-                <div class="card-icon-wrap">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <div class="card-eyebrow">Compliance &amp; Legal Teams</div>
-                <div class="card-title">Regulator Report</div>
-                <div class="card-desc">Compliance certificate, audit trail, fairness contract table, EU AI Act &amp; GDPR alignment.</div>
-                <div class="card-tags"><span class="card-tag">Certificate</span><span class="card-tag">Audit Trail</span><span class="card-tag">EU AI Act</span></div>
-                <div class="card-footer">
-                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
-                    <a href="regulatorReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
-                </div>
-            </div>
-            <div class="report-card human">
-                <div class="card-icon-wrap">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <div class="card-eyebrow">Affected Individuals</div>
-                <div class="card-title">Human Report</div>
-                <div class="card-desc">Plain-language explanation, visual score, fairness checks in simple language, FAQ — no jargon.</div>
-                <div class="card-tags"><span class="card-tag">Plain Language</span><span class="card-tag">Visual</span><span class="card-tag">FAQ</span></div>
-                <div class="card-footer">
-                    <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
-                    <a href="humanReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
-                </div>
-            </div>
-        </div>
 
         <!-- BOTTOM ROW: 2 new Round 3 reports -->
         <div class="reports-grid-bottom anim anim-4">
@@ -298,12 +255,12 @@ function renderHub(evalId, data) {
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EBB255" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 </div>
                 <div class="card-eyebrow">C-Suite &amp; Risk Officers — NEW</div>
-                <div class="card-title">Executive Report</div>
+                <div class="card-title">Technical Report</div>
                 <div class="card-desc">High-level risk summary, 5-dimension profile, business impact assessment, deployment verdict, legal compliance status.</div>
                 <div class="card-tags"><span class="card-tag">Risk Level</span><span class="card-tag">5 Dimensions</span><span class="card-tag">Business Impact</span><span class="card-tag">Legal Status</span></div>
                 <div class="card-footer">
                     <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
-                    <a href="executiveReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                    <a href="TechnicalReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
                 </div>
             </div>
             <div class="report-card remedy">
@@ -311,12 +268,12 @@ function renderHub(evalId, data) {
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                 </div>
                 <div class="card-eyebrow">ML Engineers — NEW</div>
-                <div class="card-title">Remediation Toolkit</div>
+                <div class="card-title">Plain Report</div>
                 <div class="card-desc">Prioritized fix list with before/after scores, code snippets, counterfactual examples, CI/CD deployment gate.</div>
                 <div class="card-tags"><span class="card-tag">Fix List</span><span class="card-tag">Code Snippets</span><span class="card-tag">Counterfactuals</span><span class="card-tag">CI/CD Gate</span></div>
                 <div class="card-footer">
                     <div class="card-ready"><div class="card-ready-dot"></div> Ready</div>
-                    <a href="remediationReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                    <a href="PlainReport.html?eval_id=${evalId}" class="btn-view">Open <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
                 </div>
             </div>
         </div>
