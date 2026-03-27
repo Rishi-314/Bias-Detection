@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preprocess Dataset — FairTrust AI</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* Reuse SAME variables from upload.html */
+:root {
+    --primary:#1A2D4E; --secondary:#EBB255; --bg:#F5F6FA;
+    --surface:#FFFFFF; --rule:#E4E7F0; --muted:#6B7594;
+    --success:#00C896; --danger:#FF5C38;
+}
+
+body { font-family: system-ui; background: var(--bg); }
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 2rem;
+}
+
+.card {
+    background: var(--surface);
+    border:1.5px solid var(--rule);
+    border-radius:14px;
+    padding:1.5rem;
+    margin-bottom:1.25rem;
+}
+
+textarea {
+    width:100%;
+    height:90px;
+    padding:10px;
+    border-radius:8px;
+    border:1.5px solid var(--rule);
+}
+
+button {
+    padding:10px 16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color:white;
+}
+
+.btn-success {
+    background: var(--success);
+    color:white;
+}
+
+.code {
+    background:#0F1A2A;
+    color:#93C5FD;
+    padding:1rem;
+    border-radius:10px;
+    margin-top:1rem;
+    display:none;
+}
+
+.preview {
+    margin-top:1rem;
+    padding:1rem;
+    border-radius:10px;
+    display:none;
+}
+
+.ok { background:#ECFDF5; }
+.warn { background:#FFFBEB; }
+.error { background:#FFF1EE; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Preprocess Dataset</h1>
+<p style="color:var(--muted)">
+Filter your dataset using natural language before fairness evaluation
+</p>
+
+<!-- UPLOAD DATASET -->
+<div class="card">
+    <h3>Upload Dataset</h3>
+
+    <input type="file" id="fileInput" style="margin-top:10px">
+
+    <button class="btn-primary" style="margin-top:10px" onclick="uploadDataset()">
+        📤 Upload
+    </button>
+
+    <p id="uploadStatus" style="margin-top:10px; color:var(--muted)"></p>
+</div>
+
+<!-- INPUT -->
+<div class="card">
+    <textarea id="promptBox"
+        placeholder="e.g. Keep only female candidates aged 25–35">
+    </textarea>
+
+    <div style="margin-top:1rem; display:flex; gap:10px;">
+        <button class="btn-primary" onclick="generateCode()">
+            ✨ Generate Filter
+        </button>
+
+        <button onclick="previewFilter()">
+            👁 Preview
+        </button>
+    </div>
+
+    <div id="codeBlock" class="code"></div>
+</div>
+
+<!-- PREVIEW -->
+<div id="previewBox" class="card preview"></div>
+
+<!-- ACTION -->
+<div class="card">
+    <button class="btn-success" onclick="applyFilter()">
+        ✅ Apply & Download
+    </button>
+</div>
+
+</div>
+
+<script>
+const API = "http://127.0.0.1:5000";
+
+// ✅ support BOTH upload + URL
+const params = new URLSearchParams(window.location.search);
+let datasetId = params.get("dataset_id") || null;
+
+let filterCode = "";
+
+// 🧠 helper
+function requireDataset() {
+    if (!datasetId) {
+        alert("⚠️ Please upload dataset first");
+        return false;
+    }
+    return true;
+}
+
+// 🚀 UPLOAD
+async function uploadDataset() {
+    const file = document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
+
+    document.getElementById("uploadStatus").innerText = "Uploading...";
+
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`${API}/datasets`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Upload failed");
+
+        datasetId = data.dataset_id;
+
+        document.getElementById("uploadStatus").innerHTML = `
+            ✅ Uploaded <b>${data.records}</b> rows
+        `;
+
+        console.log("Dataset:", datasetId);
+
+    } catch (err) {
+        document.getElementById("uploadStatus").innerText = "❌ Upload failed";
+        alert(err.message);
+    }
+}
+
+// ✨ GENERATE
+async function generateCode() {
+    if (!requireDataset()) return;
+
+    const prompt = document.getElementById("promptBox").value;
+
+    if (!prompt.trim()) {
+        alert("Enter a filter prompt");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/datasets/${datasetId}/generate-filter`, {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        filterCode = data.code;
+
+        const block = document.getElementById("codeBlock");
+        block.style.display = "block";
+        block.textContent = filterCode;
+
+    } catch (err) {
+        alert("❌ Gemini failed: " + err.message);
+    }
+}
+
+// 👁 PREVIEW
+async function previewFilter() {
+    if (!requireDataset() || !filterCode) {
+        alert("Generate filter first");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/datasets/${datasetId}/filter-preview`, {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({ filter_code: filterCode })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        const box = document.getElementById("previewBox");
+        box.style.display = "block";
+
+        if (data.rows_after === 0) {
+            box.className = "card preview error";
+            box.innerHTML = `❌ No rows match<br>${data.suggestion || ""}`;
+            return;
+        }
+
+        box.className = "card preview ok";
+        box.innerHTML = `
+            <strong>${data.rows_after}</strong> rows after filter<br>
+            from ${data.rows_before} (${data.pct_retained}% retained)
+        `;
+
+    } catch (err) {
+        alert("❌ Preview failed: " + err.message);
+    }
+}
+
+// ✅ APPLY
+async function applyFilter() {
+    if (!requireDataset() || !filterCode) {
+        alert("Generate filter first");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/datasets/${datasetId}/filter-apply`, {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({
+                filter_code: filterCode,
+                description: "custom filter"
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        alert(`✅ Filter applied: ${data.rows_after} rows`);
+
+        // 🔥 download
+        window.location.href = `${API}/datasets/${data.filtered_dataset_id}/download`;
+
+    } catch (err) {
+        alert("❌ Apply failed: " + err.message);
+    }
+}
+</script>
+
+</body>
+</html>
