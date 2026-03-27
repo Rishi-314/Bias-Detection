@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Use - FairTrust AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1A2D4E;
+            --secondary: #EBB255;
+            --bg: #FFFFFF;
+            --surface: #FFFFFF;
+            --text: #1A2D4E;
+            --muted: #5A6169;
+            --border: rgba(26,45,78,0.1);
+            --accent-border: rgba(235,178,85,0.3);
+            --radius: 14px;
+        }
+
+        body {
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background: #FFFFFF;
+            line-height: 1.65;
+        }
+
+        .top {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            background: rgba(255,255,255,0.95);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+        }
+
+        .top-inner {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .logo i { color: var(--secondary); }
+
+        .nav {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav a:hover, .nav a.active { color: var(--secondary); }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 46px 20px 72px;
+        }
+
+        .head {
+            margin-bottom: 24px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 7px 13px;
+            background: rgba(235,178,85,0.12);
+            border: 1px solid var(--accent-border);
+            color: var(--secondary);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: clamp(30px, 4vw, 42px);
+            line-height: 1.12;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .lead {
+            color: var(--muted);
+            max-width: 780px;
+            font-size: 16px;
+        }
+
+        .content {
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+        }
+
+        .sec {
+            border-bottom: 1px solid rgba(26,45,78,0.08);
+            padding: 14px 0 17px;
+        }
+
+        .sec:last-child { border-bottom: none; padding-bottom: 4px; }
+
+        .sec h2 {
+            font-size: 20px;
+            margin-bottom: 7px;
+            color: var(--primary);
+        }
+
+        .sec p, .sec li {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .sec ul {
+            margin-top: 8px;
+            padding-left: 19px;
+        }
+
+        .sec li { margin-bottom: 5px; }
+
+        .callout {
+            margin-top: 11px;
+            border: 1px solid var(--accent-border);
+            background: rgba(235,178,85,0.1);
+            color: #7A4B12;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: 26px;
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        .footer a:hover { color: var(--secondary); }
+
+        @media (max-width: 860px) {
+            .nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="top">
+        <div class="top-inner">
+            <a href="index.html" class="logo"><i class="fas fa-shield-alt"></i> FairTrust AI</a>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html" class="active">Terms</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="head">
+            <span class="tag"><i class="fas fa-scale-balanced"></i> Terms of Use</span>
+            <h1>Terms of Use for FairTrust-AI</h1>
+            <p class="lead">These Terms define the legal agreement between you and FairTrust-AI for accessing and using our fairness auditing platform and associated tools.</p>
+        </section>
+
+        <section class="content">
+            <article class="sec">
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing or using FairTrust-AI, you agree to these Terms of Use. If you do not agree, you should not use the platform.</p>
+            </article>
+
+            <article class="sec">
+                <h2>2. Description of Service</h2>
+                <p>FairTrust-AI is an AI fairness evaluation platform that helps teams audit models for bias, review explainability outputs, generate stakeholder reports, and plan remediation workflows.</p>
+            </article>
+
+            <article class="sec">
+                <h2>3. User Responsibilities</h2>
+                <ul>
+                    <li>You must upload only lawful data and ensure you have rights to process that data.</li>
+                    <li>You agree not to misuse, disrupt, reverse engineer, or abuse the service.</li>
+                    <li>You are responsible for verifying that your usage aligns with your sector regulations and internal governance obligations.</li>
+                </ul>
+            </article>
+
+            <article class="sec">
+                <h2>4. AI Disclaimer</h2>
+                <p>FairTrust-AI outputs are advisory analytics and governance support signals. They are not legal advice, employment decisions, lending decisions, or binding compliance determinations.</p>
+            </article>
+
+            <article class="sec">
+                <h2>5. Limitation of Liability</h2>
+                <p>We provide the service on an "as available" basis and do not guarantee specific fairness outcomes, business outcomes, or regulatory approvals. To the maximum extent permitted by law, FairTrust-AI is not liable for indirect, incidental, or consequential damages resulting from platform use.</p>
+            </article>
+
+            <article class="sec">
+                <h2>6. Data Responsibility</h2>
+                <p>You retain ownership of uploaded datasets and associated content. You are solely responsible for data quality, legality, and consent handling. FairTrust-AI processes data only to deliver requested service functionality.</p>
+            </article>
+
+            <article class="sec">
+                <h2>7. Termination</h2>
+                <p>We may suspend or terminate access for misuse, unlawful activity, security risk, or violations of these Terms. You may stop using the service at any time.</p>
+            </article>
+
+            <article class="sec">
+                <h2>8. Changes to Terms</h2>
+                <p>We may update these Terms as the product evolves. Updated versions become effective once posted. Continued use after updates indicates acceptance of revised Terms.</p>
+                <div class="callout">If you have compliance-sensitive use-cases, review these Terms during each release cycle and contact us for clarifications.</div>
+            </article>
+        </section>
+
+        <footer class="footer">
+            <div>Last updated: March 2026</div>
+            <div>
+                <a href="contact.html">Contact</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Use</a>
+            </div>
+        </footer>
+    </main>
+</body>
+</html>
