@@ -515,12 +515,13 @@
     const auth = getAuth(app);
 
     // ── Redirect if already logged in ──────────────────────────
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            // User is already signed in → go to upload page
-            window.location.href = "http://127.0.0.1:5000/upload.html";
-        }
-    });
+    // onAuthStateChanged(auth, user => {
+    //     if (user) {
+    //         // User is already signed in → go to upload page
+    //         window.location.href = "http://127.0.0.1:5000/upload.html";
+    //     }
+    // });
+
 
     // ── Friendly error messages ─────────────────────────────────
     function friendlyError(code) {
@@ -596,7 +597,8 @@
             // Save basic user info for display in the app
             sessionStorage.setItem('user_name',  cred.user.displayName || 'User');
             sessionStorage.setItem('user_email', cred.user.email);
-            setTimeout(() => { window.location.href = "http://127.0.0.1:5000/upload.html"; }, 900);
+            setTimeout(() => { window.location.href = "dashboard.html";
+             }, 900);
         } catch (err) {
             showError(friendlyError(err.code));
         } finally {
