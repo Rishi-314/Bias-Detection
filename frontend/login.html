@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — FairTrust</title>
+    <style>
+        :root {
+            --primary: #1A2D4E;
+            --secondary: #EBB255;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #1A2D4E; /* Dark theme to match your index style */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            color: white;
+            text-align: center;
+        }
+
+        .logo { font-size: 24px; font-weight: 800; margin-bottom: 30px; }
+        .logo span { color: var(--secondary); }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--secondary);
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .signup-redirect { margin-top: 20px; font-size: 14px; opacity: 0.8; }
+        .signup-redirect a { color: var(--secondary); text-decoration: none; }
+
+        /* Post-login simulation */
+        #dashboardLink { display: none; margin-top: 20px; }
+        #dashboardLink a { color: #4A90E2; font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo">FAIR<span>TRUST</span></div>
+    <h2>Welcome Back</h2>
+    
+    <div id="loginForm">
+        <input type="email" placeholder="Email Address">
+        <input type="password" placeholder="Password">
+        <button class="btn" onclick="handleLogin()">Login</button>
+        
+        <div class="signup-redirect">
+            Don't have an account? <a href="signUp.html">Sign Up here</a>
+        </div>
+    </div>
+
+    <div id="dashboardLink">
+        <p>Login Successful!</p>
+        <a href="http://127.0.0.1:5000/">Upload Your Project</a>
+    </div>
+</div>
+
+<script>
+    function handleLogin() {
+        // Simple UI toggle for demonstration
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('dashboardLink').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
