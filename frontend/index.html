@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FairTrust AI — Ethical AI Evaluation Framework</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #1A2D4E;
+            --secondary: #EBB255;
+            --accent: #4A90E2;
+            --light-bg: #F8F9FA;
+            --light-text: #5A6169;
+            --white: #FFFFFF;
+            --shadow: 0 10px 30px rgba(26, 45, 78, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --radius: 16px;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+        }
+
+        body {
+            background: var(--white);
+            color: var(--primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── Snap sections ── */
+        .snap-section {
+            scroll-snap-align: start;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 20px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            padding: 15px 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 28px;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(26, 45, 78, 0.2);
+            transition: var(--transition);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .logo-text span { color: var(--secondary); }
+
+        .logo-subtitle {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--secondary);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--primary);
+            position: relative;
+            padding: 8px 0;
+            transition: var(--transition);
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--secondary); }
+        .nav-links a:hover:after { width: 100%; }
+        .nav-links a.active { color: var(--secondary); }
+        .nav-links a.active:after { width: 100%; }
+
+        .nav-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 14px 28px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: var(--transition);
+            background: linear-gradient(135deg, var(--secondary), #d18b1f);
+            color: var(--white);
+            box-shadow: 0 5px 15px rgba(224, 161, 43, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(224, 161, 43, 0.4);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* ================= HERO SECTION ================= */
+        .hero-section {
+            width: 100%;
+            padding: 80px 5% 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section:before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(224, 161, 43, 0.08) 0%, rgba(224, 161, 43, 0) 70%);
+            z-index: 0;
+        }
+
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content { flex: 1; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(235, 178, 85, 0.1);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 24px;
+            border: 1px solid rgba(235, 178, 85, 0.2);
+        }
+
+        .hero-content h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .hero-content h1:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 80px;
+            height: 5px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--light-text);
+            margin-bottom: 36px;
+            max-width: 520px;
+            font-weight: 500;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 16px 32px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary), #2c3e50);
+            color: var(--white);
+            box-shadow: 0 8px 20px rgba(26, 45, 78, 0.3);
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(26, 45, 78, 0.4);
+        }
+
+        .btn-ghost {
+            padding: 16px 32px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid var(--secondary);
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .btn-ghost:hover {
+            background: var(--secondary);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        .hero-visual {
+            flex: 1;
+            position: relative;
+        }
+
+        .floating-tag {
+            position: absolute;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 3;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .floating-tag.tl { top: -20px; left: -30px; animation-delay: 0.2s; }
+        .floating-tag.br { bottom: -20px; right: -30px; animation-delay: 0.5s; }
+
+        .floating-tag i {
+            width: 40px;
+            height: 40px;
+            background: rgba(235, 178, 85, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .score-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(26, 45, 78, 0.12);
+            border: 2px solid rgba(235, 178, 85, 0.15);
+            transition: var(--transition);
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(26, 45, 78, 0.15);
+            border-color: rgba(235, 178, 85, 0.3);
+        }
+
+        .score-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .score-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--light-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-card-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(235, 178, 85, 0.1);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .score-ring-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .score-ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .score-ring svg { transform: rotate(-90deg); }
+
+        .score-ring-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-ring-num {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .score-ring-sub {
+            font-size: 12px;
+            color: var(--light-text);
+            font-weight: 500;
+        }
+
+        .score-dims {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .score-dim { display: flex; align-items: center; gap: 10px; }
+
+        .score-dim-label {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+            width: 130px;
+        }
+
+        .score-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--light-bg);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 100px;
+            background: var(--secondary);
+            transition: width 1s ease;
+        }
+
+        .score-bar-fill.warn { background: #FFB020; }
+        .score-bar-fill.risk { background: #FF5C38; }
+
+        .score-dim-val {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            width: 30px;
+            text-align: right;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* ================= METRICS STRIP ================= */
+        .metrics-strip {
+            background: var(--primary);
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+        }
+
+        .metrics-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            gap: 30px;
+            flex-wrap: wrap;
+            padding: 60px 0;
+        }
+
+        .metric-item {
+            text-align: center;
+            position: relative;
+            padding: 0 30px;
+        }
+
+        .metric-item + .metric-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .metric-num {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .metric-num span { color: var(--secondary); font-size: 24px; }
+
+        .metric-lbl {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* ================= SECTION STYLES ================= */
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+            width: 100%;
+        }
+
+        .section-eyebrow {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--secondary);
+            margin-bottom: 16px;
+        }
+
+        .section-heading {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 16px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-heading:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+
+        .section-sub {
+            font-size: 16px;
+            color: var(--light-text);
+            margin-bottom: 28px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* ================= PROBLEM GRID ================= */
+        .problem-section {
+            background: #F4F6F8;
+            padding: 0 5%;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .problem-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            box-shadow: 0 12px 35px rgba(26, 45, 78, 0.08);
+            transition: var(--transition);
+            border: 2px solid rgba(235, 178, 85, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), #ffce6d);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .problem-card:hover:before { transform: scaleX(1); }
+
+        .problem-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 45px rgba(26, 45, 78, 0.15);
+            border-color: rgba(235, 178, 85, 0.3);
+        }
+
+        .problem-card-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(26, 45, 78, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            color: var(--primary);
+            font-size: 22px;
+            border: 2px solid rgba(235, 178, 85, 0.1);
+            transition: var(--transition);
+        }
+
+        .problem-card:hover .problem-card-icon {
+            background: linear-gradient(135deg, var(--primary), #2a3f65);
+            color: var(--white);
+            transform: rotate(5deg) scale(1.05);
+            border-color: var(--secondary);
+        }
+
+        .problem-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .problem-card p {
+            font-size: 13px;
+            color: var(--light-text);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .stat-highlight {
+            display: block;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-highlight.red { color: #FF5C38; }
+        .stat-highlight.amber { color: #FFB020; }
+
+        /* ================= HOW IT WORKS SECTION ================= */
+        .how-section {
+            background: var(--white);
+            padding: 0 5%;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .step {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid rgba(235, 178, 85, 0.15);
+            transition: var(--transition);
+            position: relative;
+            text-align: center;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 45px rgba(26, 45, 78, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .step-num {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 34px;
+            height: 34px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .step-icon-wrap {
+            width: 64px;
+            height: 64px;
+            background: rgba(235, 178, 85, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            color: var(--secondary);
+            font-size: 26px;
+            border: 2px solid rgba(235, 178, 85, 0.3);
+            transition: var(--transition);
+        }
+
+        .step:hover .step-icon-wrap {
+            background: var(--secondary);
+            color: var(--white);
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .step h3 { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        .step p { font-size: 13px; color: var(--light-text); line-height: 1.5; }
+
+        /* ================= DIMENSIONS SECTION ================= */
+        .dims-section {
+            background: #F4F6F8;
+            padding: 0 5%;
+        }
+
+        .dims-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .dims-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .dim-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px 16px;
+            box-shadow: var(--shadow);
+            border: 2px solid rgba(235, 178, 85, 0.15);
+            transition: var(--transition);
+        }
+
+        .dim-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(26, 45, 78, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .dim-num { font-size: 11px; font-weight: 600; color: var(--secondary); letter-spacing: 1px; margin-bottom: 10px; }
+
+        .dim-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(235, 178, 85, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .dim-card h4 { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+        .dim-card p { font-size: 12px; color: var(--light-text); line-height: 1.4; }
+
+        /* ================= VIDEO SECTION ================= */
+        .video-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #0F1E38 100%);
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-section:before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: -100px;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(235, 178, 85, 0.08) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .video-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .video-section .section-eyebrow { color: var(--secondary); }
+        .video-section .section-heading { color: var(--white); }
+        .video-section .section-heading:after { background: var(--secondary); }
+        .video-section .section-sub { color: rgba(255, 255, 255, 0.6); }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(235, 178, 85, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .video-card iframe {
+            width: 100%;
+            height: 280px;
+            border-radius: 12px;
+            border: none;
+            display: block;
+        }
+
+        .video-card-footer {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+        }
+
+        /* ================= CERT SECTION ================= */
+        .cert-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #0F1E38 100%);
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cert-section:before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: -100px;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(235, 178, 85, 0.08) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .cert-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .cert-section .section-eyebrow { color: var(--secondary); }
+        .cert-section .section-heading { color: var(--white); }
+        .cert-section .section-heading:after { background: var(--secondary); }
+        .cert-section .section-sub { color: rgba(255, 255, 255, 0.6); }
+
+        .cert-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(235, 178, 85, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cert-seal {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .cert-seal i {
+            font-size: 80px;
+            color: var(--secondary);
+            opacity: 0.9;
+        }
+
+        .cert-level-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .cert-level {
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .cert-level:hover { transform: translateY(-3px); }
+
+        .cert-level.pass { background: rgba(235, 178, 85, 0.15); border: 1px solid rgba(235, 178, 85, 0.3); }
+        .cert-level.cond { background: rgba(255, 176, 32, 0.15); border: 1px solid rgba(255, 176, 32, 0.3); }
+        .cert-level.risk { background: rgba(255, 92, 56, 0.15); border: 1px solid rgba(255, 92, 56, 0.3); }
+        .cert-level.fail { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .cert-level-range {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .cert-level.pass .cert-level-range { color: var(--secondary); }
+        .cert-level.cond .cert-level-range { color: #FFB020; }
+        .cert-level.risk .cert-level-range { color: #FF5C38; }
+        .cert-level.fail .cert-level-range { color: rgba(255, 255, 255, 0.6); }
+
+        .cert-level-name { font-size: 13px; font-weight: 500; }
+        .cert-level.pass .cert-level-name { color: var(--secondary); }
+        .cert-level.cond .cert-level-name { color: #FFB020; }
+        .cert-level.risk .cert-level-name { color: #FF5C38; }
+        .cert-level.fail .cert-level-name { color: rgba(255, 255, 255, 0.5); }
+
+        /* ================= FOOTER ================= */
+        .footer {
+            background: #0F1E38;
+            padding: 0 5%;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), #ffce6d);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .footer-brand .logo-mark {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            font-size: 15px;
+            color: #D1D5DB;
+            line-height: 1.6;
+            max-width: 300px;
+        }
+
+        .footer-col h5 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-col h5:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 15px; }
+
+        .footer-col a {
+            color: #D1D5DB;
+            text-decoration: none;
+            font-size: 15px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-col a:hover {
+            color: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .footer-bottom p { color: #9CA3AF; font-size: 14px; }
+
+        .version-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(235, 178, 85, 0.15);
+            border-radius: 50px;
+            color: var(--secondary);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeInUp 0.8s ease-out forwards; }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 1100px) {
+            .hero-content h1, .section-heading { font-size: 36px; }
+            .dims-grid { grid-template-columns: repeat(3, 1fr); }
+            .problem-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 900px) {
+            .hero { flex-direction: column; text-align: center; }
+            .hero-content h1:after, .section-heading:after { left: 50%; transform: translateX(-50%); }
+            .cta-group { justify-content: center; }
+            .nav-links { display: none; }
+            .nav-links.open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0; right: 0;
+                background: var(--white);
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                gap: 15px;
+            }
+            .mobile-menu-btn { display: block; }
+            .problem-grid, .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .dims-grid { grid-template-columns: repeat(2, 1fr); }
+            .cert-inner, .video-inner { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+            .footer-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .footer-brand .logo-mark { justify-content: center; }
+            .footer-col h5:after { left: 50%; transform: translateX(-50%); }
+            .footer-col a { justify-content: center; }
+            .metric-item + .metric-item:before { display: none; }
+            .snap-section { height: auto; min-height: 100vh; }
+        }
+
+        @media (max-width: 640px) {
+            .hero-content h1, .section-heading { font-size: 30px; }
+            .dims-grid, .problem-grid, .steps-grid { grid-template-columns: 1fr; }
+            .cta-group { flex-direction: column; }
+            .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+    <a href="index.html" class="logo">
+        <div class="logo-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <div>
+            <div class="logo-text">Fair<span>Trust</span></div>
+            <div class="logo-subtitle">ETHICAL AI</div>
+        </div>
+    </a>
+
+    <div class="nav-links" id="navLinks">
+        <a href="index.html" class="active">Home</a>
+        <a href="http://127.0.0.1:5000/">Upload</a>
+        <a href="docs.html">Docs</a>
+        <a href="admin.html">Admin</a>
+    </div>
+
+    <div class="nav-actions">
+        <a href="http://127.0.0.1:5000/" class="btn-nav">
+            <i class="fas fa-play-circle"></i> Try Demo
+        </a>
+    </div>
+
+    <button class="mobile-menu-btn" id="mobileBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+</nav>
+
+<!-- ═══ SECTION 1: HERO ══════════════════════════════════════════ -->
+<section class="snap-section hero-section">
+    <div class="hero">
+        <div class="hero-content fade-in">
+            <div class="hero-badge">
+                <i class="fas fa-star"></i>
+                JEDI Ethical AI Framework
+            </div>
+            <h1>AI fairness you<br>can <span style="color: var(--secondary);">prove.</span></h1>
+            <p>FairTrust evaluates, explains, and certifies your AI models across seven bias dimensions — with compliance reports your regulators, developers, and users can all understand.</p>
+            <div class="cta-group">
+                <a href="upload.html" class="btn-primary">
+                    <i class="fas fa-play-circle"></i> Run an Audit
+                </a>
+                <a href="docs.html" class="btn-ghost">
+                    <i class="fas fa-file-alt"></i> Read the Docs
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-visual fade-in delay-1">
+            <div class="floating-tag tl">
+                <i class="fas fa-check-circle"></i>
+                <div><strong>Bias Detected &amp; Fixed</strong></div>
+            </div>
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div>
+                        <div class="score-card-title">Ethical Audit Report</div>
+                        <div style="font-size:13px; color: var(--light-text);">Home Credit Default Dataset</div>
+                    </div>
+                    <div class="score-card-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Conditional Pass
+                    </div>
+                </div>
+                <div class="score-ring-wrap">
+                    <div class="score-ring">
+                        <svg width="140" height="140" viewBox="0 0 140 140">
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="#F4F6F8" stroke-width="12"/>
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="#EBB255" stroke-width="12"
+                                stroke-dasharray="377" stroke-dashoffset="105" stroke-linecap="round"/>
+                        </svg>
+                        <div class="score-ring-label">
+                            <span class="score-ring-num">72</span>
+                            <span class="score-ring-sub">/ 100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="score-dims">
+                    <div class="score-dim">
+                        <span class="score-dim-label">Demographic Parity</span>
+                        <div class="score-bar-track"><div class="score-bar-fill" style="width:82%"></div></div>
+                        <span class="score-dim-val">82</span>
+                    </div>
+                    <div class="score-dim">
+                        <span class="score-dim-label">Equal Opportunity</span>
+                        <div class="score-bar-track"><div class="score-bar-fill" style="width:78%"></div></div>
+                        <span class="score-dim-val">78</span>
+                    </div>
+                    <div class="score-dim">
+                        <span class="score-dim-label">Disparate Impact</span>
+                        <div class="score-bar-track"><div class="score-bar-fill warn" style="width:64%"></div></div>
+                        <span class="score-dim-val">64</span>
+                    </div>
+                    <div class="score-dim">
+                        <span class="score-dim-label">Calibration</span>
+                        <div class="score-bar-track"><div class="score-bar-fill risk" style="width:55%"></div></div>
+                        <span class="score-dim-val">55</span>
+                    </div>
+                </div>
+            </div>
+            <div class="floating-tag br">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div><strong>Proxy Risk: Zip Code</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SECTION 2: METRICS ════════════════════════════════════════ -->
+<div class="metrics-strip">
+    <div class="metrics-inner">
+        <div class="metric-item">
+            <div class="metric-num">7</div>
+            <div class="metric-lbl">Fairness Dimensions</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-num">4</div>
+            <div class="metric-lbl">Evaluation Layers</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-num">70<span>%</span></div>
+            <div class="metric-lbl">AI systems show bias</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-num">0</div>
+            <div class="metric-lbl">Universal standards</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SECTION 3: PROBLEM ════════════════════════════════════════ -->
+<section class="snap-section problem-section">
+    <div class="section-inner">
+        <div class="section-eyebrow fade-in">The Problem</div>
+        <h2 class="section-heading fade-in delay-1">AI is making life-changing decisions. Is yours fair?</h2>
+        <p class="section-sub fade-in delay-1">Hiring, lending, healthcare, criminal justice — hidden bias in AI systems is causing real harm, today. There's no universal standard to prove otherwise.</p>
+
+        <div class="problem-grid">
+            <div class="problem-card fade-in delay-2">
+                <div class="problem-card-icon"><i class="fas fa-users"></i></div>
+                <span class="stat-highlight red">Amazon</span>
+                <h3>Scrapped a hiring AI that penalised women</h3>
+                <p>Resumes containing the word "women's" (e.g. women's chess club) were systematically downranked — learned entirely from historical data.</p>
+            </div>
+            <div class="problem-card fade-in delay-2">
+                <div class="problem-card-icon"><i class="fas fa-university"></i></div>
+                <span class="stat-highlight amber">Banks</span>
+                <h3>Charging minorities higher rates</h3>
+                <p>Loan approval AIs charge higher interest rates or reject minority applicants — even with identical financial profiles.</p>
+            </div>
+            <div class="problem-card fade-in delay-3">
+                <div class="problem-card-icon"><i class="fas fa-chart-line"></i></div>
+                <span class="stat-highlight" style="color: var(--primary);">Hidden</span>
+                <h3>Bias buried deep in model mathematics</h3>
+                <p>The bias is never programmed in — it's learned from historical data. Removing a sensitive column doesn't remove the information.</p>
+            </div>
+            <div class="problem-card fade-in delay-3">
+                <div class="problem-card-icon"><i class="fas fa-gavel"></i></div>
+                <span class="stat-highlight" style="color: #059669;">India</span>
+                <h3>No AI Act. No enforcement. No standard.</h3>
+                <p>Unlike the EU, India has no law requiring companies to prove their AI is fair. FairTrust fills both technical and policy gaps.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SECTION 4: HOW IT WORKS ═══════════════════════════════════ -->
+<section class="snap-section how-section">
+    <div class="section-inner">
+        <div class="section-eyebrow fade-in">How It Works</div>
+        <h2 class="section-heading fade-in delay-1">Six-layer pipeline.<br>One ethical score.</h2>
+        <p class="section-sub fade-in delay-1">Upload your model predictions and dataset. FairTrust handles the rest — from bias detection to compliance certification.</p>
+
+        <div class="steps-grid">
+            <div class="step fade-in delay-2">
+                <div class="step-num">1</div>
+                <div class="step-icon-wrap"><i class="fas fa-cloud-upload-alt"></i></div>
+                <h3>Model Ingestion</h3>
+                <p>Upload your dataset and model predictions. Define sensitive attributes and fairness priorities.</p>
+            </div>
+            <div class="step fade-in delay-2">
+                <div class="step-num">2</div>
+                <div class="step-icon-wrap"><i class="fas fa-search"></i></div>
+                <h3>Bias Detection</h3>
+                <p>Seven fairness dimensions evaluated across four Swiss-cheese layers of analysis.</p>
+            </div>
+            <div class="step fade-in delay-2">
+                <div class="step-num">3</div>
+                <div class="step-icon-wrap"><i class="fas fa-chart-bar"></i></div>
+                <h3>SHAP/LIME Explainability</h3>
+                <p>Individual and group-level feature attribution to make invisible decisions visible.</p>
+            </div>
+            <div class="step fade-in delay-3">
+                <div class="step-num">4</div>
+                <div class="step-icon-wrap"><i class="fas fa-tools"></i></div>
+                <h3>Remediation Engine</h3>
+                <p>Prescribes fixes — rebalancing, proxy removal, recalibration, and fairness-aware thresholds.</p>
+            </div>
+            <div class="step fade-in delay-3">
+                <div class="step-num">5</div>
+                <div class="step-icon-wrap"><i class="fas fa-file-alt"></i></div>
+                <h3>Three Audience Reports</h3>
+                <p>Developer technical analysis, regulator compliance checklist, end-user plain language.</p>
+            </div>
+            <div class="step fade-in delay-3">
+                <div class="step-num">6</div>
+                <div class="step-icon-wrap"><i class="fas fa-certificate"></i></div>
+                <h3>JEDI Certification</h3>
+                <p>Machine-readable certificate for regulators and clients as proof of ethical compliance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SECTION 5: 7 DIMENSIONS ══════════════════════════════════ -->
+<section class="snap-section dims-section">
+    <div class="section-inner">
+        <div class="dims-header">
+            <div>
+                <div class="section-eyebrow fade-in">Evaluation Dimensions</div>
+                <h2 class="section-heading fade-in delay-1" style="margin-bottom:0">Seven angles of fairness</h2>
+            </div>
+            <p class="fade-in delay-1" style="font-size:16px; color:var(--light-text); max-width:350px;">Each dimension independently scored and weighted, combined into a single ethical score.</p>
+        </div>
+
+        <div class="dims-grid">
+            <div class="dim-card fade-in delay-2">
+                <div class="dim-num">DIM 01</div>
+                <div class="dim-icon"><i class="fas fa-user-check"></i></div>
+                <h4>Individual Fairness</h4>
+                <p>Similar individuals are treated similarly by the model, regardless of demographic group.</p>
+            </div>
+            <div class="dim-card fade-in delay-2">
+                <div class="dim-num">DIM 02</div>
+                <div class="dim-icon"><i class="fas fa-users"></i></div>
+                <h4>Group Fairness</h4>
+                <p>Demographic groups receive equitable outcomes across the model's predictions.</p>
+            </div>
+            <div class="dim-card fade-in delay-2">
+                <div class="dim-num">DIM 03</div>
+                <div class="dim-icon"><i class="fas fa-venus-mars"></i></div>
+                <h4>Demographic Bias</h4>
+                <p>Gender, age, race, disability, and socioeconomic bias across all protected attributes.</p>
+            </div>
+            <div class="dim-card fade-in delay-2">
+                <div class="dim-num">DIM 04</div>
+                <div class="dim-icon"><i class="fas fa-balance-scale"></i></div>
+                <h4>Calibration Bias</h4>
+                <p>Model confidence equally reliable across all subgroups — 80% means 80% for everyone.</p>
+            </div>
+            <div class="dim-card fade-in delay-3">
+                <div class="dim-num">DIM 05</div>
+                <div class="dim-icon"><i class="fas fa-chart-pie"></i></div>
+                <h4>Disparate Impact</h4>
+                <p>The 80% rule — minority approval rate must be at least 80% of the majority rate.</p>
+            </div>
+            <div class="dim-card fade-in delay-3">
+                <div class="dim-num">DIM 06</div>
+                <div class="dim-icon"><i class="fas fa-random"></i></div>
+                <h4>Counterfactual Bias</h4>
+                <p>Outcomes shouldn't change if only a sensitive attribute is flipped.</p>
+            </div>
+            <div class="dim-card fade-in delay-3" style="grid-column: span 2;">
+                <div class="dim-num">DIM 07</div>
+                <div class="dim-icon"><i class="fas fa-layer-group"></i></div>
+                <h4>Intersectional Bias</h4>
+                <p>Overlapping disadvantages across multiple identities — invisible to single-dimension analysis.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SECTION 6: VIDEO ══════════════════════════════════════════ -->
+<section class="snap-section video-section">
+    <div class="video-inner">
+        <div class="fade-in">
+            <div class="section-eyebrow">See It In Action</div>
+            <h2 class="section-heading">Watch how FairTrust evaluates AI bias in under 2 minutes</h2>
+            <p class="section-sub">See our six-layer pipeline detect bias, generate explanations, and produce compliance reports — all from a simple CSV upload.</p>
+            <div style="display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap;">
+                <a href="http://127.0.0.1:5000/" class="btn-primary" style="display:inline-flex;">
+                    <i class="fas fa-play-circle"></i> Try It Yourself
+                </a>
+            </div>
+        </div>
+
+        <div class="video-card fade-in delay-1">
+            <iframe
+                src="https://drive.google.com/file/d/17YP_Nl44srQXtgKcQU6mX3hNsC7gjK71/preview"
+                allow="autoplay"
+                allowfullscreen>
+            </iframe>
+            <div class="video-card-footer">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-chart-line" style="color: var(--secondary);"></i>
+                    <span>FairTrust Demo — Bias Detection Walkthrough</span>
+                </div>
+                <div style="display: flex; gap: 10px; font-size:13px; color: rgba(255,255,255,0.5);">
+                    <span><i class="fas fa-clock" style="margin-right:4px;"></i>1:48 min</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SECTION 7: CERTIFICATION (second-to-last) ════════════════ -->
+<section class="snap-section cert-section">
+    <div class="cert-inner">
+        <div class="fade-in">
+            <div class="section-eyebrow">Certification</div>
+            <h2 class="section-heading">A certificate your regulators will accept</h2>
+            <p class="section-sub">Not just a score — a machine-readable compliance artifact. Built for India's emerging AI governance landscape.</p>
+            <a href="http://127.0.0.1:5000/" class="btn-primary" style="margin-top:20px; display:inline-flex;">
+                <i class="fas fa-certificate"></i> Generate Certificate
+            </a>
+        </div>
+
+        <div class="cert-card fade-in delay-1">
+            <div class="cert-seal">
+                <i class="fas fa-certificate"></i>
+            </div>
+            <div style="font-size:14px; font-weight:600; color:var(--secondary); text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">JEDI Certification Levels</div>
+            <div class="cert-level-grid">
+                <div class="cert-level pass">
+                    <div class="cert-level-range">80–100</div>
+                    <div class="cert-level-name">Fully Compliant</div>
+                </div>
+                <div class="cert-level cond">
+                    <div class="cert-level-range">60–79</div>
+                    <div class="cert-level-name">Conditional</div>
+                </div>
+                <div class="cert-level risk">
+                    <div class="cert-level-range">40–59</div>
+                    <div class="cert-level-name">High Risk</div>
+                </div>
+                <div class="cert-level fail">
+                    <div class="cert-level-range">&lt;40</div>
+                    <div class="cert-level-name">Non-Compliant</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SECTION 8: FOOTER (last) ═════════════════════════════════ -->
+<footer class="footer" style="scroll-snap-align: start; padding-top: 60px; padding-bottom: 60px;">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="index.html" class="logo-mark">
+                <div class="logo-icon" style="width: 50px; height: 50px; font-size: 24px;">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <div class="logo-text" style="color: white;">Fair<span style="color: var(--secondary);">Trust</span></div>
+                    <div class="logo-subtitle">ETHICAL AI</div>
+                </div>
+            </a>
+            <p>JEDI Ethical AI Evaluation Framework — test, explain, and certify your AI models for fairness across seven bias dimensions.</p>
+        </div>
+ 
+        <div class="footer-col">
+            <h5>Product</h5>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-chevron-right"></i> Home</a></li>
+                <li><a href="http://127.0.0.1:5000/"><i class="fas fa-chevron-right"></i> Upload &amp; Demo</a></li>
+                <li><a href="docs.html"><i class="fas fa-chevron-right"></i> Documentation</a></li>
+            </ul>
+        </div>
+ 
+        <div class="footer-col">
+            <h5>Resources</h5>
+            <ul>
+                <li><a href="contact.html"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                <li><a href="privacy.html"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                <li><a href="terms.html"><i class="fas fa-chevron-right"></i> Terms of Use</a></li>
+            </ul>
+        </div>
+    </div>
+ 
+    <div class="footer-bottom">
+        <p>© 2026 FairTrust AI Evaluation Framework</p>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span class="version-pill">
+                <i class="fas fa-check-circle"></i> v1.0
+            </span>
+            <span style="font-size: 14px; color: #9CA3AF;">Built for India's AI governance future</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Mobile nav toggle
+    document.getElementById('mobileBtn').addEventListener('click', () => {
+        document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Animate score bars on load
+    window.addEventListener('load', () => {
+        document.querySelectorAll('.score-bar-fill').forEach(bar => {
+            const w = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => { bar.style.width = w; }, 400);
+        });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Fade-in animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>

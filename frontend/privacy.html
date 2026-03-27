@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - FairTrust AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1A2D4E;
+            --secondary: #EBB255;
+            --bg: #FFFFFF;
+            --surface: #FFFFFF;
+            --surface-soft: #F8F9FA;
+            --text: #1A2D4E;
+            --muted: #5A6169;
+            --border: rgba(26, 45, 78, 0.1);
+            --card-border: rgba(235, 178, 85, 0.3);
+            --radius: 14px;
+        }
+
+        body {
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            background: #FFFFFF;
+            color: var(--text);
+            line-height: 1.65;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .topbar-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .logo i { color: var(--secondary); }
+
+        .nav {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav a:hover, .nav a.active { color: var(--secondary); }
+
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 48px 20px 70px;
+        }
+
+        .hero {
+            margin-bottom: 24px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--card-border);
+            background: rgba(235, 178, 85, 0.12);
+            color: var(--secondary);
+            border-radius: 999px;
+            padding: 7px 13px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: clamp(30px, 4vw, 42px);
+            line-height: 1.15;
+            margin-bottom: 9px;
+            letter-spacing: -0.02em;
+        }
+
+        .intro {
+            max-width: 800px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .policy-wrap {
+            margin-top: 26px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 18px;
+        }
+
+        .toc, .content {
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .toc {
+            position: sticky;
+            top: 74px;
+            height: fit-content;
+            padding: 18px;
+        }
+
+        .toc h2 {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .toc a {
+            display: block;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+
+        .toc a:hover { color: var(--secondary); }
+
+        .content {
+            padding: 22px;
+        }
+
+        .section {
+            padding: 14px 0 18px;
+            border-bottom: 1px solid rgba(26, 45, 78, 0.08);
+        }
+
+        .section:last-child { border-bottom: none; padding-bottom: 6px; }
+
+        .section h3 {
+            font-size: 19px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .section p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .section ul {
+            margin-top: 9px;
+            padding-left: 18px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .section li { margin-bottom: 6px; }
+
+        .callout {
+            margin-top: 10px;
+            background: rgba(235, 178, 85, 0.1);
+            border: 1px solid var(--card-border);
+            color: #7A4B12;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: 28px;
+            color: var(--muted);
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        .footer a:hover { color: var(--secondary); }
+
+        @media (max-width: 920px) {
+            .policy-wrap { grid-template-columns: 1fr; }
+            .toc { position: static; }
+            .nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="index.html" class="logo"><i class="fas fa-shield-alt"></i> FairTrust AI</a>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy.html" class="active">Privacy</a>
+                <a href="terms.html">Terms</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <span class="pill"><i class="fas fa-user-shield"></i> Privacy Policy</span>
+            <h1>Privacy Policy for FairTrust-AI</h1>
+            <p class="intro">FairTrust-AI is a bias detection and explainability SaaS platform designed to help teams deploy responsible AI systems. We are committed to transparent data handling and practical privacy protections.</p>
+        </section>
+
+        <section class="policy-wrap">
+            <aside class="toc">
+                <h2>Sections</h2>
+                <a href="#intro">1. Introduction</a>
+                <a href="#collect">2. Data We Collect</a>
+                <a href="#use">3. How We Use Data</a>
+                <a href="#storage">4. Data Storage</a>
+                <a href="#security">5. Data Security</a>
+                <a href="#sharing">6. Data Sharing</a>
+                <a href="#rights">7. User Rights</a>
+                <a href="#cookies">8. Cookies</a>
+                <a href="#compliance">9. Compliance Awareness</a>
+                <a href="#contact">10. Contact</a>
+            </aside>
+
+            <article class="content">
+                <div class="section" id="intro">
+                    <h3>1. Introduction</h3>
+                    <p>FairTrust-AI provides fairness auditing workflows for ML systems, including dataset review, bias detection, SHAP/LIME explainability, and stakeholder reports. This policy explains what information we process and how we protect it while enabling responsible AI governance.</p>
+                </div>
+
+                <div class="section" id="collect">
+                    <h3>2. Data We Collect</h3>
+                    <ul>
+                        <li><strong>Account information:</strong> primarily email address when account features are used.</li>
+                        <li><strong>User-provided datasets:</strong> files uploaded for fairness analysis and report generation.</li>
+                        <li><strong>Minimal usage metadata:</strong> technical logs such as request timing, error traces, and session diagnostics for platform reliability.</li>
+                    </ul>
+                </div>
+
+                <div class="section" id="use">
+                    <h3>3. How We Use Data</h3>
+                    <ul>
+                        <li>Run fairness, bias, and explainability evaluations you request.</li>
+                        <li>Generate developer, regulator, executive, and end-user reports.</li>
+                        <li>Improve product reliability and workflow quality based on aggregate platform behavior, not personal dataset content.</li>
+                    </ul>
+                    <div class="callout">We do NOT use your datasets to train our models.</div>
+                </div>
+
+                <div class="section" id="storage">
+                    <h3>4. Data Storage</h3>
+                    <p>By default, uploaded files are processed in temporary runtime workflows. Where persistence features are enabled, retention is user-controlled and can be minimized or disabled according to your operational needs. Data in transit and at rest should be protected with modern encryption controls.</p>
+                </div>
+
+                <div class="section" id="security">
+                    <h3>5. Data Security</h3>
+                    <ul>
+                        <li>Encryption for data transmission and storage paths where applicable.</li>
+                        <li>Controlled access principles for operational and admin workflows.</li>
+                        <li>Secure processing practices for evaluation jobs and report generation.</li>
+                    </ul>
+                </div>
+
+                <div class="section" id="sharing">
+                    <h3>6. Data Sharing</h3>
+                    <p>We do NOT sell or share user data for advertising or third-party monetization. Data is processed only for service delivery and technical support operations directly tied to your use of FairTrust-AI.</p>
+                </div>
+
+                <div class="section" id="rights">
+                    <h3>7. User Rights</h3>
+                    <ul>
+                        <li>Request access to information associated with your account.</li>
+                        <li>Request deletion of uploaded data where technically feasible.</li>
+                        <li>Control storage preferences where optional retention settings are available.</li>
+                    </ul>
+                </div>
+
+                <div class="section" id="cookies">
+                    <h3>8. Cookies</h3>
+                    <p>FairTrust-AI currently uses no or minimal cookie-based tracking. If cookie use expands in future releases (for example, secure session continuity or analytics), this policy will be updated accordingly.</p>
+                </div>
+
+                <div class="section" id="compliance">
+                    <h3>9. Compliance Awareness</h3>
+                    <p>FairTrust-AI is built with awareness of global privacy expectations including GDPR and CCPA principles. We do not claim blanket legal compliance for every customer context; each organization should validate obligations based on its jurisdiction and data practices.</p>
+                </div>
+
+                <div class="section" id="contact">
+                    <h3>10. Contact</h3>
+                    <p>For privacy inquiries, data requests, or policy clarifications, contact us at <a href="mailto:fairtrustai@gmail.com" style="color: var(--secondary); text-decoration: none;">fairtrustai@gmail.com</a>.</p>
+                </div>
+            </article>
+        </section>
+
+        <footer class="footer">
+            <div>Last updated: March 2026</div>
+            <div>
+                <a href="contact.html">Contact</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Use</a>
+            </div>
+        </footer>
+    </main>
+</body>
+</html>
