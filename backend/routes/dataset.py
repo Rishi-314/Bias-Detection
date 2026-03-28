@@ -9,7 +9,7 @@ import google.generativeai as genai
 from flask import send_file
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key="AIzaSyBy0yxElF8XGifFCjOFX0FO0FbeWzXPdts")
+genai.configure(api_key="AIzaSyAaj7-O56M5bS7ZzFCIUd9AGKgOy3MW3Uo")
 
 dataset_routes = Blueprint("dataset_routes", __name__)
 
