@@ -184,29 +184,7 @@
         .btn-danger { background: var(--red2); border-color: rgba(220,53,69,0.2); color: var(--red); }
         .btn-danger:hover { background: var(--red); color: white; border-color: var(--red); }
 
-        /* ── RANKING ── */
-        .ranking-list { margin-bottom: .875rem; }
-        .ranking-item { display: grid; grid-template-columns: 32px 1fr 1fr 48px 100px; align-items: center; gap: .75rem; padding: .675rem .875rem; background: var(--bg); border: 1.5px solid var(--rule); border-radius: 9px; margin-bottom: .4rem; cursor: grab; transition: all .15s; font-size: .875rem; }
-        .ranking-item:hover { background: var(--gold2); border-color: var(--gold3); }
-        .ranking-item.dragging { opacity: .5; background: var(--gold2); cursor: grabbing; }
-        .rank-number { width: 26px; height: 26px; background: var(--navy); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .75rem; font-family: var(--mono); flex-shrink: 0; }
-        .dimension-name { font-weight: 500; color: var(--text); font-size: .8375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .weight-bar { height: 4px; background: var(--rule); border-radius: 100px; overflow: hidden; }
-        .weight-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #f0c76a); border-radius: 100px; transition: width .2s; }
-        .weight-value { font-weight: 700; color: var(--gold); min-width: 34px; text-align: right; font-size: .8rem; font-family: var(--mono); }
-        .weight-slider { width: 100%; height: 3px; border-radius: 100px; background: var(--rule); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
-        .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; box-shadow: 0 0 0 3px var(--gold2); transition: transform .15s; }
-        .weight-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        .weight-summary { background: var(--bg); padding: .75rem .875rem; border-radius: 9px; margin: .625rem 0 .875rem; border: 1.5px solid var(--rule); }
-        .weight-summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; font-size: .8rem; font-weight: 600; color: var(--text); font-family: var(--mono); }
-        .weight-summary-total { color: var(--gold); font-size: .875rem; }
-        .weight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-        .weight-stat { text-align: center; padding: .45rem; background: var(--surface); border-radius: 7px; border: 1px solid var(--rule); }
-        .weight-stat-label { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-family: var(--mono); }
-        .weight-stat-name { font-size: .775rem; font-weight: 700; color: var(--gold); margin-top: .1rem; }
-        .weight-stat.low .weight-stat-name { color: var(--red); }
-        .weight-stat-val { font-size: .7rem; color: var(--muted); font-family: var(--mono); }
 
         /* ── REPORT CARDS ── */
         .report-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -243,8 +221,7 @@
         .toast.error { background: var(--red2); color: var(--red); border: 1px solid rgba(220,53,69,0.2); }
         .toast.info { background: var(--gold2); color: var(--navy); border: 1px solid var(--gold3); }
 
-        /* hint row */
-        .hint-row { margin-top: .625rem; font-size: .775rem; color: var(--muted); display: flex; align-items: center; gap: .375rem; font-family: var(--mono); }
+
 
         /* animations */
         @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -449,39 +426,7 @@
                 </div>
             </div>
 
-            <!-- Fairness Priorities -->
-            <div class="section-label fade fade-3">Fairness Priorities</div>
-            <div class="section-block fade fade-4">
-                <div class="card-header">
-                    <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
-                    <span class="card-title">Rank Fairness Dimensions</span>
-                </div>
-                <p class="section-desc">Drag to reorder · Adjust sliders to set weights (min 5%)</p>
 
-                <div class="ranking-list" id="rankingList">
-                    <div class="ranking-item" draggable="true" data-value="individualFairness"><span class="rank-number">1</span><span class="dimension-name">Individual Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:25%"></div></div><span class="weight-value">25%</span><input type="range" class="weight-slider" min="5" max="100" value="25" oninput="updateWeights()"></div>
-                    <div class="ranking-item" draggable="true" data-value="groupFairness"><span class="rank-number">2</span><span class="dimension-name">Group Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:20%"></div></div><span class="weight-value">20%</span><input type="range" class="weight-slider" min="5" max="100" value="20" oninput="updateWeights()"></div>
-                    <div class="ranking-item" draggable="true" data-value="demographicParity"><span class="rank-number">3</span><span class="dimension-name">Demographic Parity</span><div class="weight-bar"><div class="weight-fill" style="width:15%"></div></div><span class="weight-value">15%</span><input type="range" class="weight-slider" min="5" max="100" value="15" oninput="updateWeights()"></div>
-                    <div class="ranking-item" draggable="true" data-value="calibrationError"><span class="rank-number">4</span><span class="dimension-name">Calibration</span><div class="weight-bar"><div class="weight-fill" style="width:12%"></div></div><span class="weight-value">12%</span><input type="range" class="weight-slider" min="5" max="100" value="12" oninput="updateWeights()"></div>
-                    <div class="ranking-item" draggable="true" data-value="disparateImpact"><span class="rank-number">5</span><span class="dimension-name">Disparate Impact</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
-                    <div class="ranking-item" draggable="true" data-value="counterfactual"><span class="rank-number">6</span><span class="dimension-name">Counterfactual</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
-                    <div class="ranking-item" draggable="true" data-value="intersectional"><span class="rank-number">7</span><span class="dimension-name">Intersectional</span><div class="weight-bar"><div class="weight-fill" style="width:8%"></div></div><span class="weight-value">8%</span><input type="range" class="weight-slider" min="5" max="100" value="8" oninput="updateWeights()"></div>
-                </div>
-
-                <div class="weight-summary">
-                    <div class="weight-summary-header"><span>Total Weight</span><span class="weight-summary-total" id="totalWeight">100%</span></div>
-                    <div class="weight-grid">
-                        <div class="weight-stat"><div class="weight-stat-label">Highest</div><div class="weight-stat-name" id="highestDim">Individual Fairness</div><div class="weight-stat-val" id="highestVal">25%</div></div>
-                        <div class="weight-stat low"><div class="weight-stat-label">Lowest</div><div class="weight-stat-name" id="lowestDim">Intersectional</div><div class="weight-stat-val" id="lowestVal">8%</div></div>
-                    </div>
-                </div>
-
-                <div class="btn-row">
-                    <button class="btn btn-danger" type="button" onclick="resetRanking()" style="flex:1;"><i class="fas fa-redo-alt"></i> Reset to Default</button>
-                    <button class="btn btn-primary" type="button" onclick="normalizeWeights()" style="flex:1;"><i class="fas fa-bolt"></i> Normalize Weights</button>
-                </div>
-                <div class="hint-row"><i class="fas fa-info-circle" style="color:var(--gold);"></i> Each dimension gets at least 5%. Click Normalize to distribute proportionally.</div>
-            </div>
 
             <!-- Report Type -->
             <div class="section-label fade fade-4">Report Type</div>
@@ -707,67 +652,9 @@ function resetAttrs() {
     updateAttrDisplay();
 }
 
-function updateWeights() {
-    let hi = {name:'',val:-Infinity}, lo = {name:'',val:Infinity}, total = 0;
-    document.querySelectorAll('.ranking-item').forEach(item => {
-        const v = parseInt(item.querySelector('.weight-slider').value);
-        const name = item.querySelector('.dimension-name').textContent;
-        total += v;
-        item.querySelector('.weight-value').textContent = v + '%';
-        item.querySelector('.weight-fill').style.width  = Math.min(v,100) + '%';
-        if (v > hi.val) hi = {name, val:v};
-        if (v < lo.val) lo = {name, val:v};
-    });
-    document.getElementById('totalWeight').textContent = total + '%';
-    document.getElementById('highestDim').textContent  = hi.name;
-    document.getElementById('highestVal').textContent  = hi.val + '%';
-    document.getElementById('lowestDim').textContent   = lo.name;
-    document.getElementById('lowestVal').textContent   = lo.val + '%';
-}
-
 function getWeights() {
-    const w = {};
-    document.querySelectorAll('.ranking-item').forEach(item => { w[item.dataset.value] = parseInt(item.querySelector('.weight-slider').value); });
-    return w;
+    return { individualFairness:25, groupFairness:20, demographicParity:15, calibrationError:12, disparateImpact:10, counterfactual:10, intersectional:8 };
 }
-
-function normalizeWeights() {
-    const sls = Array.from(document.querySelectorAll('.weight-slider'));
-    const raw = sls.map(sl => parseInt(sl.value));
-    const total = raw.reduce((s,v) => s+v, 0);
-    if (!total) return;
-    const proportional = raw.map(v => Math.max(5, Math.floor(v / total * 100)));
-    let remainder = 100 - proportional.reduce((s,v) => s+v, 0);
-    if (remainder < 0) {
-        const order = proportional.map((v,i)=>({i,v})).sort((a,b)=>b.v-a.v);
-        for (const {i} of order) { if (remainder===0) break; const reduce=Math.min(proportional[i]-5,-remainder); proportional[i]-=reduce; remainder+=reduce; }
-    } else if (remainder > 0) {
-        const fracs = raw.map((v,i)=>({i,frac:(v/total*100)-Math.floor(v/total*100)})).sort((a,b)=>b.frac-a.frac);
-        for (let k=0;k<remainder;k++) proportional[fracs[k%fracs.length].i]++;
-    }
-    sls.forEach((sl,i) => { sl.value = proportional[i]; });
-    updateWeights();
-    toast('Weights normalized to 100%', 'info');
-}
-
-const DEFAULTS = [25,20,15,12,10,10,8];
-function resetRanking() { document.querySelectorAll('.weight-slider').forEach((sl,i) => sl.value = DEFAULTS[i]); updateWeights(); toast('Weights reset', 'info'); }
-
-// Drag reorder
-(function() {
-    let drag = null;
-    const list = document.getElementById('rankingList');
-    list.addEventListener('dragstart', e => { drag = e.target.closest('.ranking-item'); if (drag) drag.classList.add('dragging'); });
-    list.addEventListener('dragend', () => { if (drag) drag.classList.remove('dragging'); drag = null; renum(); });
-    list.addEventListener('dragover', e => {
-        e.preventDefault();
-        const tgt = e.target.closest('.ranking-item');
-        if (!tgt || tgt === drag) return;
-        const mid = tgt.getBoundingClientRect().top + tgt.getBoundingClientRect().height / 2;
-        list.insertBefore(drag, e.clientY < mid ? tgt : tgt.nextSibling);
-    });
-    function renum() { document.querySelectorAll('.ranking-item .rank-number').forEach((el,i) => el.textContent = i+1); }
-})();
 
 function selectReport(type) {
     S.selectedReport = type;
