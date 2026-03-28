@@ -778,15 +778,13 @@
         .dim-card p { font-size: 12px; color: var(--light-text); line-height: 1.4; }
 
         /* ================= VIDEO SECTION ================= */
-        /* ================= VIDEO SECTION ================= */
         .video-section {
-            background: var(--white); /* Changed from gradient to white */
+            background: var(--white);
             padding: 0 5%;
             position: relative;
             overflow: hidden;
         }
 
-        /* Adjusted the decorative circle to be visible on white */
         .video-section:before {
             content: '';
             position: absolute;
@@ -811,18 +809,17 @@
             width: 100%;
         }
 
-        /* Text colors updated to be readable on white */
         .video-section .section-eyebrow { color: var(--secondary); }
-        .video-section .section-heading { color: var(--primary); } /* Changed from white to primary */
+        .video-section .section-heading { color: var(--primary); }
         .video-section .section-heading:after { background: var(--secondary); }
-        .video-section .section-sub { color: var(--light-text); } /* Changed from transparent white to light-text */
+        .video-section .section-sub { color: var(--light-text); }
 
         .video-card {
-            background: var(--white); /* Changed from semi-transparent */
+            background: var(--white);
             border: 2px solid rgba(235, 178, 85, 0.2);
             border-radius: 20px;
             padding: 20px;
-            box-shadow: var(--shadow); /* Added shadow for depth on white background */
+            box-shadow: var(--shadow);
         }
 
         .video-card iframe {
@@ -838,7 +835,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: var(--primary); /* Changed from white to primary */
+            color: var(--primary);
         }
 
         /* ================= CERT SECTION ================= */
@@ -1051,6 +1048,106 @@
             font-weight: 600;
         }
 
+        /* ================= CHATBOT STYLES ================= */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(26, 45, 78, 0.3);
+            z-index: 999;
+            transition: var(--transition);
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(26, 45, 78, 0.4);
+        }
+
+        .chat-button.active {
+            background: linear-gradient(135deg, #FF5C38, #FFB020);
+        }
+
+        .chat-popup {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 420px;
+            height: 600px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(26, 45, 78, 0.15);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 999;
+            border: 1px solid rgba(235, 178, 85, 0.2);
+        }
+
+        .chat-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .chat-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chat-close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .chat-body {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 0;
+        }
+
+        .chat-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         /* ================= ANIMATIONS ================= */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -1096,6 +1193,13 @@
             .footer-col a { justify-content: center; }
             .metric-item + .metric-item:before { display: none; }
             .snap-section { height: auto; min-height: 100vh; }
+            .chat-popup {
+                width: 90%;
+                height: 70vh;
+                bottom: 80px;
+                right: 5%;
+                left: 5%;
+            }
         }
 
         @media (max-width: 640px) {
@@ -1104,6 +1208,17 @@
             .cta-group { flex-direction: column; }
             .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
             .footer-bottom { flex-direction: column; text-align: center; }
+            .chat-button {
+                bottom: 20px;
+                right: 20px;
+            }
+            .chat-popup {
+                width: 95%;
+                height: 75vh;
+                bottom: 75px;
+                right: 2.5%;
+                left: 2.5%;
+            }
         }
     </style>
     
@@ -1124,8 +1239,7 @@
 
     <div class="nav-links" id="navLinks">
         <a href="index.html" class="active">Home</a>
-        <!-- <a href="http://127.0.0.1:5000/">Upload</a> -->
-         <a href="aboutUs.html">Where AI Goes Wrong</a>
+        <a href="aboutUs.html">Where AI Goes Wrong</a>
         <a href="docs.html">Docs</a>
         <a href="admin.html">Admin</a>
     </div>
@@ -1152,9 +1266,6 @@
             <h1>AI fairness you<br>can <span style="color: var(--secondary);">prove.</span></h1>
             <p>FairTrust evaluates, explains, and certifies your AI models across seven bias dimensions — with compliance reports your regulators, developers, and users can all understand.</p>
             <div class="cta-group">
-                <!-- <a href="upload.html" class="btn-primary">
-                    <i class="fas fa-play-circle"></i> Run an Audit
-                </a> -->
                 <a href="docs.html" class="btn-ghost">
                     <i class="fas fa-file-alt"></i> Read the Docs
                 </a>
@@ -1243,10 +1354,6 @@
     </div>
 </div>
 
-
-
-
-
 <!-- ═══ SECTION 6: VIDEO ══════════════════════════════════════════ -->
 <section class="snap-section video-section">
     <div class="video-inner">
@@ -1280,7 +1387,7 @@
     </div>
 </section>
 
-<!-- ═══ SECTION 7: CERTIFICATION (second-to-last) ════════════════ -->
+<!-- ═══ SECTION 7: CERTIFICATION ════════════════════════════════════ -->
 <section class="snap-section cert-section">
     <div class="cert-inner">
         <div class="fade-in">
@@ -1319,7 +1426,32 @@
     </div>
 </section>
 
-<!-- ═══ SECTION 8: FOOTER (last) ═════════════════════════════════ -->
+<!-- ═══ CHATBOT POPUP ════════════════════════════════════════════ -->
+<button class="chat-button" id="chatButton" title="Open chat">
+    <i class="fas fa-comments"></i>
+</button>
+
+<div class="chat-popup" id="chatPopup">
+    <div class="chat-header">
+        <h3>
+            <i class="fas fa-robot"></i>
+            Chat with us
+        </h3>
+        <button class="chat-close-btn" id="chatCloseBtn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="chat-body">
+        <iframe 
+            src="https://www.chatbase.co/chatbot-iframe/YOUR_CHATBOT_ID" 
+            width="100%" 
+            height="100%" 
+            frameborder="0">
+        </iframe>
+    </div>
+</div>
+
+<!-- ═══ SECTION 8: FOOTER ════════════════════════════════════════ -->
 <footer class="footer" style="scroll-snap-align: start; padding-top: 60px; padding-bottom: 60px;">
     <div class="footer-inner">
         <div class="footer-brand">
@@ -1365,11 +1497,33 @@
     </div>
 </footer>
 
-
 <script>
     // Mobile nav toggle
     document.getElementById('mobileBtn').addEventListener('click', () => {
         document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Chat popup functionality
+    const chatButton = document.getElementById('chatButton');
+    const chatPopup = document.getElementById('chatPopup');
+    const chatCloseBtn = document.getElementById('chatCloseBtn');
+
+    chatButton.addEventListener('click', () => {
+        chatPopup.classList.toggle('active');
+        chatButton.classList.toggle('active');
+    });
+
+    chatCloseBtn.addEventListener('click', () => {
+        chatPopup.classList.remove('active');
+        chatButton.classList.remove('active');
+    });
+
+    // Close popup when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!chatButton.contains(e.target) && !chatPopup.contains(e.target)) {
+            chatPopup.classList.remove('active');
+            chatButton.classList.remove('active');
+        }
     });
 
     // Animate score bars on load
