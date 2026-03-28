@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Preprocess Dataset — FairTrust AI</title>
+<<<<<<< Updated upstream
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -77,11 +78,613 @@ button {
 .warn { background:#FFFBEB; }
 .error { background:#FFF1EE; }
 
+=======
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #1A2D4E;
+    --secondary: #EBB255;
+    --bg: #F5F6FA;
+    --surface: #FFFFFF;
+    --rule: #E4E7F0;
+    --muted: #6B7594;
+    --success: #00C896;
+    --danger: #FF5C38;
+    --sidebar-w: 240px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--primary);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+    width: var(--sidebar-w);
+    background: var(--primary);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.logo-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--secondary);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.logo-text {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #fff;
+}
+.logo-text span { color: var(--secondary); }
+
+.sidebar-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    padding: 0 0.75rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.sidebar-greeting {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+    padding: 0 0.75rem;
+    margin-bottom: 0.6rem;
+}
+
+.user-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.avatar {
+    width: 32px; height: 32px;
+    background: var(--secondary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.nav-item.active {
+    background: rgba(235,178,85,0.15);
+    color: var(--secondary);
+}
+.nav-item i { width: 18px; text-align: center; font-size: 0.9rem; }
+
+/* ── TOPBAR ── */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-w);
+    right: 0;
+    height: 60px;
+    background: var(--surface);
+    border-bottom: 1.5px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 2rem;
+    gap: 1rem;
+    z-index: 90;
+}
+
+.topbar a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+}
+.topbar a:hover { color: var(--primary); }
+
+.api-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ECFDF5;
+    color: #059669;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid #A7F3D0;
+}
+
+.api-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--success);
+    border-radius: 50%;
+}
+
+/* ── MAIN ── */
+.main {
+    margin-left: var(--sidebar-w);
+    margin-top: 60px;
+    flex: 1;
+    padding: 2.5rem 2.5rem;
+    max-width: 900px;
+}
+
+/* ── HERO BANNER ── */
+.hero {
+    background: var(--primary);
+    border-radius: 18px;
+    padding: 2.5rem 2.5rem 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: rgba(235,178,85,0.08);
+}
+
+.powered-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(235,178,85,0.15);
+    color: var(--secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(235,178,85,0.3);
+    margin-bottom: 1.25rem;
+}
+
+.hero h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+}
+
+.hero h1 span {
+    color: var(--secondary);
+    font-style: italic;
+}
+
+.hero p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    max-width: 480px;
+    line-height: 1.6;
+}
+
+/* ── HOW IT WORKS ── */
+.how-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 1rem;
+    margin-top: 1.75rem;
+}
+
+.steps-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.step-card {
+    background: var(--surface);
+    border: 1.5px solid var(--rule);
+    border-radius: 14px;
+    padding: 1.25rem 1.25rem 1rem;
+    border-top: 3px solid var(--rule);
+    transition: box-shadow 0.2s;
+}
+
+.step-card.blue  { border-top-color: #3B82F6; }
+.step-card.amber { border-top-color: var(--secondary); }
+.step-card.green { border-top-color: var(--success); }
+
+.step-card:hover { box-shadow: 0 4px 18px rgba(26,45,78,0.08); }
+
+.step-num {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.step-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.step-card.blue  .step-icon { background: #EFF6FF; color: #3B82F6; }
+.step-card.amber .step-icon { background: #FFFBEB; color: var(--secondary); }
+.step-card.green .step-icon { background: #ECFDF5; color: var(--success); }
+
+.step-card h4 {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--primary);
+}
+
+.step-card p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-label::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 14px;
+    background: var(--secondary);
+    border-radius: 4px;
+}
+
+/* ── CARDS ── */
+.card {
+    background: var(--surface);
+    border: 1.5px solid var(--rule);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.card-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    background: #EFF6FF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    color: #3B82F6;
+}
+
+.card-icon.amber { background: #FFFBEB; color: var(--secondary); }
+.card-icon.green { background: #ECFDF5; color: var(--success); }
+
+.tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #F0F4FF;
+    color: #3B82F6;
+    border: 1px solid #DBEAFE;
+}
+
+.tag.amber { background: #FFFBEB; color: #D97706; border-color: #FDE68A; }
+.tag.green { background: #ECFDF5; color: #059669; border-color: #A7F3D0; }
+
+/* ── DROP ZONE ── */
+.dropzone {
+    border: 2px dashed var(--rule);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
+    position: relative;
+}
+
+.dropzone:hover, .dropzone.drag-over {
+    border-color: #3B82F6;
+    background: #EFF6FF;
+}
+
+.dropzone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.dropzone-icon {
+    font-size: 1.6rem;
+    color: #3B82F6;
+    margin-bottom: 0.5rem;
+}
+
+.dropzone p {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.dropzone p span {
+    color: #3B82F6;
+    font-weight: 600;
+}
+
+.dropzone small {
+    display: block;
+    font-size: 0.72rem;
+    color: #B0BAD3;
+    margin-top: 4px;
+}
+
+/* File selected state */
+.file-selected {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: #EFF6FF;
+    border: 1.5px solid #DBEAFE;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+}
+
+.file-selected i { color: #3B82F6; font-size: 1.1rem; }
+
+.file-selected-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--primary);
+    flex: 1;
+}
+
+.file-selected-size {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+/* ── BUTTONS ── */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.15s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+.btn-primary:hover { background: #162540; }
+
+.btn-amber {
+    background: var(--secondary);
+    color: var(--primary);
+}
+.btn-amber:hover { background: #e0a73e; }
+
+.btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--rule);
+    color: var(--muted);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+.btn-success:hover { background: #00b085; }
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ── STATUS ── */
+.status-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+.status-bar.ok    { background: #ECFDF5; color: #065F46; border: 1.5px solid #A7F3D0; }
+.status-bar.warn  { background: #FFFBEB; color: #92400E; border: 1.5px solid #FDE68A; }
+.status-bar.error { background: #FFF1EE; color: #9A3412; border: 1.5px solid #FEC9BB; }
+.status-bar.info  { background: #EFF6FF; color: #1E40AF; border: 1.5px solid #BFDBFE; }
+
+/* ── TEXTAREA ── */
+.filter-textarea {
+    width: 100%;
+    height: 100px;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--rule);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--primary);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s;
+    background: var(--bg);
+}
+
+.filter-textarea:focus { border-color: var(--secondary); }
+
+.textarea-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+    display: none;
+    background: #0F1A2A;
+    color: #93C5FD;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    border: 1.5px solid #1E3A5F;
+}
+
+/* ── PREVIEW RESULT ── */
+.preview-result {
+    display: none;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+}
+
+.preview-result.ok    { background: #ECFDF5; border: 1.5px solid #A7F3D0; }
+.preview-result.error { background: #FFF1EE; border: 1.5px solid #FEC9BB; }
+
+.preview-stat {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.preview-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+/* ── APPLY CARD INFO ── */
+.apply-info {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* ── SPINNER ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.7s linear infinite; display: inline-block; }
+>>>>>>> Stashed changes
 </style>
 </head>
 
 <body>
 
+<<<<<<< Updated upstream
 <div class="container">
 
 <h1>Preprocess Dataset</h1>
@@ -132,6 +735,159 @@ Filter your dataset using natural language before fairness evaluation
 </div>
 
 </div>
+=======
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">🛡</div>
+        <div class="logo-text"><span>Fair</span>Trust</div>
+    </div>
+
+    <div class="sidebar-greeting">Good to see you</div>
+    <div class="user-row">
+        <div class="avatar">EA</div>
+        <div class="user-name">Enterprise Account</div>
+    </div>
+
+    <div class="sidebar-label">Navigation</div>
+
+    <a class="nav-item" href="#"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-upload"></i> Upload</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-code-compare"></i> Version Compare</a>
+    <a class="nav-item active" href="#"><i class="fa-solid fa-wand-magic-sparkles"></i> Preprocess</a>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+    <a href="#">Upload</a>
+    <a href="#">Compare</a>
+    <div class="api-badge">API Online</div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="powered-badge">
+            <i class="fa-solid fa-bolt"></i> Powered by Gemini AI
+        </div>
+        <h1>Dataset Refinement.<br><span>With Natural Language.</span></h1>
+        <p>Filter and clean your dataset using plain English before running a fairness evaluation. Describe what you want — Gemini generates the code.</p>
+
+        <div class="how-label">How it works</div>
+    </div>
+
+    <!-- HOW IT WORKS STEPS -->
+    <div class="steps-row">
+        <div class="step-card blue">
+            <div class="step-num">Step 01</div>
+            <div class="step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <h4>Upload Dataset</h4>
+            <p>Upload your CSV file. It will be stored securely for processing.</p>
+        </div>
+        <div class="step-card amber">
+            <div class="step-num">Step 02</div>
+            <div class="step-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <h4>Describe the Filter</h4>
+            <p>Tell Gemini what to keep in plain English. It generates the exact filter code.</p>
+        </div>
+        <div class="step-card green">
+            <div class="step-num">Step 03</div>
+            <div class="step-icon"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+            <h4>Apply &amp; Download</h4>
+            <p>Preview the filtered rows, then apply and download the cleaned dataset.</p>
+        </div>
+    </div>
+
+    <!-- SECTION 1: UPLOAD -->
+    <div class="section-label">1 — Upload Dataset</div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon"><i class="fa-regular fa-file-csv"></i></div>
+                Upload a CSV file
+            </div>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept=".csv" onchange="onFileSelect(this)">
+            <div class="dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <p><span>Click to browse</span> or drag & drop</p>
+            <small>CSV files only · Max 50MB</small>
+        </div>
+
+        <div class="file-selected" id="fileSelected">
+            <i class="fa-solid fa-file-csv"></i>
+            <span class="file-selected-name" id="fileName">—</span>
+            <span class="file-selected-size" id="fileSize"></span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="uploadDataset()">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Dataset
+            </button>
+        </div>
+
+        <div class="status-bar" id="uploadStatus"></div>
+    </div>
+
+    <!-- SECTION 2: FILTER -->
+    <div class="section-label">2 — Describe Your Filter</div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon amber"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                Natural Language Filter
+            </div>
+            <span class="tag amber">Gemini AI</span>
+        </div>
+
+        <div class="textarea-label">Describe what rows to keep</div>
+        <textarea class="filter-textarea" id="promptBox"
+            placeholder="e.g. Keep only female candidates aged 25–35 with a credit score above 650"></textarea>
+
+        <div class="btn-row">
+            <button class="btn btn-amber" onclick="generateCode()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Filter
+            </button>
+            <button class="btn btn-outline" onclick="previewFilter()">
+                <i class="fa-regular fa-eye"></i> Preview
+            </button>
+        </div>
+
+        <div class="code-block" id="codeBlock"></div>
+
+        <div class="preview-result" id="previewBox"></div>
+    </div>
+
+    <!-- SECTION 3: APPLY -->
+    <div class="section-label">3 — Apply &amp; Download</div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                Apply Filter
+            </div>
+            <span class="tag green">Final step</span>
+        </div>
+
+        <p class="apply-info">
+            Once happy with the preview, apply the filter and download your cleaned dataset ready for fairness evaluation.
+        </p>
+
+        <button class="btn btn-success" onclick="applyFilter()">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Apply &amp; Download
+        </button>
+
+        <div class="status-bar" id="applyStatus"></div>
+    </div>
+
+</main>
+>>>>>>> Stashed changes
 
 <script>
 const API = "http://127.0.0.1:5000";
@@ -142,6 +898,7 @@ let datasetId = params.get("dataset_id") || null;
 
 let filterCode = "";
 
+<<<<<<< Updated upstream
 // 🧠 helper
 function requireDataset() {
     if (!datasetId) {
@@ -226,11 +983,117 @@ async function generateCode() {
 async function previewFilter() {
     if (!requireDataset() || !filterCode) {
         alert("Generate filter first");
+=======
+function requireDataset() {
+    if (!datasetId) {
+        showStatus("uploadStatus", "error", "⚠️ Please upload a dataset first.");
+        return false;
+    }
+    return true;
+}
+
+function showStatus(id, type, html) {
+    const el = document.getElementById(id);
+    el.className = `status-bar ${type}`;
+    el.innerHTML = html;
+    el.style.display = "flex";
+}
+
+function onFileSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const sel = document.getElementById("fileSelected");
+    document.getElementById("fileName").textContent = file.name;
+    document.getElementById("fileSize").textContent = (file.size / 1024).toFixed(1) + " KB";
+    sel.style.display = "flex";
+}
+
+// Drag & drop
+const dz = document.getElementById("dropzone");
+dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("drag-over"); });
+dz.addEventListener("dragleave", () => dz.classList.remove("drag-over"));
+dz.addEventListener("drop", e => {
+    e.preventDefault();
+    dz.classList.remove("drag-over");
+    const file = e.dataTransfer.files[0];
+    if (file) {
+        document.getElementById("fileInput").files = e.dataTransfer.files;
+        onFileSelect(document.getElementById("fileInput"));
+    }
+});
+
+// ── UPLOAD
+async function uploadDataset() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+        showStatus("uploadStatus", "warn", "⚠️ Please select a CSV file first.");
+        return;
+    }
+
+    showStatus("uploadStatus", "info", '<i class="fa-solid fa-spinner spin"></i> Uploading…');
+
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`${API}/datasets`, { method: "POST", body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload failed");
+
+        datasetId = data.dataset_id;
+        showStatus("uploadStatus", "ok",
+            `<i class="fa-solid fa-circle-check"></i> Uploaded <strong>${data.records}</strong> rows successfully.`);
+    } catch (err) {
+        showStatus("uploadStatus", "error", `<i class="fa-solid fa-circle-xmark"></i> ${err.message}`);
+    }
+}
+
+// ── GENERATE
+async function generateCode() {
+    if (!requireDataset()) return;
+
+    const prompt = document.getElementById("promptBox").value;
+    if (!prompt.trim()) {
+        alert("Please enter a filter description.");
+        return;
+    }
+
+    const btn = event.currentTarget;
+    btn.innerHTML = '<i class="fa-solid fa-spinner spin"></i> Generating…';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API}/datasets/${datasetId}/generate-filter`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        filterCode = data.code;
+        const block = document.getElementById("codeBlock");
+        block.style.display = "block";
+        block.textContent = filterCode;
+    } catch (err) {
+        alert("❌ Gemini failed: " + err.message);
+    } finally {
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Filter';
+        btn.disabled = false;
+    }
+}
+
+// ── PREVIEW
+async function previewFilter() {
+    if (!requireDataset() || !filterCode) {
+        alert("Please generate a filter first.");
+>>>>>>> Stashed changes
         return;
     }
 
     try {
         const res = await fetch(`${API}/datasets/${datasetId}/filter-preview`, {
+<<<<<<< Updated upstream
             method:"POST",
             headers:{ "Content-Type":"application/json" },
             body: JSON.stringify({ filter_code: filterCode })
@@ -238,12 +1101,20 @@ async function previewFilter() {
 
         const data = await res.json();
 
+=======
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filter_code: filterCode })
+        });
+        const data = await res.json();
+>>>>>>> Stashed changes
         if (!res.ok) throw new Error(data.error);
 
         const box = document.getElementById("previewBox");
         box.style.display = "block";
 
         if (data.rows_after === 0) {
+<<<<<<< Updated upstream
             box.className = "card preview error";
             box.innerHTML = `❌ No rows match<br>${data.suggestion || ""}`;
             return;
@@ -255,11 +1126,23 @@ async function previewFilter() {
             from ${data.rows_before} (${data.pct_retained}% retained)
         `;
 
+=======
+            box.className = "preview-result error";
+            box.innerHTML = `<div style="font-weight:600;color:#9A3412;">❌ No rows match this filter</div>
+                <div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">${data.suggestion || "Try a different description."}</div>`;
+        } else {
+            box.className = "preview-result ok";
+            box.innerHTML = `
+                <div class="preview-stat">${data.rows_after} <span style="font-size:1rem;color:var(--muted)">rows</span></div>
+                <div class="preview-sub">retained from ${data.rows_before} total &nbsp;·&nbsp; ${data.pct_retained}% kept</div>`;
+        }
+>>>>>>> Stashed changes
     } catch (err) {
         alert("❌ Preview failed: " + err.message);
     }
 }
 
+<<<<<<< Updated upstream
 // ✅ APPLY
 async function applyFilter() {
     if (!requireDataset() || !filterCode) {
@@ -288,6 +1171,32 @@ async function applyFilter() {
 
     } catch (err) {
         alert("❌ Apply failed: " + err.message);
+=======
+// ── APPLY
+async function applyFilter() {
+    if (!requireDataset() || !filterCode) {
+        alert("Please generate a filter first.");
+        return;
+    }
+
+    showStatus("applyStatus", "info", '<i class="fa-solid fa-spinner spin"></i> Applying filter…');
+
+    try {
+        const res = await fetch(`${API}/datasets/${datasetId}/filter-apply`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filter_code: filterCode, description: "custom filter" })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        showStatus("applyStatus", "ok",
+            `<i class="fa-solid fa-circle-check"></i> Filter applied: <strong>${data.rows_after}</strong> rows. Downloading…`);
+
+        window.location.href = `${API}/datasets/${data.filtered_dataset_id}/download`;
+    } catch (err) {
+        showStatus("applyStatus", "error", `<i class="fa-solid fa-circle-xmark"></i> ${err.message}`);
+>>>>>>> Stashed changes
     }
 }
 </script>
