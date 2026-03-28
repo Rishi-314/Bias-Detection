@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Version Comparison — FairTrust AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0C1B33;--navy2:#152645;--navy3:#1E3461;
+  --gold:#D4A943;--gold2:rgba(212,169,67,0.15);--gold3:rgba(212,169,67,0.3);
+  --red:#DC3545;--red2:rgba(220,53,69,0.1);--red3:rgba(220,53,69,0.25);
+  --green:#198754;--green2:rgba(25,135,84,0.1);--green3:rgba(25,135,84,0.25);
+  --amber:#E08C2A;--amber2:rgba(224,140,42,0.1);--amber3:rgba(224,140,42,0.25);
+  --blue:#2563EB;--blue2:rgba(37,99,235,0.1);--blue3:rgba(37,99,235,0.25);
+  --bg:#F2F4F8;--bg2:#E8EBF2;--surface:#FFF;--rule:#DDE1EC;
+  --text:#0C1B33;--muted:#5A6478;
+  --mono:'DM Mono',monospace;--display:'Fraunces',serif;--body:'DM Sans',sans-serif;
+  --r:10px;--r-lg:14px;
+  --sh:0 2px 10px rgba(12,27,51,0.07);--sh-md:0 6px 24px rgba(12,27,51,0.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
+
+/* NAV */
+.navbar{position:sticky;top:0;z-index:200;background:rgba(12,27,51,0.97);backdrop-filter:blur(12px);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-icon{width:30px;height:30px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--navy)}
+.logo-name{font-family:var(--display);font-size:16px;font-weight:700;color:white}
+.logo-name span{color:var(--gold)}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:13px;font-weight:400;color:rgba(255,255,255,0.5);text-decoration:none;padding:5px 10px;border-radius:6px;transition:all .15s}
+.nav-links a:hover{color:white;background:rgba(255,255,255,0.08)}
+.nav-links a.active{color:var(--gold);background:rgba(212,169,67,0.12)}
+
+/* LAYOUT */
+.page{max-width:1260px;margin:0 auto;padding:2rem 2rem 5rem}
+
+/* PAGE HEADER */
+.page-head{margin-bottom:1.75rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.page-head h1{font-family:var(--display);font-size:2rem;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:.25rem}
+.page-head p{font-size:.9rem;color:var(--muted)}
+.head-badge{display:inline-flex;align-items:center;gap:5px;background:var(--gold2);border:1px solid var(--gold3);color:var(--gold);font-family:var(--mono);font-size:10px;font-weight:500;padding:4px 10px;border-radius:999px}
+
+/* SELECTOR AREA */
+.selector-panel{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:1.5rem;box-shadow:var(--sh);margin-bottom:1.5rem}
+.selector-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:end}
+.sel-col label{display:block;font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.5rem}
+.sel-col select{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:var(--r);background:var(--bg);font-family:var(--body);font-size:.875rem;color:var(--text);outline:none;cursor:pointer;transition:border-color .15s}
+.sel-col select:focus{border-color:var(--gold)}
+.sel-vs{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--navy);color:var(--gold);font-family:var(--mono);font-size:11px;font-weight:500;margin-bottom:0;flex-shrink:0}
+.compare-btn{display:flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border:none;border-radius:var(--r);font-family:var(--body);font-size:.875rem;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;margin-left:auto;margin-top:1rem}
+.compare-btn:hover{background:var(--navy2);transform:translateY(-1px)}
+.compare-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* TABS */
+.tab-row{display:flex;gap:0;border-bottom:1px solid var(--rule);margin-bottom:1.5rem}
+.tab{padding:.625rem 1.25rem;font-size:.875rem;font-weight:400;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--body)}
+.tab:hover{color:var(--navy)}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:500}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:.75rem;color:var(--muted)}
+.spin{font-size:1.5rem;color:var(--gold);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* VERDICT BANNER */
+.verdict-banner{border-radius:var(--r-lg);padding:1.5rem;margin-bottom:1.5rem;display:flex;gap:1.25rem;align-items:flex-start}
+.verdict-banner.improvement{background:var(--green2);border:1px solid var(--green3)}
+.verdict-banner.regression{background:var(--red2);border:1px solid var(--red3)}
+.verdict-banner.neutral{background:var(--blue2);border:1px solid var(--blue3)}
+.vb-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.verdict-banner.improvement .vb-icon{background:var(--green3);color:var(--green)}
+.verdict-banner.regression .vb-icon{background:var(--red3);color:var(--red)}
+.verdict-banner.neutral .vb-icon{background:var(--blue3);color:var(--blue)}
+.vb-title{font-weight:500;font-size:1rem;color:var(--text);margin-bottom:3px}
+.vb-sub{font-size:.8375rem;color:var(--muted)}
+.vb-badge{font-family:var(--mono);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:6px;margin-left:auto;flex-shrink:0;align-self:flex-start}
+.verdict-banner.improvement .vb-badge{background:var(--green3);color:var(--green)}
+.verdict-banner.regression .vb-badge{background:var(--red3);color:var(--red)}
+.verdict-banner.neutral .vb-badge{background:var(--blue3);color:var(--blue)}
+
+/* SCORE COMPARE GRID */
+.score-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;margin-bottom:1.5rem;align-items:stretch}
+.score-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:1.25rem;box-shadow:var(--sh)}
+.score-card-label{font-family:var(--mono);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.625rem}
+.score-big{font-family:var(--display);font-size:3.5rem;font-weight:700;line-height:1}
+.score-card-meta{font-size:.75rem;color:var(--muted);margin-top:.5rem}
+.score-meta-row{display:flex;justify-content:space-between;padding:2px 0;font-size:.8rem}
+.score-meta-k{color:var(--muted)}
+.score-meta-v{font-family:var(--mono);font-weight:500;color:var(--text)}
+.vs-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;min-width:50px}
+.vs-label{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted)}
+.delta-big{font-family:var(--display);font-size:1.5rem;font-weight:700}
+
+/* DIMENSIONS TABLE */
+.block{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);box-shadow:var(--sh);margin-bottom:1.25rem;overflow:hidden}
+.block-head{padding:.875rem 1.25rem;border-bottom:1px solid var(--rule);background:var(--bg);display:flex;justify-content:space-between;align-items:center}
+.block-title{font-weight:500;font-size:.9rem;color:var(--navy);display:flex;align-items:center;gap:7px}
+.block-title i{color:var(--gold);font-size:.8rem}
+.block-sub{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.block-body{padding:1.25rem}
+
+.dim-table{width:100%;border-collapse:collapse;font-size:.875rem}
+.dim-table th{padding:7px 12px;text-align:left;font-weight:500;font-size:.75rem;color:var(--muted);border-bottom:1px solid var(--rule);white-space:nowrap;font-family:var(--mono)}
+.dim-table td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.dim-table tr:last-child td{border-bottom:none}
+.dim-table tr:hover td{background:var(--bg)}
+.dim-name{font-weight:500;color:var(--text)}
+
+/* Bar comparison */
+.bar-compare{display:flex;flex-direction:column;gap:4px;min-width:200px}
+.bar-row{display:flex;align-items:center;gap:6px}
+.bar-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);width:16px;flex-shrink:0}
+.bar-track{flex:1;height:12px;background:var(--bg2);border-radius:3px;overflow:hidden;max-width:160px}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--text);min-width:35px}
+.bar-fill.a{background:#4E6B9E}
+.bar-fill.b{background:#D4A943}
+
+/* Delta pill */
+.delta-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-family:var(--mono);font-size:.75rem;font-weight:500}
+.delta-pill.up{background:var(--green2);color:var(--green)}
+.delta-pill.down{background:var(--red2);color:var(--red)}
+.delta-pill.flat{background:var(--bg2);color:var(--muted)}
+
+/* STATUS PILL */
+.st-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-family:var(--mono);font-size:.7rem;font-weight:500}
+.st-pill.pass{background:var(--green2);color:var(--green)}
+.st-pill.fail{background:var(--red2);color:var(--red)}
+.st-pill.warn{background:var(--amber2);color:var(--amber)}
+
+/* TIMELINE / HISTORY */
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:1.5px;background:var(--rule)}
+.tl-item{position:relative;padding:.875rem 0 .875rem 1.25rem;border-bottom:1px dashed var(--rule)}
+.tl-item:last-child{border-bottom:none}
+.tl-dot{position:absolute;left:-1.65rem;top:1.1rem;width:14px;height:14px;border-radius:50%;border:2px solid var(--surface);flex-shrink:0}
+.tl-dot.pass{background:var(--green)}
+.tl-dot.warn{background:var(--amber)}
+.tl-dot.fail{background:var(--red)}
+.tl-head{display:flex;align-items:center;gap:.625rem;margin-bottom:.25rem;flex-wrap:wrap}
+.tl-id{font-family:var(--mono);font-size:.8rem;font-weight:500;color:var(--navy)}
+.tl-trigger{font-size:.75rem;color:var(--muted)}
+.tl-score{font-family:var(--display);font-size:1.25rem;font-weight:700}
+.tl-delta{font-family:var(--mono);font-size:.75rem;font-weight:500;padding:2px 7px;border-radius:4px}
+.tl-delta.up{background:var(--green2);color:var(--green)}
+.tl-delta.down{background:var(--red2);color:var(--red)}
+.tl-delta.none{background:var(--bg2);color:var(--muted)}
+.tl-meta{font-size:.8rem;color:var(--muted);display:flex;gap:.875rem;flex-wrap:wrap}
+
+/* SPARKLINE chart wrapper */
+.spark-wrap{position:relative;width:100%;height:140px;margin-bottom:1.25rem}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:3rem 2rem;color:var(--muted)}
+.empty i{font-size:2.5rem;color:var(--rule);margin-bottom:.875rem;display:block}
+.empty strong{display:block;font-size:1rem;color:var(--text);margin-bottom:.375rem}
+
+/* ANOMALY badge */
+.anomaly{background:var(--red2);border:1px solid var(--red3);border-radius:var(--r);padding:.625rem .875rem;font-size:.8125rem;color:var(--red);display:flex;gap:.5rem;align-items:flex-start;margin-top:.75rem}
+.anomaly i{flex-shrink:0;margin-top:2px;font-size:.8rem}
+
+/* RESPONSIVE */
+@media(max-width:860px){.selector-grid{grid-template-columns:1fr}.score-compare{grid-template-columns:1fr}.vs-divider{flex-direction:row;min-width:auto}.dim-table .bar-compare{display:none}}
+@media(max-width:640px){.page{padding:1.25rem 1rem 4rem}.page-head h1{font-size:1.5rem}}
+
+/* fade in */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .35s ease both}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="#" class="logo">
+    <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="logo-name">Fair<span>Trust</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="upload.html">Upload</a>
+    <a href="allReports.html">Reports</a>
+    <a href="comparison.html" class="active">Compare</a>
+    <a href="admin.html">Admin</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-head">
+    <div>
+      <h1>Version Comparison</h1>
+      <p>Compare bias metrics across different evaluation runs to track fairness improvements over time</p>
+    </div>
+    <div class="head-badge"><i class="fas fa-code-branch"></i> Dataset drift analysis</div>
+  </div>
+
+  <!-- SELECTOR -->
+  <div class="selector-panel">
+    <div class="selector-grid">
+      <div class="sel-col">
+        <label>Baseline evaluation (A)</label>
+        <select id="selA" onchange="onSelChange()">
+          <option value="">— loading evaluations —</option>
+        </select>
+      </div>
+      <div class="sel-vs">VS</div>
+      <div class="sel-col">
+        <label>New evaluation (B)</label>
+        <select id="selB" onchange="onSelChange()">
+          <option value="">— loading evaluations —</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+      <button class="compare-btn" id="compareBtn" onclick="runCompare()" disabled>
+        <i class="fas fa-balance-scale"></i> Compare evaluations
+      </button>
+      <span style="font-size:.8rem;color:var(--muted)" id="selHint">Select two evaluations to compare</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-row">
+    <button class="tab active" id="tabCompare" onclick="switchTab('compare')">Side-by-side comparison</button>
+    <button class="tab" id="tabHistory" onclick="switchTab('history')">Retraining history</button>
+    <button class="tab" id="tabAlerts" onclick="switchTab('alerts')">Monitoring alerts</button>
+  </div>
+
+  <!-- CONTENT AREAS -->
+  <div id="paneCompare">
+    <div class="empty">
+      <i class="fas fa-not-equal"></i>
+      <strong>No comparison loaded</strong>
+      Select two evaluations above and click Compare
+    </div>
+  </div>
+
+  <div id="paneHistory" style="display:none">
+    <div class="loading" id="histLoading">
+      <i class="fas fa-circle-notch spin"></i>
+      <span>Loading history…</span>
+    </div>
+    <div id="histContent" style="display:none"></div>
+  </div>
+
+  <div id="paneAlerts" style="display:none">
+    <div class="loading" id="alertLoading">
+      <i class="fas fa-circle-notch spin"></i>
+      <span>Loading alerts…</span>
+    </div>
+    <div id="alertContent" style="display:none"></div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const API = 'http://127.0.0.1:5000';
+const fmt4 = v => v != null ? Number(v).toFixed(4) : '—';
+const pct  = v => v != null ? (Number(v)*100).toFixed(1)+'%' : '—';
+const round2 = v => v != null ? Number(v).toFixed(2) : '—';
+
+let _evals = [];
+let _sparkChart = null;
+let _activeTab = 'compare';
+
+function scoreColor(s) {
+  if (s == null) return 'var(--muted)';
+  if (s >= 0.80) return 'var(--green)';
+  if (s >= 0.60) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function sevClass(s) {
+  if (s == null) return 'warn';
+  if (s >= 0.80) return 'pass';
+  if (s >= 0.60) return 'warn';
+  return 'fail';
+}
+
+function deltaClass(d) {
+  if (d > 0.001) return 'up';
+  if (d < -0.001) return 'down';
+  return 'flat';
+}
+
+function deltaIcon(d) {
+  if (d > 0.001) return '↑';
+  if (d < -0.001) return '↓';
+  return '—';
+}
+
+/* ── LOAD EVALUATIONS FOR SELECTORS ── */
+async function loadEvalList() {
+  const hint = document.getElementById('selHint');
+  hint.textContent = 'Loading evaluations…';
+
+  // Normalise any eval object into a common shape for the dropdown
+  function normaliseEval(ev) {
+    return {
+      evaluation_id: ev.evaluation_id || ev.id || '',
+      ethical_score: ev.ethical_score ?? ev.fairness_score ?? null,
+      records:       ev.records || 0,
+      report_type:   ev.report_type || ev.reportType || '—',
+      status:        ev.status || 'complete',
+    };
+  }
+
+  const seen = new Set();
+  const merge = (list) => {
+    list.forEach(ev => {
+      const id = ev.evaluation_id || ev.id;
+      if (id && !seen.has(id)) { seen.add(id); _evals.push(normaliseEval(ev)); }
+    });
+  };
+
+  // Source 1: /compare/list (evals with full fairness data)
+  try {
+    const r = await fetch(`${API}/compare/list`);
+    const d = await r.json();
+    if (Array.isArray(d.evaluations)) merge(d.evaluations);
+  } catch (_) {}
+
+  // Source 2: /evaluate (full in-memory store, any status)
+  try {
+    const r = await fetch(`${API}/evaluate`);
+    const d = await r.json();
+    const completed = (d.evaluations || []).filter(e => e.status === 'complete');
+    merge(completed);
+  } catch (_) {}
+
+  // Source 3: sessionStorage — the most recently run eval is always stored here
+  try {
+    const cached = sessionStorage.getItem('eval_result');
+    const cachedId = sessionStorage.getItem('eval_id');
+    if (cached && cachedId) {
+      const raw = JSON.parse(cached);
+      raw.evaluation_id = cachedId;
+      raw.status = 'complete';
+      merge([raw]);
+    }
+  } catch (_) {}
+
+  if (_evals.length === 0) {
+    hint.textContent = 'No completed evaluations found — run an evaluation first';
+    document.getElementById('selA').innerHTML = '<option value="">No evaluations found</option>';
+    document.getElementById('selB').innerHTML = '<option value="">No evaluations found</option>';
+    return;
+  }
+
+  populateSelectors(_evals);
+}
+
+function populateSelectors(evals) {
+  ['selA','selB'].forEach((id, idx) => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = `<option value="">— select evaluation —</option>`;
+    evals.forEach((ev, i) => {
+      const score   = ev.ethical_score != null ? Math.round(Number(ev.ethical_score) * 100) + '/100' : 'pending';
+      const records = ev.records ? `${Number(ev.records).toLocaleString()} rows` : '';
+      const short   = (ev.evaluation_id || '').slice(0, 8);
+      const label   = `[${i+1}] ${short}… · ${score} · ${records}`;
+      const opt = document.createElement('option');
+      opt.value = ev.evaluation_id;
+      opt.textContent = label;
+      sel.appendChild(opt);
+    });
+    // Pre-select: A gets index 0, B gets index 1 (if available)
+    if (evals.length >= 1) sel.value = evals[Math.min(idx, evals.length - 1)].evaluation_id;
+    if (evals.length < 2 && idx === 1) sel.value = '';
+  });
+  onSelChange();
+}
+
+function onSelChange() {
+  const a = document.getElementById('selA').value;
+  const b = document.getElementById('selB').value;
+  const btn = document.getElementById('compareBtn');
+  const hint = document.getElementById('selHint');
+  if (a && b && a !== b) {
+    btn.disabled = false;
+    hint.textContent = 'Ready to compare';
+  } else if (a && b && a === b) {
+    btn.disabled = true;
+    hint.textContent = 'Select two different evaluations to compare';
+  } else if (_evals.length === 1) {
+    btn.disabled = true;
+    hint.innerHTML = '<span style="color:var(--amber)">Only 1 evaluation found — run a second evaluation to enable comparison</span>';
+  } else if (_evals.length === 0) {
+    btn.disabled = true;
+    hint.innerHTML = '<span style="color:var(--red)">No evaluations found — <a href="upload.html" style="color:var(--gold)">run an evaluation first</a></span>';
+  } else {
+    btn.disabled = true;
+    hint.textContent = 'Select two evaluations to compare';
+  }
+}
+
+/* ── RUN COMPARISON ── */
+async function runCompare() {
+  const a = document.getElementById('selA').value;
+  const b = document.getElementById('selB').value;
+  if (!a || !b || a === b) return;
+
+  const pane = document.getElementById('paneCompare');
+  pane.innerHTML = `<div class="loading"><i class="fas fa-circle-notch spin"></i><span>Comparing evaluations…</span></div>`;
+
+  try {
+    const res  = await fetch(`${API}/compare?eval_a=${a}&eval_b=${b}`);
+    const data = await res.json();
+
+    if (data.error) {
+      // Backend couldn't find evals in memory — build comparison from cached eval data
+      const built = buildOfflineComparison(a, b);
+      if (built) { renderComparison(built, a, b); return; }
+      throw new Error(data.error);
+    }
+    renderComparison(data, a, b);
+  } catch (e) {
+    // Last resort: try offline comparison from session cache
+    const built = buildOfflineComparison(a, b);
+    if (built) { renderComparison(built, a, b); return; }
+    pane.innerHTML = `<div class="empty">
+      <i class="fas fa-exclamation-circle" style="color:var(--red)"></i>
+      <strong>Cannot compare</strong>
+      The server lost evaluation data after restart. Please re-run your evaluations to compare them.
+      <br><br><a href="upload.html" style="color:var(--gold);font-weight:500">Run a new evaluation →</a>
+    </div>`;
+  }
+}
+
+/* Build a synthetic comparison when only session cache is available */
+function buildOfflineComparison(idA, idB) {
+  try {
+    const cached = sessionStorage.getItem('eval_result');
+    const cachedId = sessionStorage.getItem('eval_id');
+    if (!cached || !cachedId) return null;
+
+    const raw = JSON.parse(cached);
+    // We only have one eval in cache; we can only compare it to itself (no-op) or show it solo
+    if (cachedId !== idA && cachedId !== idB) return null;
+
+    const ev = _evals.find(e => e.evaluation_id === cachedId) || {};
+    const f = raw.fairness || {};
+
+    // Build a minimal comparison object from session cache
+    const dims = [
+      ['Individual Fairness', f.individualFairness],
+      ['Group Fairness',      f.groupFairness],
+      ['Demographic Bias',    f.demographicParity != null ? Math.max(0, 1 - f.demographicParity) : null],
+      ['Calibration',         f.calibrationError  != null ? Math.max(0, 1 - f.calibrationError)  : null],
+      ['Disparate Impact',    f.disparateImpact],
+      ['Counterfactual',      f.counterfactual],
+      ['Intersectional',      f.intersectional],
+    ].filter(([, v]) => v != null);
+
+    const score = raw.ethical_score || raw.fairness_score || 0;
+
+    const evalObj = {
+      evaluation_id: cachedId,
+      ethical_score: score,
+      records: raw.records || 0,
+      report_type: raw.report_type || '—',
+      dimensions: Object.fromEntries(dims),
+    };
+
+    return {
+      eval_a: evalObj,
+      eval_b: evalObj,
+      overall_delta: 0,
+      verdict: { title: 'Single evaluation (no baseline)', detail: 'Only one evaluation is available in the current session. Run a second evaluation to enable real comparison.', winner: null, badge: 'Solo view' },
+      delta: dims.map(([label, val]) => ({
+        dimension: label,
+        score_a: val, score_b: val, delta: 0,
+        delta_label: '0.0000 —', delta_class: 'neutral',
+      })),
+    };
+  } catch (_) { return null; }
+}
+
+function renderComparison(data, idA, idB) {
+  const pane = document.getElementById('paneCompare');
+  const ea = data.eval_a || {};
+  const eb = data.eval_b || {};
+  const delta = data.overall_delta || 0;
+  const verdict = data.verdict || {};
+  const rows = data.delta || [];
+
+  const vClass = delta > 0.005 ? 'improvement' : delta < -0.005 ? 'regression' : 'neutral';
+  const vIcon  = delta > 0.005 ? 'fa-arrow-trend-up' : delta < -0.005 ? 'fa-arrow-trend-down' : 'fa-equals';
+
+  const scoreA = ea.ethical_score || 0;
+  const scoreB = eb.ethical_score || 0;
+
+  /* Anomaly detection: any dimension regressed > 10 points */
+  const badRows = rows.filter(r => r.delta < -0.10);
+  const anomalyHtml = badRows.length > 0
+    ? `<div class="anomaly"><i class="fas fa-exclamation-triangle"></i><div><strong>Regression detected</strong> in ${badRows.length} dimension(s): ${badRows.map(r=>r.dimension).join(', ')}. These warrant investigation before deployment.</div></div>`
+    : '';
+
+  pane.innerHTML = `
+  <div class="fade">
+
+    <div class="verdict-banner ${vClass}">
+      <div class="vb-icon"><i class="fas ${vIcon}"></i></div>
+      <div>
+        <div class="vb-title">${verdict.title || 'Comparison complete'}</div>
+        <div class="vb-sub">${verdict.detail || ''}</div>
+      </div>
+      <div class="vb-badge">${delta > 0 ? '+' : ''}${(delta*100).toFixed(1)}% overall delta</div>
+    </div>
+
+    <div class="score-compare">
+      <div class="score-card">
+        <div class="score-card-label">Evaluation A — baseline</div>
+        <div class="score-big" style="color:${scoreColor(scoreA)}">${Math.round(scoreA*100)}<span style="font-size:1.25rem;opacity:.4">/100</span></div>
+        <div style="margin-top:.875rem">
+          <div class="score-meta-row"><span class="score-meta-k">ID</span><span class="score-meta-v">${idA.slice(0,12)}…</span></div>
+          <div class="score-meta-row"><span class="score-meta-k">Records</span><span class="score-meta-v">${(ea.records||0).toLocaleString()}</span></div>
+          <div class="score-meta-row"><span class="score-meta-k">Report type</span><span class="score-meta-v">${ea.report_type||'—'}</span></div>
+        </div>
+      </div>
+
+      <div class="vs-divider">
+        <div class="vs-label">Δ</div>
+        <div class="delta-big" style="color:${delta > 0.005 ? 'var(--green)' : delta < -0.005 ? 'var(--red)' : 'var(--muted)'}">${delta >= 0 ? '+' : ''}${(delta*100).toFixed(1)}%</div>
+        <div class="vs-label">score</div>
+      </div>
+
+      <div class="score-card">
+        <div class="score-card-label">Evaluation B — new version</div>
+        <div class="score-big" style="color:${scoreColor(scoreB)}">${Math.round(scoreB*100)}<span style="font-size:1.25rem;opacity:.4">/100</span></div>
+        <div style="margin-top:.875rem">
+          <div class="score-meta-row"><span class="score-meta-k">ID</span><span class="score-meta-v">${idB.slice(0,12)}…</span></div>
+          <div class="score-meta-row"><span class="score-meta-k">Records</span><span class="score-meta-v">${(eb.records||0).toLocaleString()}</span></div>
+          <div class="score-meta-row"><span class="score-meta-k">Report type</span><span class="score-meta-v">${eb.report_type||'—'}</span></div>
+        </div>
+      </div>
+    </div>
+
+    ${anomalyHtml}
+
+    <div class="block">
+      <div class="block-head">
+        <div class="block-title"><i class="fas fa-table-cells"></i> Dimension-by-dimension breakdown</div>
+        <div class="block-sub">${rows.length} dimensions compared</div>
+      </div>
+      <div class="block-body" style="padding:0;overflow-x:auto">
+        <table class="dim-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>A (baseline)</th>
+              <th>B (new)</th>
+              <th>Change</th>
+              <th>Visual</th>
+              <th>Status B</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const dc = deltaClass(row.delta);
+              const sA = Number(row.score_a), sB = Number(row.score_b);
+              return `<tr>
+                <td><div class="dim-name">${row.dimension}</div></td>
+                <td><span style="font-family:var(--mono);font-size:.875rem">${sA.toFixed(4)}</span></td>
+                <td><span style="font-family:var(--mono);font-size:.875rem">${sB.toFixed(4)}</span></td>
+                <td>
+                  <div class="delta-pill ${dc}">
+                    ${deltaIcon(row.delta)} ${row.delta >= 0 ? '+' : ''}${(row.delta*100).toFixed(1)}%
+                  </div>
+                </td>
+                <td>
+                  <div class="bar-compare">
+                    <div class="bar-row">
+                      <div class="bar-lbl">A</div>
+                      <div class="bar-track"><div class="bar-fill a" style="width:${Math.round(sA*100)}%"></div></div>
+                      <div class="bar-val">${Math.round(sA*100)}%</div>
+                    </div>
+                    <div class="bar-row">
+                      <div class="bar-lbl">B</div>
+                      <div class="bar-track"><div class="bar-fill b" style="width:${Math.round(sB*100)}%"></div></div>
+                      <div class="bar-val">${Math.round(sB*100)}%</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="st-pill ${sevClass(sB)}">${sevClass(sB).toUpperCase()}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <div class="block-title"><i class="fas fa-radar"></i> Fairness radar — dimension coverage</div>
+      </div>
+      <div class="block-body">
+        <div style="position:relative;width:100%;height:280px;max-width:480px;margin:0 auto">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  /* Render radar chart */
+  const labels = rows.map(r => r.dimension);
+  const dataA  = rows.map(r => Number(r.score_a));
+  const dataB  = rows.map(r => Number(r.score_b));
+
+  if (_sparkChart) { _sparkChart.destroy(); _sparkChart = null; }
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  _sparkChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Eval A (baseline)', data: dataA, borderColor: '#4E6B9E', backgroundColor: 'rgba(78,107,158,0.1)', borderWidth: 2, pointRadius: 4 },
+        { label: 'Eval B (new)',      data: dataB, borderColor: '#D4A943', backgroundColor: 'rgba(212,169,67,0.12)', borderWidth: 2, pointRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { r: { min: 0, max: 1, ticks: { stepSize: 0.2, backdropColor: 'transparent', font: { size: 10 } }, grid: { color: '#DDE1EC' }, pointLabels: { font: { size: 10 } } } },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 16 } } }
+    }
+  });
+}
+
+/* ── HISTORY TAB ── */
+async function loadHistory() {
+  document.getElementById('histLoading').style.display = 'flex';
+  document.getElementById('histContent').style.display = 'none';
+
+  try {
+    const res  = await fetch(`${API}/compare/history`);
+    const data = await res.json();
+    renderHistory(data);
+  } catch (e) {
+    document.getElementById('histLoading').innerHTML = `<div class="empty"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><strong>Failed to load history</strong>${e.message}</div>`;
+  }
+}
+
+function renderHistory(data) {
+  const history = data.history || [];
+  const trend   = data.trend   || [];
+
+  document.getElementById('histLoading').style.display = 'none';
+  const el = document.getElementById('histContent');
+  el.style.display = 'block';
+
+  if (!history.length) {
+    el.innerHTML = `<div class="empty"><i class="fas fa-clock-rotate-left"></i><strong>No history yet</strong>Run at least two evaluations to see the retraining history.</div>`;
+    return;
+  }
+
+  /* Destroy any prior chart */
+  if (window._histChart) { window._histChart.destroy(); window._histChart = null; }
+
+  el.innerHTML = `
+  <div class="block fade" style="margin-bottom:1.25rem">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-chart-line"></i> Ethical score trend</div>
+      <div class="block-sub">${history.length} evaluation${history.length!==1?'s':''} · oldest → newest</div>
+    </div>
+    <div class="block-body">
+      <div style="position:relative;width:100%;height:180px">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="block fade">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-list-check"></i> Retraining log</div>
+      <div class="block-sub">All completed evaluations, newest first</div>
+    </div>
+    <div class="block-body">
+      <div class="timeline">
+        ${history.map(item => {
+          const sc = item.ethical_score || 0;
+          const pctScore = Math.round(sc*100);
+          const dc = item.improvement != null
+            ? (item.improvement > 0.005 ? 'up' : item.improvement < -0.005 ? 'down' : 'none')
+            : 'none';
+          const deltaLabel = item.improvement != null
+            ? `${item.improvement >= 0 ? '+' : ''}${(item.improvement*100).toFixed(1)}%`
+            : 'initial';
+          return `<div class="tl-item">
+            <div class="tl-dot ${sevClass(sc)}"></div>
+            <div class="tl-head">
+              <div class="tl-id">${item.evaluation_id.slice(0,12)}…</div>
+              <span class="tl-score" style="color:${scoreColor(sc)}">${pctScore}/100</span>
+              <span class="tl-delta ${dc}">${deltaLabel}</span>
+              <span class="st-pill ${sevClass(sc)}">${sevClass(sc).toUpperCase()}</span>
+            </div>
+            <div class="tl-meta">
+              <span><i class="fas fa-database" style="font-size:11px;margin-right:3px"></i>${(item.records||0).toLocaleString()} records</span>
+              <span><i class="fas fa-tag" style="font-size:11px;margin-right:3px"></i>${item.trigger || '—'}</span>
+              <span><i class="fas fa-file-lines" style="font-size:11px;margin-right:3px"></i>${item.report_type || '—'}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  /* Trend sparkline */
+  const trendLabels = trend.map((_,i) => `Run ${i+1}`);
+  const trendData   = trend.map(v => Number(v));
+  const ctx2 = document.getElementById('trendChart').getContext('2d');
+  window._histChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: trendLabels,
+      datasets: [{
+        label: 'Ethical score',
+        data: trendData,
+        borderColor: '#D4A943',
+        backgroundColor: 'rgba(212,169,67,0.08)',
+        fill: true,
+        borderWidth: 2,
+        pointRadius: 5,
+        pointBackgroundColor: trendData.map(v => v >= 0.8 ? '#198754' : v >= 0.6 ? '#E08C2A' : '#DC3545'),
+        tension: 0.35
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { min: 0, max: 1, ticks: { callback: v => Math.round(v*100)+'%', font: {size: 10} }, grid: {color: '#EEE'} },
+        x: { ticks: { font: {size: 10} }, grid: {display: false} }
+      },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'Score: ' + Math.round(ctx.raw*100) + '/100' } } }
+    }
+  });
+}
+
+/* ── ALERTS TAB ── */
+async function loadAlerts() {
+  document.getElementById('alertLoading').style.display = 'flex';
+  document.getElementById('alertContent').style.display = 'none';
+
+  try {
+    const res  = await fetch(`${API}/compare/alerts`);
+    const data = await res.json();
+    renderAlerts(data);
+  } catch (e) {
+    document.getElementById('alertLoading').innerHTML = `<div class="empty"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><strong>Failed to load alerts</strong>${e.message}</div>`;
+  }
+}
+
+function renderAlerts(data) {
+  document.getElementById('alertLoading').style.display = 'none';
+  const el = document.getElementById('alertContent');
+  el.style.display = 'block';
+
+  const alerts  = data.alerts  || [];
+  const summary = data.summary || {};
+
+  const sevColor = s => s === 'CRITICAL' ? 'var(--red)' : s === 'WARNING' ? 'var(--amber)' : 'var(--muted)';
+  const sevBg    = s => s === 'CRITICAL' ? 'var(--red2)' : s === 'WARNING' ? 'var(--amber2)' : 'var(--bg2)';
+  const sevBorder= s => s === 'CRITICAL' ? 'var(--red3)' : s === 'WARNING' ? 'var(--amber3)' : 'var(--rule)';
+
+  el.innerHTML = `
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.25rem" class="fade">
+    ${[
+      {label:'Critical', val: summary.critical||0, color:'var(--red)', bg:'var(--red2)', icon:'fa-triangle-exclamation'},
+      {label:'Warning',  val: summary.warning||0,  color:'var(--amber)', bg:'var(--amber2)', icon:'fa-circle-exclamation'},
+      {label:'Resolved', val: summary.resolved||0, color:'var(--green)', bg:'var(--green2)', icon:'fa-circle-check'},
+      {label:'Total',    val: summary.total||0,    color:'var(--muted)', bg:'var(--bg2)', icon:'fa-bell'},
+    ].map(s => `<div style="background:${s.bg};border-radius:var(--r);padding:1rem;text-align:center">
+      <div style="font-size:1.5rem;color:${s.color};margin-bottom:.25rem"><i class="fas ${s.icon}"></i></div>
+      <div style="font-family:var(--display);font-size:1.75rem;font-weight:700;color:${s.color}">${s.val}</div>
+      <div style="font-size:.75rem;color:var(--muted);font-family:var(--mono)">${s.label}</div>
+    </div>`).join('')}
+  </div>
+
+  <div class="block fade">
+    <div class="block-head">
+      <div class="block-title"><i class="fas fa-bell"></i> Active monitoring alerts</div>
+      <div class="block-sub">${alerts.filter(a=>!a.resolved).length} unresolved</div>
+    </div>
+    <div class="block-body" style="padding:0">
+      ${alerts.length === 0
+        ? `<div class="empty"><i class="fas fa-check-circle" style="color:var(--green)"></i><strong>No alerts</strong>All evaluations are within acceptable thresholds</div>`
+        : alerts.map(a => `
+          <div style="border-bottom:1px solid var(--rule);padding:1rem 1.25rem;display:flex;gap:.875rem;align-items:flex-start;${a.resolved ? 'opacity:.55' : ''}">
+            <div style="width:10px;height:10px;border-radius:50%;background:${sevColor(a.severity)};margin-top:5px;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div style="font-weight:500;font-size:.875rem;color:var(--text);margin-bottom:2px">${a.message}</div>
+              <div style="font-size:.75rem;color:var(--muted);display:flex;gap:.625rem;flex-wrap:wrap">
+                <span style="background:${sevBg(a.severity)};color:${sevColor(a.severity)};border:1px solid ${sevBorder(a.severity)};font-family:var(--mono);padding:1px 7px;border-radius:4px;font-size:.7rem">${a.severity}</span>
+                <span>Eval: ${(a.eval_id||'').slice(0,10)}…</span>
+                ${a.resolved ? '<span style="color:var(--green)">Resolved</span>' : ''}
+              </div>
+            </div>
+          </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ── TABS ── */
+function switchTab(tab) {
+  _activeTab = tab;
+  ['compare','history','alerts'].forEach(t => {
+    document.getElementById('pane'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active', t === tab);
+  });
+  if (tab === 'history') loadHistory();
+  if (tab === 'alerts')  loadAlerts();
+}
+
+/* ── INIT ── */
+(async function init() {
+  await loadEvalList();
+
+  const a = document.getElementById('selA').value;
+  const b = document.getElementById('selB').value;
+
+  if (_evals.length === 0) {
+    document.getElementById('paneCompare').innerHTML = `
+      <div class="empty">
+        <i class="fas fa-database"></i>
+        <strong>No evaluations found</strong>
+        The comparison tool needs at least one completed evaluation.
+        <br><br>
+        <a href="upload.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--navy);color:white;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;margin-top:.5rem">
+          <i class="fas fa-play-circle"></i> Run your first evaluation
+        </a>
+      </div>`;
+    return;
+  }
+
+  if (_evals.length === 1) {
+    // Only one eval — show it in solo mode via offline comparison
+    const built = buildOfflineComparison(_evals[0].evaluation_id, _evals[0].evaluation_id);
+    if (built) {
+      renderComparison(built, _evals[0].evaluation_id, _evals[0].evaluation_id);
+      return;
+    }
+  }
+
+  // Two or more evals — auto-run comparison
+  if (a && b && a !== b) runCompare();
+})();
+</script>
+</body>
+</html>

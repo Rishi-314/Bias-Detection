@@ -1,268 +1,498 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — FairTrust-AI</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #1A2D4E;
-            --secondary: #EBB255;
-            --sidebar-bg: #F8F9FA;
-            --white: #FFFFFF;
-            --border: #E5E7EB;
-            --text-muted: #6B7280;
-            --text-main: #111827;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — FairTrust AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0C1B33;--navy2:#152645;--navy3:#1E3461;
+  --gold:#D4A943;--gold2:rgba(212,169,67,0.15);--gold3:rgba(212,169,67,0.3);
+  --red:#DC3545;--red2:rgba(220,53,69,0.1);
+  --green:#198754;--green2:rgba(25,135,84,0.1);--green3:rgba(25,135,84,0.25);
+  --amber:#E08C2A;--amber2:rgba(224,140,42,0.1);
+  --blue:#2563EB;--blue2:rgba(37,99,235,0.1);
+  --bg:#F2F4F8;--bg2:#E8EBF2;--surface:#FFF;--rule:#DDE1EC;
+  --text:#0C1B33;--muted:#5A6478;
+  --mono:'DM Mono',monospace;--display:'Fraunces',serif;--body:'DM Sans',sans-serif;
+  --r:10px;--r-lg:14px;
+  --sh:0 2px 10px rgba(12,27,51,0.07);--sh-md:0 8px 28px rgba(12,27,51,0.11);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
 
-        body {
-            font-family: "Inter", "Segoe UI", sans-serif;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            color: var(--text-main);
-        }
+/* ── NAV ── */
+.navbar{position:sticky;top:0;z-index:200;background:rgba(12,27,51,0.97);backdrop-filter:blur(12px);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-icon{width:30px;height:30px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--navy)}
+.logo-name{font-family:var(--display);font-size:16px;font-weight:700;color:white}
+.logo-name span{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:.5rem}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:13px;font-weight:400;color:rgba(255,255,255,0.5);text-decoration:none;padding:5px 10px;border-radius:6px;transition:all .15s}
+.nav-links a:hover{color:white;background:rgba(255,255,255,0.08)}
+.nav-links a.active{color:var(--gold);background:rgba(212,169,67,0.12)}
+.nav-pill{display:inline-flex;align-items:center;gap:5px;background:var(--green2);border:1px solid var(--green3);color:#198754;font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:999px}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:#198754;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-        /* LEFT SIDEBAR (Gemini Style) */
-        .sidebar {
-            width: 260px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-        }
+/* ── WRAPPER ── */
+.shell{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px)}
 
-        .logo {
-            padding: 0 20px 30px;
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: -0.5px;
-        }
+/* ── SIDEBAR ── */
+.sidebar{width:260px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,0.05);overflow-y:auto}
+.sb-top{padding:1.5rem 1.25rem 1rem}
+.sb-greeting{font-family:var(--display);font-size:.875rem;font-style:italic;color:rgba(255,255,255,.35);margin-bottom:.25rem}
+.sb-user{font-weight:500;font-size:.9rem;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:.5rem}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold2);border:1px solid var(--gold3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--gold)}
+.sb-divider{height:1px;background:rgba(255,255,255,.06);margin:1rem 0}
+.sb-label{font-family:var(--mono);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);padding:.5rem 1.25rem .375rem}
+.sb-item{display:flex;align-items:center;gap:.625rem;padding:.55rem 1.25rem;font-size:.8375rem;font-weight:400;color:rgba(255,255,255,.45);cursor:pointer;transition:all .15s;border-left:2px solid transparent;text-decoration:none}
+.sb-item:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.sb-item.active{color:var(--gold);background:rgba(212,169,67,.07);border-left-color:var(--gold)}
+.sb-item i{width:14px;font-size:12px;flex-shrink:0}
+.sb-item-badge{margin-left:auto;font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:4px;background:rgba(212,169,67,.15);color:var(--gold)}
+.sb-bottom{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.06);margin-top:auto}
+.sb-history-item{display:flex;align-items:center;gap:.5rem;padding:.45rem .625rem;border-radius:6px;cursor:pointer;transition:.15s}
+.sb-history-item:hover{background:rgba(255,255,255,.05)}
+.sb-history-item i{font-size:11px;color:rgba(255,255,255,.25);flex-shrink:0}
+.sb-history-text{font-size:.775rem;color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-        .logo span { color: var(--secondary); }
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 
-        .history-container {
-            flex: 1;
-            padding: 0 12px;
-            overflow-y: auto;
-        }
+/* ── HERO BANNER ── */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 55%,var(--navy3) 100%);padding:3rem 3.5rem 2.5rem;position:relative;overflow:hidden;flex-shrink:0}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(212,169,67,.07) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:20%;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.05) 0%,transparent 70%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:640px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:5px;background:var(--gold2);border:1px solid var(--gold3);color:var(--gold);font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:999px;margin-bottom:1rem}
+.hero h1{font-family:var(--display);font-size:2rem;font-weight:700;color:white;line-height:1.2;margin-bottom:.75rem}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{font-size:.9rem;color:rgba(255,255,255,.5);line-height:1.7;max-width:480px}
+.hero-stats{display:flex;gap:2rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.hstat{display:flex;flex-direction:column;gap:2px}
+.hstat-val{font-family:var(--display);font-size:1.5rem;font-weight:700;color:white;line-height:1}
+.hstat-val.gold{color:var(--gold)}
+.hstat-val.green{color:#34D399}
+.hstat-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3)}
 
-        .section-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            padding: 10px 8px;
-            letter-spacing: 0.5px;
-        }
+/* ── CONTENT AREA ── */
+.content{padding:2rem 2.5rem 4rem;flex:1}
 
-        .history-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 4px;
-        }
+/* ── SECTION LABEL ── */
+.section-label{font-family:var(--mono);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem}
+.section-label::after{content:'';flex:1;height:1px;background:var(--rule)}
 
-        .history-item:hover { background: #E5E7EB; }
+/* ── TOOL CARDS ── */
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.125rem;margin-bottom:2rem}
+.tool-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:1.5rem;text-decoration:none;color:inherit;display:flex;flex-direction:column;box-shadow:var(--sh);transition:all .2s;position:relative;overflow:hidden}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-accent,var(--rule));transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.tool-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:var(--card-accent,var(--gold))}
+.tool-card:hover::before{transform:scaleX(1)}
+.tool-card.refine{--card-accent:#2563EB}
+.tool-card.audit{--card-accent:#D4A943}
+.tool-card.compare{--card-accent:#198754}
+.tool-card.reports{--card-accent:#E08C2A}
+.tool-card.admin{--card-accent:#DC3545}
+.tc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:1.125rem;flex-shrink:0}
+.tool-card.refine  .tc-icon{background:var(--blue2);color:var(--blue)}
+.tool-card.audit   .tc-icon{background:var(--gold2);color:var(--gold)}
+.tool-card.compare .tc-icon{background:var(--green2);color:var(--green)}
+.tool-card.reports .tc-icon{background:var(--amber2);color:var(--amber)}
+.tool-card.admin   .tc-icon{background:var(--red2);color:var(--red)}
+.tc-label{font-family:var(--mono);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem}
+.tool-card.refine  .tc-label{color:var(--blue)}
+.tool-card.audit   .tc-label{color:var(--gold)}
+.tool-card.compare .tc-label{color:var(--green)}
+.tool-card.reports .tc-label{color:var(--amber)}
+.tool-card.admin   .tc-label{color:var(--red)}
+.tc-title{font-family:var(--display);font-size:1.125rem;font-weight:700;color:var(--navy);margin-bottom:.4rem;line-height:1.2}
+.tc-desc{font-size:.8125rem;color:var(--muted);line-height:1.6;flex:1}
+.tc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:1.125rem;padding-top:.875rem;border-top:1px solid var(--rule)}
+.tc-tag{font-family:var(--mono);font-size:9px;color:var(--muted);background:var(--bg2);padding:2px 7px;border-radius:4px}
+.tc-arrow{font-size:.75rem;color:var(--rule);transition:all .2s}
+.tool-card:hover .tc-arrow{color:var(--card-accent,var(--gold));transform:translateX(3px)}
 
-        .history-item input {
-            background: transparent;
-            border: none;
-            font-size: 14px;
-            color: var(--text-main);
-            width: 100%;
-            outline: none;
-            cursor: pointer;
-        }
+/* ── QUICK STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.125rem;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:1.125rem;box-shadow:var(--sh)}
+.stat-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.375rem}
+.stat-val{font-family:var(--display);font-size:1.625rem;font-weight:700;line-height:1;color:var(--navy)}
+.stat-val.green{color:var(--green)}
+.stat-val.red{color:var(--red)}
+.stat-val.gold{color:var(--gold)}
+.stat-sub{font-size:.7rem;color:var(--muted);margin-top:.25rem;display:flex;align-items:center;gap:.3rem}
+.stat-bar{height:3px;background:var(--bg2);border-radius:100px;margin-top:.625rem;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:100px}
 
-        /* MAIN CONTENT AREA */
-        .main-stage {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+/* ── RECENT EVAL ── */
+.recent-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:0;box-shadow:var(--sh);overflow:hidden;margin-bottom:2rem}
+.rc-head{padding:1rem 1.25rem;border-bottom:1px solid var(--rule);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.rc-title{font-weight:500;font-size:.9rem;color:var(--navy);display:flex;align-items:center;gap:6px}
+.rc-title i{color:var(--gold);font-size:.8rem}
+.rc-link{font-size:.8rem;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;font-weight:500;transition:opacity .15s}
+.rc-link:hover{opacity:.75}
+.rc-body{padding:1.25rem}
+.rc-empty{text-align:center;padding:2rem;color:var(--muted);font-size:.875rem}
+.rc-empty i{display:block;font-size:2rem;color:var(--rule);margin-bottom:.75rem}
+.eval-row{display:flex;align-items:center;gap:.875rem;padding:.625rem 0;border-bottom:1px dashed var(--rule)}
+.eval-row:last-child{border-bottom:none;padding-bottom:0}
+.eval-id{font-family:var(--mono);font-size:.8rem;font-weight:500;color:var(--navy);min-width:110px}
+.eval-score-bar{flex:1;height:6px;background:var(--bg2);border-radius:100px;overflow:hidden}
+.eval-score-fill{height:100%;border-radius:100px}
+.eval-score-num{font-family:var(--mono);font-size:.8rem;font-weight:500;min-width:36px;text-align:right}
+.eval-pill{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;flex-shrink:0}
+.eval-pill.pass{background:var(--green2);color:var(--green)}
+.eval-pill.warn{background:var(--amber2);color:var(--amber)}
+.eval-pill.fail{background:var(--red2);color:var(--red)}
 
-        .top-banner {
-            text-align: right;
-            padding: 15px 40px;
-            font-size: 13px;
-            color: var(--text-muted);
-            border-bottom: 1px solid #f0f0f0;
-        }
+/* ── FOOTER ── */
+.footer{padding:1.25rem 2.5rem;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--muted);flex-shrink:0}
+.footer-links a{color:var(--muted);text-decoration:none;margin-left:1.25rem;transition:color .15s}
+.footer-links a:hover{color:var(--navy)}
 
-        .top-banner i { color: #10B981; margin-right: 5px; }
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .4s ease both}
+.fade-1{animation-delay:.05s}.fade-2{animation-delay:.1s}.fade-3{animation-delay:.15s}
+.fade-4{animation-delay:.2s}.fade-5{animation-delay:.25s}
 
-        .content-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0 40px;
-        }
-
-        .hero-section {
-            text-align: center;
-            max-width: 700px;
-            margin-bottom: 60px;
-        }
-
-        .hero-section h1 {
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 16px;
-        }
-
-        .hero-section p {
-            font-size: 18px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        /* TOOL CARDS */
-        .cards-grid {
-            display: flex;
-            gap: 24px;
-            width: 100%;
-            max-width: 850px;
-        }
-
-        .card {
-            flex: 1;
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-            text-align: left;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            border-color: var(--secondary);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-
-        .icon-box {
-            width: 48px;
-            height: 48px;
-            background: #F3F4F6;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            color: var(--primary);
-            font-size: 20px;
-        }
-
-        .card h3 {
-            margin: 0 0 12px;
-            font-size: 20px;
-            color: var(--primary);
-        }
-
-        .card p {
-            margin: 0;
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .footer-links {
-            padding: 30px;
-            text-align: center;
-            font-size: 12px;
-            color: #9CA3AF;
-        }
-
-        .footer-links a {
-            color: #9CA3AF;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-
-        .helper-text {
-            margin-top: 40px;
-            font-size: 13px;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-    </style>
+@media(max-width:1000px){.cards-grid{grid-template-columns:repeat(2,1fr)}.stats-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{display:none}.cards-grid{grid-template-columns:1fr}.hero{padding:2rem 1.5rem}.content{padding:1.5rem 1.5rem 3rem}}
+</style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">FAIR<span>TRUST-AI</span></div>
-        
-        <div class="history-container">
-            <div class="section-label">Recent History</div>
-            
-            <div class="history-item">
-                <i class="fa-regular fa-message" style="margin-right: 12px; font-size: 14px; color: #9CA3AF;"></i>
-                <input type="text" value="Financial Risk Audit" readonly onclick="this.readOnly=false" onblur="this.readOnly=true">
-            </div>
+<!-- NAV -->
+<nav class="navbar">
+  <a href="#" class="logo">
+    <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="logo-name">Fair<span>Trust</span></div>
+  </a>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="http://127.0.0.1:5000/dashboard.html" class="active">Home</a>
+      <a href="http://127.0.0.1:5000/upload.html">Upload</a>
+      <a href="http://127.0.0.1:5000/comparison.html">Compare</a>
+      <a href="http://127.0.0.1:5000/allReports.html">Reports</a>
+      <a href="http://127.0.0.1:5000/admin.html">Admin</a>
+    </div>
+    <div class="nav-pill" style="margin-left:.75rem">
+      <div class="nav-dot"></div>
+      <span>API Online</span>
+    </div>
+  </div>
+</nav>
 
-            <div class="history-item">
-                <i class="fa-regular fa-message" style="margin-right: 12px; font-size: 14px; color: #9CA3AF;"></i>
-                <input type="text" value="Lending Dataset v2" readonly onclick="this.readOnly=false" onblur="this.readOnly=true">
-            </div>
-        </div>
+<div class="shell">
 
-        <div style="padding: 20px; border-top: 1px solid var(--border);">
-            <div class="history-item" style="margin-bottom: 0;">
-                <i class="fa-solid fa-circle-user" style="margin-right: 12px; font-size: 20px;"></i>
-                <span style="font-size: 14px; font-weight: 500;">Enterprise Account</span>
-            </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="sb-greeting">Good to see you</div>
+      <div class="sb-user">
+        <div class="sb-avatar">EA</div>
+        Enterprise Account
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+
+    <div class="sb-label">Navigation</div>
+    <a href="http://127.0.0.1:5000/upload.html"    class="sb-item"><i class="fas fa-upload"></i> Upload</a>
+    <a href="http://127.0.0.1:5000/comparison.html" class="sb-item"><i class="fas fa-code-branch"></i> Version Compare</a>
+    <a href="http://127.0.0.1:5000/preprocess.html" class="sb-item"><i class="fas fa-wand-magic-sparkles"></i> Preprocess</a>
+
+    <div class="sb-bottom">
+      <div class="sb-item" style="border-radius:6px;border:none;padding:.5rem .625rem"><i class="fas fa-circle-question" style="color:rgba(255,255,255,.25)"></i><span style="font-size:.775rem;color:rgba(255,255,255,.35)">Help &amp; docs</span></div>
+      <div class="sb-item" style="border-radius:6px;border:none;padding:.5rem .625rem"><i class="fas fa-arrow-right-from-bracket" style="color:rgba(255,255,255,.25)"></i><span style="font-size:.775rem;color:rgba(255,255,255,.35)">Sign out</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-eyebrow"><i class="fas fa-shield-check" style="font-size:10px"></i> Enterprise-grade security — your data never trains our models</div>
+        <h1>Evaluate with Confidence.<br><em>Deploy with Trust.</em></h1>
+        <p>Audit your models for hidden biases across seven fairness dimensions. Get compliance-ready reports for developers, regulators, and end-users.</p>
+        <div class="hero-stats">
+          <div class="hstat">
+            <div class="hstat-val gold" id="statEvals">—</div>
+            <div class="hstat-lbl">Evaluations run</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-val green" id="statPassed">—</div>
+            <div class="hstat-lbl">Passed fairness</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-val" id="statRecords">—</div>
+            <div class="hstat-lbl">Records audited</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-val" id="statAvgScore">—</div>
+            <div class="hstat-lbl">Avg ethics score</div>
+          </div>
         </div>
+      </div>
     </div>
 
-    <div class="main-stage">
-        <div class="top-banner">
-            <i class="fa-solid fa-shield-check"></i> Enterprise-grade security. We never use your data to train our models.
+    <div class="content">
+
+      <!-- QUICK STATS -->
+      <div class="stats-row fade fade-1" id="statsRow" style="display:none">
+        <div class="stat-card">
+          <div class="stat-label">Latest eval score</div>
+          <div class="stat-val green" id="qLatestScore">—</div>
+          <div class="stat-sub" id="qLatestSub">No evaluations yet</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="qLatestBar" style="width:0%;background:var(--green)"></div></div>
         </div>
-
-        <div class="content-body">
-            <div class="hero-section">
-                <h1>Evaluate with Confidence. Deploy with Trust.</h1>
-                <p>Audit your models for hidden biases and optimize your datasets for peak ethical performance. Understand your AI better than ever before.</p>
-            </div>
-
-            <div class="cards-grid">
-                <a href="http://127.0.0.1:5000/preprocess.html" class="card">
-                <div class="card">
-                    <div class="icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                    <h3>Dataset Refinement</h3>
-                    <p>Clean, structure, and prepare your data for high-integrity evaluation.</p>
-                </div>
-                </a>
-
-                <a href="http://127.0.0.1:5000/upload.html" class="card">
-                    <div class="icon-box"><i class="fa-solid fa-scale-balanced"></i></div>
-                    <h3>Fairness Audit</h3>
-                    <p>Identify and mitigate discriminatory patterns with automated bias detection.</p>
-                </a>
-            </div>
-
-            <div class="helper-text">
-                New here? Start by refining your dataset to ensure a high-precision fairness audit.
-            </div>
+        <div class="stat-card">
+          <div class="stat-label">Disparate impact</div>
+          <div class="stat-val" id="qDI">—</div>
+          <div class="stat-sub" id="qDISub">80% rule threshold</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="qDIBar" style="width:0%"></div></div>
         </div>
-
-        <div class="footer-links">
-            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact Support</a>
+        <div class="stat-card">
+          <div class="stat-label">Counterfactual fairness</div>
+          <div class="stat-val" id="qCF">—</div>
+          <div class="stat-sub" id="qCFSub">Score ≥ 0.80 is passing</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="qCFBar" style="width:0%"></div></div>
         </div>
-    </div>
+        <div class="stat-card">
+          <div class="stat-label">Top SHAP feature</div>
+          <div class="stat-val" id="qShap" style="font-size:1rem;font-family:var(--mono)">—</div>
+          <div class="stat-sub" id="qShapSub">Most influential feature</div>
+        </div>
+      </div>
 
+      <!-- TOOL CARDS -->
+      <div class="section-label fade fade-1">Core tools</div>
+      <div class="cards-grid fade fade-2">
+
+        <a href="http://127.0.0.1:5000/preprocess.html" class="tool-card refine">
+          <div class="tc-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+          <div class="tc-label">Data prep</div>
+          <div class="tc-title">Dataset Refinement</div>
+          <div class="tc-desc">Clean, filter, and structure your data using natural language. Powered by Gemini for intelligent preprocessing.</div>
+          <div class="tc-footer">
+            <span class="tc-tag">Gemini AI</span>
+            <i class="fas fa-arrow-right tc-arrow"></i>
+          </div>
+        </a>
+
+        <a href="http://127.0.0.1:5000/upload.html" class="tool-card audit">
+          <div class="tc-icon"><i class="fas fa-scale-balanced"></i></div>
+          <div class="tc-label">Core feature</div>
+          <div class="tc-title">Fairness Audit</div>
+          <div class="tc-desc">Evaluate your model across 7 bias dimensions — individual, group, demographic, disparate impact, counterfactual &amp; more.</div>
+          <div class="tc-footer">
+            <span class="tc-tag">7 dimensions</span>
+            <i class="fas fa-arrow-right tc-arrow"></i>
+          </div>
+        </a>
+
+        <a href="http://127.0.0.1:5000/comparison.html" class="tool-card compare">
+          <div class="tc-icon"><i class="fas fa-code-compare"></i></div>
+          <div class="tc-label">Version analysis</div>
+          <div class="tc-title">Version Comparison</div>
+          <div class="tc-desc">Compare bias metrics across evaluation runs. Track fairness drift, regressions, and improvements over time with radar charts.</div>
+          <div class="tc-footer">
+            <span class="tc-tag">Drift detection</span>
+            <i class="fas fa-arrow-right tc-arrow"></i>
+          </div>
+        </a>
+
+        <a href="http://127.0.0.1:5000/allReports.html" class="tool-card reports">
+          <div class="tc-icon"><i class="fas fa-file-chart-column"></i></div>
+          <div class="tc-label">Output</div>
+          <div class="tc-title">All Reports</div>
+          <div class="tc-desc">Access developer, regulator, executive, and plain-language reports for the latest evaluation. Export as PDF or JSON.</div>
+          <div class="tc-footer">
+            <span class="tc-tag">5 formats</span>
+            <i class="fas fa-arrow-right tc-arrow"></i>
+          </div>
+        </a>
+
+        <a href="http://127.0.0.1:5000/admin.html" class="tool-card admin">
+          <div class="tc-icon"><i class="fas fa-sliders"></i></div>
+          <div class="tc-label">Settings</div>
+          <div class="tc-title">Admin Dashboard</div>
+          <div class="tc-desc">Manage users, configure fairness thresholds, view system health, and monitor API usage across your organisation.</div>
+          <div class="tc-footer">
+            <span class="tc-tag">Enterprise</span>
+            <i class="fas fa-arrow-right tc-arrow"></i>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- RECENT EVALUATIONS -->
+      <div class="section-label fade fade-3">Recent evaluations</div>
+      <div class="recent-card fade fade-4">
+        <div class="rc-head">
+          <div class="rc-title"><i class="fas fa-list-check"></i> Evaluation history</div>
+          <a href="http://127.0.0.1:5000/allReports.html" class="rc-link" id="recentLink" style="display:none">View latest report <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+        </div>
+        <div class="rc-body" id="recentBody">
+          <div class="rc-empty">
+            <i class="fas fa-database"></i>
+            No evaluations found in this session — <a href="http://127.0.0.1:5000/upload.html" style="color:var(--gold);font-weight:500">run your first audit</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- HELPER -->
+      <p class="fade fade-5" style="font-size:.8125rem;color:var(--muted);font-style:italic;text-align:center;padding-top:.5rem">
+        New here? Start with <a href="http://127.0.0.1:5000/preprocess.html" style="color:var(--gold);text-decoration:none;font-weight:500">Dataset Refinement</a> to prepare your data, then run a <a href="http://127.0.0.1:5000/upload.html" style="color:var(--gold);text-decoration:none;font-weight:500">Fairness Audit</a>.
+      </p>
+
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <span>FairTrust AI · JEDI Round 3 · v3.0</span>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Support</a>
+      </div>
+    </footer>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+const API = 'http://127.0.0.1:5000';
+
+function scoreColor(s){
+  if(s==null)return 'var(--muted)';
+  if(s>=0.80)return 'var(--green)';
+  if(s>=0.60)return 'var(--amber)';
+  return 'var(--red)';
+}
+function sevClass(s){
+  if(s==null)return 'warn';
+  if(s>=0.80)return 'pass';
+  if(s>=0.60)return 'warn';
+  return 'fail';
+}
+
+async function loadDashboard(){
+  let evals = [];
+
+  // Try live API first
+  try {
+    const res = await fetch(`${API}/evaluate`);
+    const d   = await res.json();
+    evals = (d.evaluations||[]).filter(e=>e.status==='complete');
+  } catch(_){}
+
+  // Also check sessionStorage for the most recent eval
+  const cachedId  = sessionStorage.getItem('eval_id');
+  const cachedRaw = sessionStorage.getItem('eval_result');
+  if(cachedId && cachedRaw){
+    try{
+      const raw = JSON.parse(cachedRaw);
+      const alreadyIn = evals.some(e=>e.evaluation_id===cachedId);
+      if(!alreadyIn){
+        evals.unshift({
+          evaluation_id: cachedId,
+          status:'complete',
+          ethical_score: raw.ethical_score||raw.fairness_score||null,
+          fairness_score: raw.fairness_score||null,
+          records: raw.records||0,
+          report_type: raw.report_type||'—',
+          _cached: raw,
+        });
+      }
+    }catch(_){}
+  }
+
+  // ── Hero stats ──
+  const total   = evals.length;
+  const passed  = evals.filter(e=>e.ethical_score>=0.80).length;
+  const records = evals.reduce((s,e)=>s+(e.records||0),0);
+  const avgScore = total ? evals.reduce((s,e)=>s+(e.ethical_score||0),0)/total : null;
+
+  document.getElementById('statEvals').textContent   = total || '0';
+  document.getElementById('statPassed').textContent  = passed || '0';
+  document.getElementById('statRecords').textContent = records>0 ? records.toLocaleString() : '0';
+  document.getElementById('statAvgScore').textContent= avgScore!=null ? Math.round(avgScore*100)+'/100' : '—';
+
+  // ── Quick stat cards ──
+  const latest = evals[0];
+  if(latest){
+    document.getElementById('statsRow').style.display='grid';
+    const ls = latest.ethical_score;
+    document.getElementById('qLatestScore').textContent = ls!=null ? Math.round(ls*100)+'/100' : '—';
+    document.getElementById('qLatestScore').style.color = scoreColor(ls);
+    document.getElementById('qLatestSub').textContent   = `${latest.evaluation_id.slice(0,10)}… · ${(latest.records||0).toLocaleString()} rows`;
+    document.getElementById('qLatestBar').style.width   = (ls||0)*100+'%';
+    document.getElementById('qLatestBar').style.background = scoreColor(ls);
+
+    // Pull fairness metrics from cache if available
+    const raw    = latest._cached || {};
+    const fairness = raw.fairness || {};
+    const di  = fairness.disparateImpact;
+    const cf  = fairness.counterfactual;
+    const shap = raw.shap || {};
+
+    if(di!=null){
+      document.getElementById('qDI').textContent  = Number(di).toFixed(3);
+      document.getElementById('qDI').style.color  = scoreColor(di);
+      document.getElementById('qDISub').textContent = di>=0.8?'✓ 80% rule passed':'✗ Below 0.80 threshold';
+      document.getElementById('qDIBar').style.width = Math.round(di*100)+'%';
+      document.getElementById('qDIBar').style.background = scoreColor(di);
+    }
+    if(cf!=null){
+      document.getElementById('qCF').textContent  = Number(cf).toFixed(3);
+      document.getElementById('qCF').style.color  = scoreColor(cf);
+      document.getElementById('qCFSub').textContent = cf>=0.80?'✓ Passing':'✗ Needs attention';
+      document.getElementById('qCFBar').style.width = Math.round(cf*100)+'%';
+      document.getElementById('qCFBar').style.background = scoreColor(cf);
+    }
+    if(shap.topFeature){
+      document.getElementById('qShap').textContent    = shap.topFeature;
+      document.getElementById('qShapSub').textContent = `SHAP max: ${Number(shap.shapMax||0).toFixed(3)}`;
+    }
+
+    // Show report link
+    const link = document.getElementById('recentLink');
+    link.style.display='flex';
+    link.href = `http://127.0.0.1:5000/allReports.html?eval_id=${latest.evaluation_id}`;
+  }
+
+  // ── Recent eval list ──
+  const body = document.getElementById('recentBody');
+  if(!evals.length){
+    body.innerHTML=`<div class="rc-empty"><i class="fas fa-database"></i>No evaluations found in this session — <a href="http://127.0.0.1:5000/upload.html" style="color:var(--gold);font-weight:500">run your first audit</a></div>`;
+    return;
+  }
+  body.innerHTML = evals.slice(0,6).map(ev=>{
+    const s = ev.ethical_score;
+    const pct = s!=null?Math.round(s*100):null;
+    const cls = sevClass(s);
+    return `<div class="eval-row">
+      <div class="eval-id">${ev.evaluation_id.slice(0,10)}…</div>
+      <div class="eval-score-bar"><div class="eval-score-fill" style="width:${pct||0}%;background:${scoreColor(s)}"></div></div>
+      <div class="eval-score-num" style="color:${scoreColor(s)}">${pct!=null?pct+'/100':'—'}</div>
+      <span class="eval-pill ${cls}">${cls.toUpperCase()}</span>
+      <a href="http://127.0.0.1:5000/allReports.html?eval_id=${ev.evaluation_id}" style="font-size:11px;color:var(--muted);text-decoration:none;margin-left:.5rem;transition:color .15s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-arrow-right"></i></a>
+    </div>`;
+  }).join('');
+}
+
+loadDashboard();
+</script>
 </body>
 </html>
