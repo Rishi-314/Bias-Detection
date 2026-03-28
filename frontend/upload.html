@@ -3,1167 +3,563 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload - FairTrust AI Framework</title>
+    <title>Upload — FairTrust AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        *, *::before, *::after { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
-        
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --primary: #1A2D4E;
-            --primary-light: #2A3F66;
-            --primary-soft: #E9ECF3;
-            --secondary: #EBB255;
-            --accent: #4A90E2;
-            --warning: #FFB020;
-            --danger: #FF5C38;
-            --success: #00C896;
-            --success-soft: #E9FBF4;
-            --bg: #F5F6FA;
-            --bg-2: #ECEEF5;
-            --surface: #FFFFFF;
-            --ink: #1A2D4E;
-            --ink-2: #1E2433;
-            --ink-3: #3D4560;
-            --muted: #6B7594;
-            --rule: #E4E7F0;
-            --shadow: 0 4px 20px rgba(26, 45, 78, 0.07);
-            --shadow-md: 0 8px 32px rgba(26, 45, 78, 0.10);
-            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --radius: 14px;
-        }
-        
-        body { 
-            font-family: "Segoe UI", system-ui, -apple-system, sans-serif; 
-            background: var(--bg); 
-            color: var(--ink); 
-            line-height: 1.6; 
-        }
-
-        /* ================= NAVBAR ================= */
-        .navbar {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            background: rgba(255,255,255,0.97);
-            padding: 0 2.5rem;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 1px 0 var(--rule), var(--shadow);
-            z-index: 1000;
-            backdrop-filter: blur(12px);
-            transition: var(--transition);
+            --navy: #0C1B33;
+            --navy2: #152645;
+            --navy3: #1E3461;
+            --gold: #D4A943;
+            --gold2: rgba(212,169,67,0.15);
+            --gold3: rgba(212,169,67,0.3);
+            --red: #DC3545;
+            --red2: rgba(220,53,69,0.1);
+            --green: #198754;
+            --green2: rgba(25,135,84,0.1);
+            --green3: rgba(25,135,84,0.25);
+            --amber: #E08C2A;
+            --amber2: rgba(224,140,42,0.1);
+            --blue: #2563EB;
+            --blue2: rgba(37,99,235,0.1);
+            --bg: #F2F4F8;
+            --bg2: #E8EBF2;
+            --surface: #FFF;
+            --rule: #DDE1EC;
+            --text: #0C1B33;
+            --muted: #5A6478;
+            --mono: 'DM Mono', monospace;
+            --display: 'Fraunces', serif;
+            --body: 'DM Sans', sans-serif;
+            --r: 10px;
+            --r-lg: 14px;
+            --sh: 0 2px 10px rgba(12,27,51,0.07);
+            --sh-md: 0 8px 28px rgba(12,27,51,0.11);
         }
 
-        .navbar.scrolled {
-            height: 56px;
-            box-shadow: 0 2px 12px rgba(26,45,78,0.10);
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--body); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; display: flex; flex-direction: column; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--primary);
-        }
-
-        .logo-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, var(--primary), #4A90E2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 17px;
-            box-shadow: 0 3px 10px rgba(26,45,78,0.18);
-            transition: var(--transition);
-        }
-
-        .logo:hover .logo-icon { transform: rotate(5deg) scale(1.05); }
-
-        .logo-text { font-size: 20px; font-weight: 800; line-height: 1.2; }
-        .logo-text span { color: var(--secondary); }
-        .logo-subtitle { font-size: 11px; font-weight: 600; color: var(--secondary); letter-spacing: 1.5px; }
-
+        /* ── NAV ── */
+        .navbar { position: sticky; top: 0; z-index: 200; background: rgba(12,27,51,0.97); backdrop-filter: blur(12px); height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+        .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+        .logo-icon { width: 30px; height: 30px; background: var(--gold); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--navy); }
+        .logo-name { font-family: var(--display); font-size: 16px; font-weight: 700; color: white; }
+        .logo-name span { color: var(--gold); }
+        .nav-right { display: flex; align-items: center; gap: .5rem; }
         .nav-links { display: flex; gap: 4px; }
+        .nav-links a { font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.5); text-decoration: none; padding: 5px 10px; border-radius: 6px; transition: all .15s; }
+        .nav-links a:hover { color: white; background: rgba(255,255,255,0.08); }
+        .nav-links a.active { color: var(--gold); background: rgba(212,169,67,0.12); }
+        .nav-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); border: 1px solid var(--green3); color: #198754; font-family: var(--mono); font-size: 10px; padding: 3px 9px; border-radius: 999px; }
+        .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: #198754; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-        .nav-links a {
-            text-decoration: none;
-            font-size: 14.5px;
-            font-weight: 600;
-            color: var(--muted);
-            padding: 6px 14px;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
+        /* ── LAYOUT ── */
+        .shell { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 56px); }
 
-        .nav-links a:hover { color: var(--primary); background: var(--bg); }
+        /* ── SIDEBAR ── */
+        .sidebar { width: 220px; flex-shrink: 0; background: var(--navy); display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); overflow-y: auto; }
+        .sb-top { padding: 1.5rem 1.25rem 1rem; }
+        .sb-greeting { font-family: var(--display); font-size: .875rem; font-style: italic; color: rgba(255,255,255,.35); margin-bottom: .25rem; }
+        .sb-user { font-weight: 500; font-size: .9rem; color: rgba(255,255,255,.75); display: flex; align-items: center; gap: .5rem; }
+        .sb-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gold2); border: 1px solid var(--gold3); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--gold); }
+        .sb-divider { height: 1px; background: rgba(255,255,255,.06); margin: 1rem 0; }
+        .sb-label { font-family: var(--mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.25); padding: .5rem 1.25rem .375rem; }
+        .sb-item { display: flex; align-items: center; gap: .625rem; padding: .55rem 1.25rem; font-size: .8375rem; font-weight: 400; color: rgba(255,255,255,.45); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; text-decoration: none; }
+        .sb-item:hover { color: rgba(255,255,255,.8); background: rgba(255,255,255,.04); }
+        .sb-item.active { color: var(--gold); background: rgba(212,169,67,.07); border-left-color: var(--gold); }
+        .sb-item i { width: 14px; font-size: 12px; flex-shrink: 0; }
+        .sb-bottom { padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,.06); margin-top: auto; }
 
-        .nav-links a.active {
-            color: var(--secondary);
-            background: rgba(235,178,85,0.08);
-        }
+        /* ── MAIN SCROLL AREA ── */
+        .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
 
-        /* ================= GLOBAL ERROR ================= */
-        .global-error { 
-            display: none; 
-            max-width: 1280px; 
-            margin: 0 auto 1rem; 
-            padding: 0 2.5rem; 
-        }
+        /* ── PAGE HEADER ── */
+        .page-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 55%, var(--navy3) 100%); padding: 2.25rem 3rem 2rem; position: relative; overflow: hidden; flex-shrink: 0; }
+        .page-header::before { content:''; position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(212,169,67,.07) 0%,transparent 70%); pointer-events:none; }
+        .ph-inner { position: relative; z-index: 1; }
+        .ph-eyebrow { display: inline-flex; align-items: center; gap: 5px; background: var(--gold2); border: 1px solid var(--gold3); color: var(--gold); font-family: var(--mono); font-size: 10px; padding: 3px 10px; border-radius: 999px; margin-bottom: .875rem; }
+        .page-header h1 { font-family: var(--display); font-size: 1.625rem; font-weight: 700; color: white; line-height: 1.2; margin-bottom: .375rem; }
+        .page-header h1 em { font-style: italic; color: var(--gold); }
+        .page-header p { font-size: .875rem; color: rgba(255,255,255,.45); }
 
-        .global-error-inner { 
-            background: #FFF1EE; 
-            border: 1px solid #FFCFC4; 
-            border-left: 4px solid var(--danger);
-            border-radius: 0 10px 10px 0; 
-            padding: 0.875rem 1rem; 
-            color: #C0391B; 
-            font-size: 0.875rem; 
-            display: flex; 
-            align-items: flex-start; 
-            gap: 0.625rem; 
-        }
+        /* ── CONTENT ── */
+        .content { padding: 1.75rem 2.5rem 4rem; flex: 1; }
 
-        .global-error-inner i { color: var(--danger); margin-top: 2px; }
+        /* ── SECTION LABEL ── */
+        .section-label { font-family: var(--mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: .875rem; display: flex; align-items: center; gap: .5rem; }
+        .section-label::after { content:''; flex:1; height:1px; background:var(--rule); }
 
-        /* ================= PAGE LAYOUT ================= */
-        .upload-page { 
-            max-width: 1280px; 
-            margin: 0 auto; 
-            padding: 2.5rem 2.5rem 5rem; 
-        }
+        /* ── GLOBAL ERROR ── */
+        .global-error { display: none; margin-bottom: 1.25rem; }
+        .global-error-inner { background: var(--red2); border: 1px solid rgba(220,53,69,0.25); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: .75rem 1rem; color: var(--red); font-size: .8375rem; display: flex; align-items: flex-start; gap: .625rem; }
 
-        /* ================= PAGE HEADER ================= */
-        .page-header { 
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--rule);
-        }
+        /* ── CARDS ── */
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.125rem; margin-bottom: 1.5rem; }
+        .card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-lg); padding: 1.375rem; box-shadow: var(--sh); transition: all .2s; }
+        .card:hover { border-color: var(--gold3); box-shadow: var(--sh-md); }
 
-        .page-header h1 { 
-            font-size: 2rem; 
-            font-weight: 800; 
-            color: var(--primary);
-            margin-bottom: 0.375rem;
-            letter-spacing: -0.02em;
-        }
+        .card-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.125rem; padding-bottom: .875rem; border-bottom: 1px solid var(--rule); }
+        .card-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--gold2); color: var(--gold); font-size: 15px; transition: all .2s; }
+        .card:hover .card-icon { background: var(--gold); color: var(--navy); }
+        .card-title { font-family: var(--display); font-size: 1rem; font-weight: 700; color: var(--navy); }
 
-        .page-header p { 
-            color: var(--muted); 
-            font-size: 0.9375rem;
-        }
+        /* ── UPLOAD AREA ── */
+        .upload-area { border: 2px dashed var(--rule); border-radius: 9px; padding: 1.625rem 1rem; text-align: center; cursor: pointer; transition: all .2s; margin-bottom: .5rem; user-select: none; background: var(--bg); }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--gold); background: rgba(212,169,67,0.04); }
+        .upload-area.uploaded { border-color: var(--green); background: var(--green2); border-style: solid; }
+        .upload-icon { display: flex; justify-content: center; margin-bottom: .5rem; color: var(--gold); font-size: 28px; }
+        .upload-main-text { font-weight: 600; font-size: .875rem; color: var(--text); }
+        .upload-hint { color: var(--muted); font-size: .775rem; margin-top: .2rem; }
+        .file-limit { color: var(--muted); font-size: .75rem; margin-bottom: .625rem; font-family: var(--mono); }
 
-        /* ================= FORM SECTIONS ================= */
-        .upload-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 1.25rem; 
-            margin-bottom: 1.25rem; 
-        }
-
-        .upload-card, .section-block { 
-            background: var(--surface); 
-            border: 1.5px solid var(--rule); 
-            border-radius: var(--radius); 
-            padding: 1.5rem; 
-            box-shadow: var(--shadow);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .section-block {
-            margin-top: 1.25rem;
-        }
-
-        .upload-card:hover, .section-block:hover { 
-            border-color: rgba(235,178,85,0.35); 
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Card headers */
-        .card-header { 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem; 
-            margin-bottom: 1.25rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--rule);
-        }
-
-        .card-icon { 
-            width: 36px; 
-            height: 36px; 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-shrink: 0; 
-            background: rgba(235,178,85,0.1); 
-            color: var(--secondary); 
-            font-size: 16px;
-            transition: var(--transition);
-        }
-
-        .upload-card:hover .card-icon,
-        .section-block:hover .card-icon { 
-            background: var(--secondary); 
-            color: white; 
-        }
-
-        .card-title { 
-            font-size: 1rem; 
-            font-weight: 700; 
-            color: var(--primary);
-            letter-spacing: -0.01em;
-        }
-
-        /* Upload Area */
-        .upload-area { 
-            border: 2px dashed rgba(26,45,78,0.18); 
-            border-radius: 10px; 
-            padding: 1.75rem 1rem; 
-            text-align: center; 
-            cursor: pointer; 
-            transition: var(--transition);
-            margin-bottom: 0.625rem; 
-            user-select: none; 
-            background: var(--bg); 
-        }
-
-        .upload-area:hover, .upload-area.dragover { 
-            border-color: var(--secondary); 
-            background: rgba(235,178,85,0.04); 
-        }
-
-        .upload-area.uploaded { 
-            border-color: var(--success); 
-            background: var(--success-soft); 
-            border-style: solid; 
-        }
-
-        .upload-icon { 
-            display: flex; 
-            justify-content: center; 
-            margin-bottom: 0.625rem; 
-            color: var(--secondary);
-            font-size: 32px;
-        }
-
-        .upload-main-text { font-weight: 600; font-size: 0.875rem; color: var(--ink-2); }
-        .upload-hint { color: var(--muted); font-size: 0.775rem; margin-top: 0.2rem; }
-
-        .file-limit { 
-            color: var(--muted); 
-            font-size: 0.75rem; 
-            margin-bottom: 0.75rem; 
-        }
-
-        .file-status { 
-            display: none; 
-            align-items: center; 
-            gap: 0.5rem; 
-            margin-top: 0.5rem; 
-            padding: 0.5rem 0.875rem; 
-            border-radius: 8px; 
-            font-size: 0.8rem; 
-            font-weight: 500; 
-        }
-
-        .file-status.success { display: flex; background: var(--success-soft); color: #059669; border: 1px solid #A7F3D0; }
-        .file-status.error   { display: flex; background: #FFF1EE; color: var(--danger); border: 1px solid #FFCFC4; }
-        .file-status.uploading { display: flex; background: rgba(235,178,85,0.1); color: var(--secondary); border: 1px solid rgba(235,178,85,0.2); }
-
-        .upload-spinner { 
-            width: 13px; 
-            height: 13px; 
-            border: 2px solid currentColor; 
-            border-top-color: transparent; 
-            border-radius: 50%; 
-            animation: spin 0.7s linear infinite; 
-            flex-shrink: 0; 
-        }
-
+        /* File status */
+        .file-status { display: none; align-items: center; gap: .5rem; margin-top: .5rem; padding: .45rem .875rem; border-radius: 7px; font-size: .8rem; font-weight: 500; font-family: var(--mono); }
+        .file-status.success { display: flex; background: var(--green2); color: var(--green); border: 1px solid var(--green3); }
+        .file-status.error { display: flex; background: var(--red2); color: var(--red); border: 1px solid rgba(220,53,69,0.2); }
+        .file-status.uploading { display: flex; background: var(--gold2); color: var(--amber); border: 1px solid var(--gold3); }
+        .upload-spinner { width: 12px; height: 12px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Form Fields */
-        .field-group { margin-top: 1rem; }
-
-        .field-group label { 
-            display: block; 
-            margin-bottom: 0.35rem; 
-            font-size: 0.8125rem; 
-            font-weight: 600; 
-            color: var(--ink-3); 
-        }
-
-        .field-group label .optional {
-            color: var(--muted);
-            font-weight: 400;
-            font-size: 0.75rem;
-            margin-left: 4px;
-        }
-
-        .field-group select, 
-        .field-group input[type="text"] { 
-            width: 100%; 
-            padding: 0.575rem 0.875rem; 
-            border: 1.5px solid var(--rule); 
-            border-radius: 8px; 
-            background: var(--surface); 
-            font-size: 0.875rem; 
-            font-family: inherit; 
-            color: var(--ink); 
-            transition: var(--transition);
-            outline: none; 
-        }
-
-        .field-group select:focus, 
-        .field-group input[type="text"]:focus { 
-            border-color: var(--secondary); 
-            box-shadow: 0 0 0 3px rgba(235,178,85,0.12); 
-        }
-
-        .field-hint { 
-            font-size: 0.75rem; 
-            color: var(--muted); 
-            margin-top: 0.3rem; 
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .field-hint i { color: var(--secondary); font-size: 0.7rem; }
-
-        .field-row { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 0.75rem; 
-            margin-top: 1rem; 
-        }
-
-        /* Buttons */
-        .btn { 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 0.375rem; 
-            padding: 0.575rem 1rem; 
-            border-radius: 8px; 
-            font-size: 0.8125rem; 
-            font-family: inherit; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: var(--transition);
-            border: 1.5px solid transparent; 
-        }
-
-        .btn-block { width: 100%; }
-
-        .btn-ghost { 
-            background: var(--bg); 
-            border-color: var(--rule); 
-            color: var(--ink-3); 
-        }
-
-        .btn-ghost:hover { 
-            border-color: var(--secondary); 
-            color: var(--secondary); 
-            background: rgba(235,178,85,0.05); 
-        }
-
-        .btn-primary-filled { 
-            background: var(--primary); 
-            color: white; 
-            border-color: var(--primary); 
-            box-shadow: 0 2px 10px rgba(26,45,78,0.18);
-        }
-
-        .btn-primary-filled:hover { 
-            background: #243d65;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(26,45,78,0.25);
-        }
-
-        .btn-danger-outline { 
-            border-color: rgba(255,92,56,0.3); 
-            color: var(--danger); 
-            background: #FFF1EE; 
-        }
-
-        .btn-danger-outline:hover { 
-            background: var(--danger); 
-            color: white; 
-            border-color: var(--danger); 
-        }
+        /* Form fields */
+        .field-group { margin-top: .875rem; }
+        .field-group label { display: block; margin-bottom: .3rem; font-size: .8rem; font-weight: 500; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+        .field-group label .req { color: var(--red); }
+        .field-group select, .field-group input[type="text"] { width: 100%; padding: .55rem .875rem; border: 1.5px solid var(--rule); border-radius: 8px; background: var(--surface); font-size: .875rem; font-family: var(--body); color: var(--text); transition: all .15s; outline: none; }
+        .field-group select:focus, .field-group input[type="text"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold2); }
+        .field-hint { font-size: .75rem; color: var(--muted); margin-top: .3rem; display: flex; align-items: center; gap: 4px; }
+        .field-hint i { color: var(--gold); font-size: .7rem; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .875rem; }
 
         /* Checkbox */
-        .checkbox-wrapper { 
-            margin-top: 0.875rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.5rem; 
-            font-size: 0.8125rem; 
-            color: var(--ink-3); 
-        }
+        .checkbox-wrapper { margin-top: .875rem; display: flex; align-items: center; gap: .5rem; font-size: .8375rem; color: var(--muted); }
+        .checkbox-wrapper input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--gold); }
 
-        .checkbox-wrapper input[type="checkbox"] { 
-            width: 16px; 
-            height: 16px; 
-            cursor: pointer; 
-            accent-color: var(--secondary); 
-        }
+        /* Info banner */
+        .info-banner { margin-top: .875rem; padding: .65rem .875rem; background: var(--gold2); border-radius: 8px; border: 1px solid var(--gold3); font-size: .8rem; color: var(--navy); display: flex; align-items: center; gap: .5rem; }
+        .info-banner i { color: var(--gold); }
 
-        .section-desc { 
-            font-size: 0.875rem; 
-            color: var(--muted); 
-            margin-bottom: 1.25rem;
-            line-height: 1.5;
-        }
+        /* ── SECTION BLOCK ── */
+        .section-block { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-lg); padding: 1.375rem; box-shadow: var(--sh); margin-bottom: 1.25rem; transition: all .2s; }
+        .section-block:hover { border-color: var(--gold3); box-shadow: var(--sh-md); }
+        .section-desc { font-size: .875rem; color: var(--muted); margin-bottom: 1.125rem; line-height: 1.55; }
 
-        /* Attribute Grid */
-        .attribute-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); 
-            gap: 0.625rem; 
-            margin-bottom: 1rem; 
-        }
-
-        .attribute-checkbox { 
-            display: flex; 
-            align-items: center; 
-            gap: 0.625rem; 
-            background: var(--bg); 
-            padding: 0.65rem 0.875rem; 
-            border-radius: 8px; 
-            border: 1.5px solid var(--rule); 
-            cursor: pointer; 
-            transition: var(--transition);
-            font-size: 0.8375rem; 
-            font-weight: 500; 
-            color: var(--ink-3); 
-        }
-
-        .attribute-checkbox:hover { 
-            border-color: var(--secondary); 
-            background: rgba(235,178,85,0.05); 
-            color: var(--secondary); 
-        }
-
-        .attribute-checkbox:has(input:checked) { 
-            border-color: var(--secondary); 
-            background: rgba(235,178,85,0.08); 
-            color: var(--secondary); 
-        }
-
+        /* Attributes */
+        .attribute-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: .5rem; margin-bottom: .875rem; }
+        .attribute-checkbox { display: flex; align-items: center; gap: .5rem; background: var(--bg); padding: .575rem .8rem; border-radius: 8px; border: 1.5px solid var(--rule); cursor: pointer; transition: all .15s; font-size: .8125rem; font-weight: 500; color: var(--muted); }
+        .attribute-checkbox:hover { border-color: var(--gold3); color: var(--navy); }
+        .attribute-checkbox:has(input:checked) { border-color: var(--gold); background: var(--gold2); color: var(--navy); }
         .attribute-checkbox input[type="checkbox"] { display: none; }
+        .checkbox-custom { width: 14px; height: 14px; border: 1.5px solid var(--rule); border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+        .attribute-checkbox input[type="checkbox"]:checked + .checkbox-custom { background: var(--gold); border-color: var(--gold); }
+        .attribute-checkbox input[type="checkbox"]:checked + .checkbox-custom::after { content: ''; display: block; width: 4px; height: 7px; border: 2px solid var(--navy); border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+        .attr-icon { width: 14px; font-size: .75rem; flex-shrink: 0; color: currentColor; }
 
-        .checkbox-custom { 
-            width: 15px; 
-            height: 15px; 
-            border: 1.5px solid rgba(26,45,78,0.25); 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            transition: var(--transition);
-            flex-shrink: 0; 
-        }
-
-        .attribute-checkbox input[type="checkbox"]:checked + .checkbox-custom { 
-            background: var(--secondary); 
-            border-color: var(--secondary); 
-        }
-
-        .attribute-checkbox input[type="checkbox"]:checked + .checkbox-custom::after { 
-            content: ''; 
-            display: block; 
-            width: 4px; 
-            height: 7px; 
-            border: 2px solid white; 
-            border-top: none; 
-            border-left: none; 
-            transform: rotate(45deg) translateY(-1px); 
-        }
-
-        .attr-icon { width: 15px; height: 15px; color: currentColor; flex-shrink: 0; font-size: 0.8rem; }
-
-        .other-input-wrap { display: none; margin-top: 0.75rem; }
+        .other-input-wrap { display: none; margin-top: .625rem; }
         .other-input-wrap.visible { display: block; }
 
-        .selected-attrs-display { 
-            display: none; 
-            margin-bottom: 1rem; 
-            padding: 0.875rem 1rem; 
-            background: rgba(235,178,85,0.07); 
-            border-radius: 8px; 
-            border: 1px solid rgba(235,178,85,0.2); 
-        }
+        .selected-attrs-display { display: none; margin-bottom: .875rem; padding: .75rem .875rem; background: var(--gold2); border-radius: 8px; border: 1px solid var(--gold3); }
+        .attrs-label { font-size: .7rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .375rem; font-family: var(--mono); }
+        .attr-tag { display: inline-flex; align-items: center; gap: .25rem; padding: .175rem .575rem; background: white; border: 1px solid var(--gold3); border-radius: 999px; font-size: .775rem; font-weight: 500; color: var(--navy); }
+        .attr-tag i { color: var(--gold); font-size: .6rem; }
 
-        .attrs-label { 
-            font-size: 0.75rem; 
-            font-weight: 700; 
-            color: var(--secondary); 
-            text-transform: uppercase; 
-            letter-spacing: 0.06em; 
-            margin-bottom: 0.5rem; 
-        }
+        .warning-banner { background: rgba(224,140,42,0.08); border-left: 3px solid var(--amber); padding: .65rem .875rem; border-radius: 0 8px 8px 0; margin-top: .75rem; font-size: .8rem; color: var(--amber); display: none; gap: .5rem; align-items: flex-start; }
+        .warning-banner i { margin-top: 2px; }
 
-        .attr-tag { 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 0.3rem; 
-            padding: 0.2rem 0.625rem; 
-            background: white; 
-            border: 1px solid rgba(235,178,85,0.3); 
-            border-radius: 999px; 
-            font-size: 0.8rem; 
-            font-weight: 500; 
-            color: var(--primary); 
-        }
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; padding: .55rem .875rem; border-radius: 8px; font-size: .8125rem; font-family: var(--body); font-weight: 600; cursor: pointer; transition: all .15s; border: 1.5px solid transparent; }
+        .btn-row { display: flex; gap: .625rem; margin-bottom: .625rem; }
+        .btn-primary { background: var(--navy); color: white; border-color: var(--navy); box-shadow: 0 2px 8px rgba(12,27,51,0.2); }
+        .btn-primary:hover { background: var(--navy3); transform: translateY(-1px); }
+        .btn-ghost { background: var(--bg); border-color: var(--rule); color: var(--muted); }
+        .btn-ghost:hover { border-color: var(--gold3); color: var(--navy); }
+        .btn-danger { background: var(--red2); border-color: rgba(220,53,69,0.2); color: var(--red); }
+        .btn-danger:hover { background: var(--red); color: white; border-color: var(--red); }
 
-        .attr-tag i { color: var(--secondary); font-size: 0.65rem; }
-
-        .warning-banner { 
-            background: #FFFBEB; 
-            border-left: 4px solid var(--warning); 
-            padding: 0.75rem 0.875rem; 
-            border-radius: 0 8px 8px 0; 
-            margin-top: 0.875rem; 
-            font-size: 0.8rem; 
-            color: #92400E; 
-            display: flex; 
-            gap: 0.5rem; 
-            align-items: flex-start; 
-        }
-
-        .warning-banner i { color: var(--warning); margin-top: 2px; }
-
-        .info-banner { 
-            margin-top: 1rem; 
-            padding: 0.75rem 0.875rem; 
-            background: rgba(235,178,85,0.08); 
-            border-radius: 8px; 
-            border: 1px solid rgba(235,178,85,0.2); 
-            font-size: 0.8125rem; 
-            color: var(--primary); 
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .info-banner i { color: var(--secondary); }
-
-        /* Button row inside sections */
-        .btn-row {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        /* Ranking List */
-        .ranking-list { margin: 0 0 1rem; }
-
-        .ranking-item { 
-            display: grid; 
-            grid-template-columns: 36px 1fr 1fr 52px 110px; 
-            align-items: center; 
-            gap: 0.875rem; 
-            padding: 0.75rem 1rem; 
-            background: var(--bg); 
-            border: 1.5px solid var(--rule); 
-            border-radius: 9px; 
-            margin-bottom: 0.5rem; 
-            cursor: grab; 
-            transition: var(--transition);
-            font-size: 0.875rem; 
-        }
-
-        .ranking-item:hover { 
-            background: rgba(235,178,85,0.04); 
-            border-color: var(--secondary); 
-            box-shadow: 0 2px 8px rgba(26,45,78,0.07); 
-        }
-
-        .ranking-item.dragging { 
-            opacity: 0.5; 
-            background: rgba(235,178,85,0.1); 
-            cursor: grabbing; 
-        }
-
-        .rank-number { 
-            width: 28px; 
-            height: 28px; 
-            background: var(--primary); 
-            color: white; 
-            border-radius: 7px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: 700; 
-            font-size: 0.8rem; 
-            flex-shrink: 0; 
-        }
-
-        .dimension-name { font-weight: 600; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .weight-bar { height: 5px; background: var(--rule); border-radius: 100px; overflow: hidden; }
-        .weight-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), #ffce6d); border-radius: 100px; transition: width 0.25s; }
-
-        .weight-value { font-weight: 700; color: var(--secondary); min-width: 38px; text-align: right; font-size: 0.8rem; }
-
-        .weight-slider { 
-            width: 100%; 
-            height: 4px; 
-            border-radius: 100px; 
-            background: var(--rule); 
-            outline: none; 
-            -webkit-appearance: none; 
-            appearance: none; 
-            cursor: pointer; 
-        }
-
-        .weight-slider::-webkit-slider-thumb { 
-            -webkit-appearance: none; 
-            width: 15px; 
-            height: 15px; 
-            border-radius: 50%; 
-            background: var(--secondary); 
-            cursor: pointer; 
-            box-shadow: 0 0 0 3px rgba(235,178,85,0.2); 
-            transition: var(--transition);
-        }
-
+        /* ── RANKING ── */
+        .ranking-list { margin-bottom: .875rem; }
+        .ranking-item { display: grid; grid-template-columns: 32px 1fr 1fr 48px 100px; align-items: center; gap: .75rem; padding: .675rem .875rem; background: var(--bg); border: 1.5px solid var(--rule); border-radius: 9px; margin-bottom: .4rem; cursor: grab; transition: all .15s; font-size: .875rem; }
+        .ranking-item:hover { background: var(--gold2); border-color: var(--gold3); }
+        .ranking-item.dragging { opacity: .5; background: var(--gold2); cursor: grabbing; }
+        .rank-number { width: 26px; height: 26px; background: var(--navy); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .75rem; font-family: var(--mono); flex-shrink: 0; }
+        .dimension-name { font-weight: 500; color: var(--text); font-size: .8375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .weight-bar { height: 4px; background: var(--rule); border-radius: 100px; overflow: hidden; }
+        .weight-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #f0c76a); border-radius: 100px; transition: width .2s; }
+        .weight-value { font-weight: 700; color: var(--gold); min-width: 34px; text-align: right; font-size: .8rem; font-family: var(--mono); }
+        .weight-slider { width: 100%; height: 3px; border-radius: 100px; background: var(--rule); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+        .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; box-shadow: 0 0 0 3px var(--gold2); transition: transform .15s; }
         .weight-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        .weight-summary { 
-            background: var(--bg); 
-            padding: 0.875rem 1rem; 
-            border-radius: 9px; 
-            margin: 0.75rem 0 1rem; 
-            border: 1.5px solid var(--rule); 
-        }
+        .weight-summary { background: var(--bg); padding: .75rem .875rem; border-radius: 9px; margin: .625rem 0 .875rem; border: 1.5px solid var(--rule); }
+        .weight-summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; font-size: .8rem; font-weight: 600; color: var(--text); font-family: var(--mono); }
+        .weight-summary-total { color: var(--gold); font-size: .875rem; }
+        .weight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+        .weight-stat { text-align: center; padding: .45rem; background: var(--surface); border-radius: 7px; border: 1px solid var(--rule); }
+        .weight-stat-label { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-family: var(--mono); }
+        .weight-stat-name { font-size: .775rem; font-weight: 700; color: var(--gold); margin-top: .1rem; }
+        .weight-stat.low .weight-stat-name { color: var(--red); }
+        .weight-stat-val { font-size: .7rem; color: var(--muted); font-family: var(--mono); }
 
-        .weight-summary-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 0.625rem; 
-            font-size: 0.8125rem; 
-            font-weight: 600; 
-            color: var(--ink-2); 
-        }
-
-        .weight-summary-total { color: var(--secondary); font-size: 0.9rem; font-weight: 700; }
-
-        .weight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
-
-        .weight-stat { 
-            text-align: center; 
-            padding: 0.5rem; 
-            background: var(--surface); 
-            border-radius: 7px; 
-            border: 1px solid var(--rule); 
-        }
-
-        .weight-stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-        .weight-stat-name  { font-size: 0.8rem; font-weight: 700; color: var(--secondary); margin-top: 0.15rem; }
-        .weight-stat.low .weight-stat-name { color: var(--danger); }
-        .weight-stat-val   { font-size: 0.75rem; color: var(--muted); }
-
-        /* Report Toggle */
-        .report-toggle { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 1rem; 
-        }
-
-        .report-card { 
-            border: 1.5px solid var(--rule); 
-            border-radius: 11px; 
-            padding: 1.25rem; 
-            cursor: pointer; 
-            transition: var(--transition);
-            position: relative; 
-            background: var(--bg); 
-        }
-
-        .report-card:hover { 
-            border-color: var(--secondary); 
-            transform: translateY(-2px); 
-            box-shadow: var(--shadow-md); 
-            background: var(--surface); 
-        }
-
-        .report-card.selected { 
-            border-color: var(--secondary); 
-            background: rgba(235,178,85,0.05); 
-        }
-
-        .report-icon { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 10px; 
-            background: var(--surface); 
-            border: 1px solid var(--rule); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-bottom: 0.875rem; 
-            color: var(--secondary); 
-            font-size: 20px; 
-        }
-
-        .report-card.selected .report-icon { 
-            background: rgba(235,178,85,0.12); 
-            border-color: rgba(235,178,85,0.3); 
-        }
-
-        .report-title { font-size: 0.9375rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
-        .report-desc  { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.875rem; min-height: 36px; line-height: 1.5; }
-
-        .report-features { display: flex; flex-wrap: wrap; gap: 0.375rem; }
-
-        .feature-tag { 
-            background: var(--surface); 
-            border: 1px solid var(--rule); 
-            padding: 0.175rem 0.575rem; 
-            border-radius: 100px; 
-            font-size: 0.7rem; 
-            font-weight: 500; 
-            color: var(--ink-3); 
-        }
-
-        .report-card.selected .feature-tag { 
-            background: rgba(255,255,255,0.7); 
-            border-color: rgba(235,178,85,0.3); 
-        }
-
-        .selection-indicator { 
-            position: absolute; 
-            top: 0.75rem; 
-            right: 0.75rem; 
-            width: 20px; 
-            height: 20px; 
-            border-radius: 50%; 
-            background: var(--secondary); 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            transform: scale(0); 
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); 
-        }
-
+        /* ── REPORT CARDS ── */
+        .report-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .report-card { border: 1.5px solid var(--rule); border-radius: var(--r-lg); padding: 1.375rem; cursor: pointer; transition: all .2s; position: relative; background: var(--bg); }
+        .report-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: var(--sh-md); background: var(--surface); }
+        .report-card.selected { border-color: var(--gold); background: var(--gold2); }
+        .report-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--surface); border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; margin-bottom: .875rem; color: var(--gold); font-size: 18px; }
+        .report-card.selected .report-icon { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+        .report-title { font-family: var(--display); font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
+        .report-desc { font-size: .8rem; color: var(--muted); margin-bottom: .75rem; min-height: 32px; line-height: 1.55; }
+        .report-features { display: flex; flex-wrap: wrap; gap: .3rem; }
+        .feature-tag { background: var(--surface); border: 1px solid var(--rule); padding: .15rem .5rem; border-radius: 100px; font-size: .7rem; font-weight: 500; color: var(--muted); font-family: var(--mono); }
+        .report-card.selected .feature-tag { background: rgba(255,255,255,0.6); border-color: var(--gold3); color: var(--navy); }
+        .selection-indicator { position: absolute; top: .75rem; right: .75rem; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: var(--navy); display: flex; align-items: center; justify-content: center; transform: scale(0); transition: transform .2s cubic-bezier(0.34,1.56,0.64,1); }
         .report-card.selected .selection-indicator { transform: scale(1); }
-        .selection-indicator i { font-size: 0.65rem; }
+        .selection-indicator i { font-size: .6rem; }
 
-        #selectedReportDisplay { 
-            display: none; 
-            margin-top: 1rem; 
-            padding: 0.875rem 1rem; 
-            background: rgba(235,178,85,0.08); 
-            border-left: 4px solid var(--secondary); 
-            border-radius: 0 8px 8px 0; 
-        }
+        #selectedReportDisplay { display: none; margin-top: .875rem; padding: .75rem .875rem; background: var(--gold2); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; }
+        #selectedReportName { font-size: .9rem; font-weight: 600; color: var(--navy); font-family: var(--display); }
 
-        #selectedReportName { font-size: 0.9375rem; font-weight: 600; color: var(--primary); }
+        #allReportsWarning { display: none; margin-top: .75rem; padding: .65rem .875rem; background: var(--amber2); border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0; font-size: .8375rem; color: var(--amber); align-items: center; gap: .5rem; }
 
-        #allReportsWarning { 
-            display: none; 
-            margin-top: 0.875rem; 
-            padding: 0.75rem 0.875rem; 
-            background: #FFFBEB; 
-            border-left: 4px solid var(--warning); 
-            border-radius: 0 8px 8px 0; 
-            font-size: 0.875rem; 
-            color: #92400E; 
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* ── SUBMIT SECTION ── */
+        .submit-section { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-lg); padding: 1.75rem; box-shadow: var(--sh); text-align: center; margin-top: .25rem; }
+        .submit-btn { width: 100%; max-width: 400px; padding: .9rem; background: var(--navy); color: white; border: none; border-radius: 9px; font-size: .9375rem; font-weight: 700; cursor: pointer; transition: all .2s; margin-bottom: .625rem; font-family: var(--display); letter-spacing: .3px; box-shadow: 0 3px 14px rgba(12,27,51,0.25); display: inline-flex; align-items: center; justify-content: center; gap: .5rem; }
+        .submit-btn:hover:not(:disabled) { background: var(--navy3); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(12,27,51,0.32); }
+        .submit-btn:disabled { background: var(--bg2); color: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        .eta-text { font-size: .8rem; color: var(--muted); font-family: var(--mono); }
 
-        #allReportsWarning i { color: var(--warning); }
-
-        /* Submit Section */
-        .submit-section { 
-            margin-top: 2rem; 
-            padding: 1.75rem; 
-            background: var(--surface); 
-            border: 1.5px solid var(--rule); 
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center; 
-        }
-
-        .submit-btn { 
-            width: 100%; 
-            max-width: 420px; 
-            padding: 1rem; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 0.9375rem; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: var(--transition);
-            margin-bottom: 0.75rem; 
-            letter-spacing: 0.3px; 
-            box-shadow: 0 3px 16px rgba(26,45,78,0.25); 
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .submit-btn:hover:not(:disabled) { 
-            background: #243d65;
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 24px rgba(26,45,78,0.32); 
-        }
-
-        .submit-btn:disabled { 
-            background: #B4BAD0; 
-            cursor: not-allowed; 
-            transform: none; 
-            box-shadow: none; 
-        }
-
-        .eta-text { font-size: 0.8125rem; color: var(--muted); }
-
-        /* Toast */
-        .toast { 
-            position: fixed; 
-            bottom: 1.5rem; 
-            right: 1.5rem; 
-            padding: 0.8rem 1.125rem; 
-            border-radius: 10px; 
-            font-size: 0.875rem; 
-            font-weight: 500; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.625rem; 
-            box-shadow: 0 8px 32px rgba(13,15,20,0.15); 
-            z-index: 9999; 
-            transform: translateY(120px); 
-            opacity: 0; 
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            max-width: 360px; 
-        }
-
+        /* ── TOAST ── */
+        .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; padding: .75rem 1rem; border-radius: 9px; font-size: .875rem; font-weight: 500; display: flex; align-items: center; gap: .575rem; box-shadow: 0 8px 28px rgba(12,27,51,0.15); z-index: 9999; transform: translateY(100px); opacity: 0; transition: all .35s cubic-bezier(0.34,1.56,0.64,1); max-width: 340px; font-family: var(--mono); }
         .toast.show { transform: translateY(0); opacity: 1; }
-        .toast.success { background: var(--success-soft); color: #059669; border: 1px solid #A7F3D0; }
-        .toast.error   { background: #FFF1EE; color: var(--danger); border: 1px solid #FFCFC4; }
-        .toast.info    { background: rgba(235,178,85,0.1); color: var(--primary); border: 1px solid rgba(235,178,85,0.2); }
-        .toast i { font-size: 0.9rem; }
+        .toast.success { background: var(--green2); color: var(--green); border: 1px solid var(--green3); }
+        .toast.error { background: var(--red2); color: var(--red); border: 1px solid rgba(220,53,69,0.2); }
+        .toast.info { background: var(--gold2); color: var(--navy); border: 1px solid var(--gold3); }
 
-        /* Divider between hint and button in weight section */
-        .hint-row {
-            margin-top: 0.75rem;
-            font-size: 0.8rem;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
+        /* hint row */
+        .hint-row { margin-top: .625rem; font-size: .775rem; color: var(--muted); display: flex; align-items: center; gap: .375rem; font-family: var(--mono); }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .upload-grid { grid-template-columns: 1fr; }
-            .ranking-item { grid-template-columns: 36px 1fr 52px; }
-            .ranking-item .weight-bar, .ranking-item .weight-slider { display: none; }
-            .report-toggle { grid-template-columns: 1fr; }
-            .navbar { padding: 0 1.5rem; }
-            .upload-page { padding: 1.5rem 1.5rem 3rem; }
-        }
+        /* animations */
+        @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .fade { animation: fadeUp .35s ease both; }
+        .fade-1{animation-delay:.05s} .fade-2{animation-delay:.1s} .fade-3{animation-delay:.15s} .fade-4{animation-delay:.2s}
 
-        @media (max-width: 560px) {
-            .nav-links { display: none; }
-            .logo-text { font-size: 18px; }
-        }
+        /* responsive */
+        @media(max-width:900px){ .upload-grid{grid-template-columns:1fr} .report-toggle{grid-template-columns:1fr} .sidebar{display:none} .content{padding:1.5rem} }
+        @media(max-width:640px){ .ranking-item{grid-template-columns:32px 1fr 48px} .ranking-item .weight-bar,.ranking-item .weight-slider{display:none} }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar" id="navbar">
+<!-- NAV -->
+<nav class="navbar">
     <a href="index.html" class="logo">
-        <div class="logo-icon">
-            <i class="fas fa-shield-alt"></i>
-        </div>
-        <div>
-            <div class="logo-text">Fair<span>Trust</span></div>
-            <div class="logo-subtitle">ETHICAL AI</div>
-        </div>
+        <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="logo-name">Fair<span>Trust</span></div>
     </a>
-
-    <div class="nav-links" id="navLinks">
-        <a href="index.html">Home</a>
-        <a href="upload.html" class="active">Upload</a>
-        <a href="docs.html">Docs</a>
-        <a href="admin.html">Admin</a>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="upload.html" class="active">Upload</a>
+            <a href="docs.html">Docs</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        <div class="nav-pill" style="margin-left:.75rem">
+            <div class="nav-dot"></div>
+            <span>API Online</span>
+        </div>
     </div>
 </nav>
 
-<!-- ── breadcrumbs REMOVED ── -->
+<div class="shell">
 
-<div class="global-error" id="globalError">
-    <div class="global-error-inner">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span id="globalErrorMsg"></span>
-    </div>
-</div>
-
-<main class="upload-page">
-    <div class="page-header">
-        <h1>Upload your model</h1>
-        <p>Evaluate fairness &amp; bias across seven dimensions</p>
-    </div>
-
-    <div class="upload-grid">
-
-        <!-- Dataset Card -->
-        <div class="upload-card">
-            <div class="card-header">
-                <div class="card-icon"><i class="fas fa-database"></i></div>
-                <span class="card-title">Upload Dataset</span>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sb-top">
+            <div class="sb-greeting">Good to see you</div>
+            <div class="sb-user">
+                <div class="sb-avatar">EA</div>
+                Enterprise Account
             </div>
+        </div>
+        <div class="sb-divider"></div>
+        <div class="sb-label">Navigation</div>
+        <a href="index.html" class="sb-item"><i class="fas fa-house"></i> Dashboard</a>
+        <a href="upload.html" class="sb-item active"><i class="fas fa-upload"></i> Upload</a>
+        <a href="comparison.html" class="sb-item"><i class="fas fa-code-branch"></i> Version Compare</a>
+        <a href="preprocess.html" class="sb-item"><i class="fas fa-wand-magic-sparkles"></i> Preprocess</a>
+        <div class="sb-bottom">
+            <div class="sb-item" style="border-radius:6px;border:none;padding:.5rem .625rem"><i class="fas fa-circle-question" style="color:rgba(255,255,255,.25)"></i><span style="font-size:.775rem;color:rgba(255,255,255,.35)">Help &amp; docs</span></div>
+            <div class="sb-item" style="border-radius:6px;border:none;padding:.5rem .625rem"><i class="fas fa-arrow-right-from-bracket" style="color:rgba(255,255,255,.25)"></i><span style="font-size:.775rem;color:rgba(255,255,255,.35)">Sign out</span></div>
+        </div>
+    </aside>
 
-            <div class="upload-area" id="datasetDropZone" role="button" tabindex="0" aria-label="Click or drag to upload dataset">
-                <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                <div class="upload-main-text" id="datasetUploadText">Drag &amp; drop or click to upload</div>
-                <div class="upload-hint">CSV, JSON, or Excel — must include feature &amp; target columns</div>
-            </div>
-            <div class="file-limit">Max file size: 100MB</div>
+    <!-- MAIN -->
+    <div class="main">
 
-            <input type="file" id="datasetFileInput" accept=".csv,.json,.xlsx,.xls"
-                   style="position:fixed;top:-200px;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none;">
-
-            <div class="file-status" id="datasetStatus">
-                <span id="datasetStatusIcon"></span>
-                <span id="datasetStatusText"></span>
-            </div>
-
-            <div class="field-group">
-                <label for="targetVariableText">Target Variable <span style="color:var(--danger)">*</span></label>
-                <input type="text" id="targetVariableText" placeholder="e.g. approved, outcome, label">
-                <div class="field-hint">
-                    <i class="fas fa-info-circle"></i>
-                    The ground-truth label column in your dataset.
-                </div>
-            </div>
-            <div class="field-group" id="targetDropdownSection" style="display:none;">
-                <label for="targetVariableSelect">Or select from detected columns</label>
-                <select id="targetVariableSelect" onchange="onTargetSelect()">
-                    <option value="">— select a column —</option>
-                </select>
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="ph-inner">
+                <div class="ph-eyebrow"><i class="fas fa-upload" style="font-size:10px"></i> Model Fairness Evaluation</div>
+                <h1>Upload your model.<br><em>Audit with confidence.</em></h1>
+                <p>Evaluate bias across seven fairness dimensions and generate compliance-ready reports.</p>
             </div>
         </div>
 
-        <!-- Model Config Card -->
-        <div class="upload-card">
-            <div class="card-header">
-                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-                <span class="card-title">Model Configuration</span>
-            </div>
+        <div class="content">
 
-            <input type="hidden" id="predictionVariableText">
-            <div id="predictionDropdownSection" style="display:none;">
-                <select id="predictionVariableSelect" onchange="onPredictionSelect()" style="display:none;">
-                    <option value="">— select a column —</option>
-                </select>
-            </div>
-
-            <div class="field-row">
-                <div class="field-group">
-                    <label for="modelName">Model Name</label>
-                    <input type="text" id="modelName" placeholder="e.g. LoanApprovalV2" value="My Model">
-                </div>
-                <div class="field-group">
-                    <label for="modelVersion">Version</label>
-                    <input type="text" id="modelVersion" placeholder="e.g. 1.0.0" value="1.0.0">
+            <!-- Global Error -->
+            <div class="global-error fade fade-1" id="globalError">
+                <div class="global-error-inner">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="globalErrorMsg"></span>
                 </div>
             </div>
 
-            <div class="checkbox-wrapper" style="margin-top:1rem;">
-                <input type="checkbox" id="useSampleData" onchange="toggleSampleData()">
-                <label for="useSampleData" style="cursor:pointer;">Use sample data (for testing)</label>
+            <!-- Dataset + Model Config -->
+            <div class="section-label fade fade-1">Configuration</div>
+            <div class="upload-grid fade fade-2">
+
+                <!-- Dataset Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon"><i class="fas fa-database"></i></div>
+                        <span class="card-title">Upload Dataset</span>
+                    </div>
+
+                    <div class="upload-area" id="datasetDropZone" role="button" tabindex="0" aria-label="Click or drag to upload dataset">
+                        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="upload-main-text" id="datasetUploadText">Drag &amp; drop or click to upload</div>
+                        <div class="upload-hint">CSV, JSON, or Excel — feature &amp; target columns required</div>
+                    </div>
+                    <div class="file-limit">Max file size: 100 MB</div>
+
+                    <input type="file" id="datasetFileInput" accept=".csv,.json,.xlsx,.xls"
+                           style="position:fixed;top:-200px;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none;">
+
+                    <div class="file-status" id="datasetStatus">
+                        <span id="datasetStatusIcon"></span>
+                        <span id="datasetStatusText"></span>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="targetVariableText">Target Variable <span class="req">*</span></label>
+                        <input type="text" id="targetVariableText" placeholder="e.g. approved, outcome, label">
+                        <div class="field-hint"><i class="fas fa-info-circle"></i> The ground-truth label column in your dataset.</div>
+                    </div>
+                    <div class="field-group" id="targetDropdownSection" style="display:none;">
+                        <label for="targetVariableSelect">Or select from detected columns</label>
+                        <select id="targetVariableSelect" onchange="onTargetSelect()">
+                            <option value="">— select a column —</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Model Config Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                        <span class="card-title">Model Configuration</span>
+                    </div>
+
+                    <input type="hidden" id="predictionVariableText">
+                    <div id="predictionDropdownSection" style="display:none;">
+                        <select id="predictionVariableSelect" onchange="onPredictionSelect()" style="display:none;">
+                            <option value="">— select a column —</option>
+                        </select>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="modelName">Model Name</label>
+                            <input type="text" id="modelName" placeholder="e.g. LoanApprovalV2" value="My Model">
+                        </div>
+                        <div class="field-group">
+                            <label for="modelVersion">Version</label>
+                            <input type="text" id="modelVersion" placeholder="e.g. 1.0.0" value="1.0.0">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-wrapper" style="margin-top:1rem;">
+                        <input type="checkbox" id="useSampleData" onchange="toggleSampleData()">
+                        <label for="useSampleData" style="cursor:pointer;">Use sample data (for testing)</label>
+                    </div>
+
+                    <div id="columnInfoBanner" class="info-banner" style="display:none;">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Tip:</strong> Upload a dataset first, then use the dropdown to pick your target column.
+                    </div>
+                </div>
+
+            </div><!-- /upload-grid -->
+
+            <!-- Sensitive Attributes -->
+            <div class="section-label fade fade-2">Sensitive Attributes</div>
+            <div class="section-block fade fade-3">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <span class="card-title">Select Sensitive Attributes</span>
+                </div>
+                <p class="section-desc">Choose the attributes to test for bias in your model's predictions.</p>
+
+                <div class="attribute-grid">
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="gender" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-venus-mars attr-icon"></i>Gender</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="race" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-globe attr-icon"></i>Race / Ethnicity</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="age" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-calendar-alt attr-icon"></i>Age</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="socioeconomic" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-chart-pie attr-icon"></i>Socioeconomic</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="disability" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-wheelchair attr-icon"></i>Disability</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="religion" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-church attr-icon"></i>Religion</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="caste" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-users attr-icon"></i>Caste</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="marital" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-heart attr-icon"></i>Marital Status</label>
+                    <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="__other__" id="attrOtherCb" onchange="toggleOtherAttr()"><span class="checkbox-custom"></span><i class="fas fa-ellipsis-h attr-icon"></i>Other…</label>
+                </div>
+
+                <div class="other-input-wrap" id="otherAttrWrap">
+                    <div class="field-group" style="margin-top:0">
+                        <label for="otherAttrInput">Custom attribute(s)</label>
+                        <input type="text" id="otherAttrInput" placeholder="e.g. nationality, zipcode, language (comma-separated)" oninput="updateAttrDisplay()">
+                        <div class="field-hint">Separate multiple values with commas.</div>
+                    </div>
+                </div>
+
+                <div class="selected-attrs-display" id="selectedAttrsDisplay">
+                    <div class="attrs-label"><i class="fas fa-tags"></i> Selected attributes</div>
+                    <div id="attributeTags" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.375rem;"></div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-primary" type="button" onclick="autoDetect()" style="flex:1;">
+                        <i class="fas fa-search"></i> Auto-detect from dataset
+                    </button>
+                    <button class="btn btn-danger" type="button" onclick="resetAttrs()" style="flex:1;">
+                        <i class="fas fa-times"></i> Clear All
+                    </button>
+                </div>
+
+                <div class="warning-banner" id="proxyWarning" style="display:flex;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><strong>Proxy variables may be present.</strong> Some attributes can correlate with others — review before submitting.</span>
+                </div>
             </div>
 
-            <div id="columnInfoBanner" class="info-banner" style="display:none;">
-                <i class="fas fa-lightbulb"></i>
-                <strong>Tip:</strong> Upload a dataset first, then use the dropdown to pick your target column.
+            <!-- Fairness Priorities -->
+            <div class="section-label fade fade-3">Fairness Priorities</div>
+            <div class="section-block fade fade-4">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+                    <span class="card-title">Rank Fairness Dimensions</span>
+                </div>
+                <p class="section-desc">Drag to reorder · Adjust sliders to set weights (min 5%)</p>
+
+                <div class="ranking-list" id="rankingList">
+                    <div class="ranking-item" draggable="true" data-value="individualFairness"><span class="rank-number">1</span><span class="dimension-name">Individual Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:25%"></div></div><span class="weight-value">25%</span><input type="range" class="weight-slider" min="5" max="100" value="25" oninput="updateWeights()"></div>
+                    <div class="ranking-item" draggable="true" data-value="groupFairness"><span class="rank-number">2</span><span class="dimension-name">Group Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:20%"></div></div><span class="weight-value">20%</span><input type="range" class="weight-slider" min="5" max="100" value="20" oninput="updateWeights()"></div>
+                    <div class="ranking-item" draggable="true" data-value="demographicParity"><span class="rank-number">3</span><span class="dimension-name">Demographic Parity</span><div class="weight-bar"><div class="weight-fill" style="width:15%"></div></div><span class="weight-value">15%</span><input type="range" class="weight-slider" min="5" max="100" value="15" oninput="updateWeights()"></div>
+                    <div class="ranking-item" draggable="true" data-value="calibrationError"><span class="rank-number">4</span><span class="dimension-name">Calibration</span><div class="weight-bar"><div class="weight-fill" style="width:12%"></div></div><span class="weight-value">12%</span><input type="range" class="weight-slider" min="5" max="100" value="12" oninput="updateWeights()"></div>
+                    <div class="ranking-item" draggable="true" data-value="disparateImpact"><span class="rank-number">5</span><span class="dimension-name">Disparate Impact</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
+                    <div class="ranking-item" draggable="true" data-value="counterfactual"><span class="rank-number">6</span><span class="dimension-name">Counterfactual</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
+                    <div class="ranking-item" draggable="true" data-value="intersectional"><span class="rank-number">7</span><span class="dimension-name">Intersectional</span><div class="weight-bar"><div class="weight-fill" style="width:8%"></div></div><span class="weight-value">8%</span><input type="range" class="weight-slider" min="5" max="100" value="8" oninput="updateWeights()"></div>
+                </div>
+
+                <div class="weight-summary">
+                    <div class="weight-summary-header"><span>Total Weight</span><span class="weight-summary-total" id="totalWeight">100%</span></div>
+                    <div class="weight-grid">
+                        <div class="weight-stat"><div class="weight-stat-label">Highest</div><div class="weight-stat-name" id="highestDim">Individual Fairness</div><div class="weight-stat-val" id="highestVal">25%</div></div>
+                        <div class="weight-stat low"><div class="weight-stat-label">Lowest</div><div class="weight-stat-name" id="lowestDim">Intersectional</div><div class="weight-stat-val" id="lowestVal">8%</div></div>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-danger" type="button" onclick="resetRanking()" style="flex:1;"><i class="fas fa-redo-alt"></i> Reset to Default</button>
+                    <button class="btn btn-primary" type="button" onclick="normalizeWeights()" style="flex:1;"><i class="fas fa-bolt"></i> Normalize Weights</button>
+                </div>
+                <div class="hint-row"><i class="fas fa-info-circle" style="color:var(--gold);"></i> Each dimension gets at least 5%. Click Normalize to distribute proportionally.</div>
             </div>
-        </div>
 
-    </div><!-- /upload-grid -->
+            <!-- Report Type -->
+            <div class="section-label fade fade-4">Report Type</div>
+            <div class="section-block fade fade-4">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+                    <span class="card-title">Choose Report Format</span>
+                </div>
+                <p class="section-desc">Select the output format for your fairness evaluation report.</p>
 
-    <!-- Sensitive Attributes -->
-    <section class="section-block">
-        <div class="card-header">
-            <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
-            <span class="card-title">Select Sensitive Attributes</span>
-        </div>
-        <p class="section-desc">Select the attributes to test for bias in your model's predictions.</p>
+                <div class="report-toggle">
+                    <!-- Technical Report -->
+                    <div class="report-card" id="reportTech" onclick="selectReport('technical')">
+                        <div class="report-icon"><i class="fas fa-code"></i></div>
+                        <h3 class="report-title">Technical Report</h3>
+                        <p class="report-desc">In-depth ML metrics, SHAP analysis, and raw evaluation data for engineers and data scientists.</p>
+                        <div class="report-features">
+                            <span class="feature-tag">ML Metrics</span>
+                            <span class="feature-tag">SHAP Analysis</span>
+                            <span class="feature-tag">JSON Output</span>
+                            <span class="feature-tag">Debug Logs</span>
+                        </div>
+                        <div class="selection-indicator"><i class="fas fa-check"></i></div>
+                    </div>
 
-        <div class="attribute-grid">
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="gender" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-venus-mars attr-icon"></i>Gender</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="race" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-globe attr-icon"></i>Race / Ethnicity</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="age" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-calendar-alt attr-icon"></i>Age</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="socioeconomic" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-chart-pie attr-icon"></i>Socioeconomic</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="disability" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-wheelchair attr-icon"></i>Disability</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="religion" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-church attr-icon"></i>Religion</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="caste" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-users attr-icon"></i>Caste</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="marital" onchange="updateAttrDisplay()"><span class="checkbox-custom"></span><i class="fas fa-heart attr-icon"></i>Marital Status</label>
-            <label class="attribute-checkbox"><input type="checkbox" name="sensitive-attr" value="__other__" id="attrOtherCb" onchange="toggleOtherAttr()"><span class="checkbox-custom"></span><i class="fas fa-ellipsis-h attr-icon"></i>Other…</label>
-        </div>
+                    <!-- Plain Report (PM) -->
+                    <div class="report-card" id="reportPlain" onclick="selectReport('plain')">
+                        <div class="report-icon"><i class="fas fa-file-lines"></i></div>
+                        <h3 class="report-title">Plain Report</h3>
+                        <p class="report-desc">Clear, plain-language summaries and visuals designed for product managers and stakeholders.</p>
+                        <div class="report-features">
+                            <span class="feature-tag">Plain Language</span>
+                            <span class="feature-tag">Visuals</span>
+                            <span class="feature-tag">Executive Summary</span>
+                            <span class="feature-tag">Action Items</span>
+                        </div>
+                        <div class="selection-indicator"><i class="fas fa-check"></i></div>
+                    </div>
+                </div>
 
-        <div class="other-input-wrap" id="otherAttrWrap">
-            <div class="field-group" style="margin-top:0;">
-                <label for="otherAttrInput">Custom attribute(s)</label>
-                <input type="text" id="otherAttrInput" placeholder="e.g. nationality, zipcode, language  (comma-separated)" oninput="updateAttrDisplay()">
-                <div class="field-hint">Separate multiple values with commas.</div>
+                <div id="selectedReportDisplay">
+                    <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:.2rem;font-family:var(--mono);">Selected</div>
+                    <div id="selectedReportName"></div>
+                </div>
+
+                <div class="checkbox-wrapper" style="margin-top:1.25rem;">
+                    <input type="checkbox" id="generateAllReports" onchange="toggleGenerateAll()">
+                    <label for="generateAllReports" style="cursor:pointer;"><strong>Generate both report types</strong> — gives you Technical &amp; Plain (~5–7 min)</label>
+                </div>
+
+                <div id="allReportsWarning" style="display:none;margin-top:.75rem;padding:.65rem .875rem;background:var(--amber2);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;font-size:.8375rem;color:var(--amber);display:none;align-items:center;gap:.5rem;">
+                    <i class="fas fa-clock"></i>
+                    Generating both reports takes approximately 5–7 minutes.
+                </div>
             </div>
-        </div>
 
-        <div class="selected-attrs-display" id="selectedAttrsDisplay">
-            <div class="attrs-label"><i class="fas fa-tags"></i> Selected attributes</div>
-            <div id="attributeTags" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.375rem;"></div>
-        </div>
-
-        <div class="btn-row">
-            <button class="btn btn-primary-filled btn-block" type="button" onclick="autoDetect()" style="flex:1;">
-                <i class="fas fa-search"></i> Auto-detect from dataset
-            </button>
-            <button class="btn btn-danger-outline btn-block" type="button" onclick="resetAttrs()" style="flex:1;">
-                <i class="fas fa-times"></i> Clear All
-            </button>
-        </div>
-
-        <div class="warning-banner" id="proxyWarning" style="display:none;">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span><strong>Proxy variables may be present.</strong> Some attributes can correlate with others — review before submitting.</span>
-        </div>
-    </section>
-
-    <!-- Fairness Priorities -->
-    <section class="section-block">
-        <div class="card-header">
-            <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
-            <span class="card-title">Rank Fairness Dimensions</span>
-        </div>
-        <p class="section-desc">Drag to reorder · Adjust sliders to set weights (min 5%)</p>
-
-        <div class="ranking-list" id="rankingList">
-            <div class="ranking-item" draggable="true" data-value="individualFairness"><span class="rank-number">1</span><span class="dimension-name">Individual Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:25%"></div></div><span class="weight-value">25%</span><input type="range" class="weight-slider" min="5" max="100" value="25" oninput="updateWeights()"></div>
-            <div class="ranking-item" draggable="true" data-value="groupFairness"><span class="rank-number">2</span><span class="dimension-name">Group Fairness</span><div class="weight-bar"><div class="weight-fill" style="width:20%"></div></div><span class="weight-value">20%</span><input type="range" class="weight-slider" min="5" max="100" value="20" oninput="updateWeights()"></div>
-            <div class="ranking-item" draggable="true" data-value="demographicParity"><span class="rank-number">3</span><span class="dimension-name">Demographic Parity</span><div class="weight-bar"><div class="weight-fill" style="width:15%"></div></div><span class="weight-value">15%</span><input type="range" class="weight-slider" min="5" max="100" value="15" oninput="updateWeights()"></div>
-            <div class="ranking-item" draggable="true" data-value="calibrationError"><span class="rank-number">4</span><span class="dimension-name">Calibration</span><div class="weight-bar"><div class="weight-fill" style="width:12%"></div></div><span class="weight-value">12%</span><input type="range" class="weight-slider" min="5" max="100" value="12" oninput="updateWeights()"></div>
-            <div class="ranking-item" draggable="true" data-value="disparateImpact"><span class="rank-number">5</span><span class="dimension-name">Disparate Impact</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
-            <div class="ranking-item" draggable="true" data-value="counterfactual"><span class="rank-number">6</span><span class="dimension-name">Counterfactual</span><div class="weight-bar"><div class="weight-fill" style="width:10%"></div></div><span class="weight-value">10%</span><input type="range" class="weight-slider" min="5" max="100" value="10" oninput="updateWeights()"></div>
-            <div class="ranking-item" draggable="true" data-value="intersectional"><span class="rank-number">7</span><span class="dimension-name">Intersectional</span><div class="weight-bar"><div class="weight-fill" style="width:8%"></div></div><span class="weight-value">8%</span><input type="range" class="weight-slider" min="5" max="100" value="8" oninput="updateWeights()"></div>
-        </div>
-
-        <div class="weight-summary">
-            <div class="weight-summary-header"><span>Total Weight:</span><span class="weight-summary-total" id="totalWeight">100%</span></div>
-            <div class="weight-grid">
-                <div class="weight-stat"><div class="weight-stat-label">Highest</div><div class="weight-stat-name" id="highestDim">Individual Fairness</div><div class="weight-stat-val" id="highestVal">25%</div></div>
-                <div class="weight-stat low"><div class="weight-stat-label">Lowest</div><div class="weight-stat-name" id="lowestDim">Intersectional</div><div class="weight-stat-val" id="lowestVal">8%</div></div>
+            <!-- Submit -->
+            <div class="submit-section fade fade-4">
+                <button class="submit-btn" id="submitBtn" type="button" onclick="analyzeFairness()" disabled>
+                    <i class="fas fa-play-circle"></i> Analyze Fairness →
+                </button>
+                <p class="eta-text" id="etaText">Upload a dataset file to continue</p>
             </div>
-        </div>
 
-        <div class="btn-row">
-            <button class="btn btn-danger-outline" type="button" onclick="resetRanking()" style="flex:1;"><i class="fas fa-redo-alt"></i> Reset to Default</button>
-            <button class="btn btn-primary-filled" type="button" onclick="normalizeWeights()" style="flex:1;"><i class="fas fa-bolt"></i> Normalize Weights</button>
-        </div>
-        <div class="hint-row">
-            <i class="fas fa-info-circle" style="color:var(--secondary);"></i>
-            Each dimension gets at least 5%. Click Normalize to distribute proportionally.
-        </div>
-    </section>
-
-    <!-- Report Type -->
-    <section class="section-block">
-        <div class="card-header">
-            <div class="card-icon"><i class="fas fa-file-alt"></i></div>
-            <span class="card-title">Report Type</span>
-        </div>
-        <p class="section-desc">Choose the format for your fairness report</p>
-
-        <div class="report-toggle">
-            <div class="report-card" id="reportDev" onclick="selectReport('developer')">
-                <div class="report-icon"><i class="fas fa-code"></i></div>
-                <h3 class="report-title">Developer</h3><p class="report-desc">Technical metrics &amp; detailed analysis</p>
-                <div class="report-features"><span class="feature-tag">ML Metrics</span><span class="feature-tag">SHAP Analysis</span><span class="feature-tag">JSON Output</span></div>
-                <div class="selection-indicator"><i class="fas fa-check"></i></div>
-            </div>
-            <div class="report-card" id="reportReg" onclick="selectReport('regulator')">
-                <div class="report-icon"><i class="fas fa-gavel"></i></div>
-                <h3 class="report-title">Regulator</h3><p class="report-desc">Compliance &amp; audit documentation</p>
-                <div class="report-features"><span class="feature-tag">Legal Docs</span><span class="feature-tag">Compliance</span><span class="feature-tag">Evidence</span></div>
-                <div class="selection-indicator"><i class="fas fa-check"></i></div>
-            </div>
-            <div class="report-card" id="reportUser" onclick="selectReport('enduser')">
-                <div class="report-icon"><i class="fas fa-users"></i></div>
-                <h3 class="report-title">End-user</h3><p class="report-desc">Plain language explanations</p>
-                <div class="report-features"><span class="feature-tag">Simple Text</span><span class="feature-tag">FAQ</span><span class="feature-tag">Visual</span></div>
-                <div class="selection-indicator"><i class="fas fa-check"></i></div>
-            </div>
-        </div>
-
-        <div id="selectedReportDisplay">
-            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--secondary);margin-bottom:0.2rem;">Selected</div>
-            <div id="selectedReportName" style="font-size:0.9375rem;font-weight:600;color:var(--primary);"></div>
-        </div>
-
-        <div class="checkbox-wrapper" style="margin-top:1.5rem;">
-            <input type="checkbox" id="generateAllReports" onchange="toggleGenerateAll()">
-            <label for="generateAllReports" style="cursor:pointer;"><strong>Generate all report types</strong> — gives you all 3 formats (~5–7 min)</label>
-        </div>
-
-        <div id="allReportsWarning">
-            <i class="fas fa-clock"></i>
-            Generating all reports takes approximately 5–7 minutes.
-        </div>
-    </section>
-
-    <!-- Submit -->
-    <div class="submit-section">
-        <button class="submit-btn" id="submitBtn" type="button" onclick="analyzeFairness()" disabled>
-            <i class="fas fa-play-circle"></i> ANALYZE FAIRNESS →
-        </button>
-        <p class="eta-text" id="etaText">Upload a dataset file to continue</p>
-    </div>
-</main>
+        </div><!-- /content -->
+    </div><!-- /main -->
+</div><!-- /shell -->
 
 <div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
 
 <script>
 const API_BASE = 'http://127.0.0.1:5000';
+const S = { datasetId: null, modelId: null, columns: [], selectedReport: null };
 
-const S = {
-    datasetId:      null,
-    modelId:        null,
-    columns:        [],
-    selectedReport: null,
-};
-
-// Toast
 let _toastTimer = null;
 function toast(msg, type = 'info') {
     const el = document.getElementById('toast');
-    const icons = {
-        success: '<i class="fas fa-check-circle"></i>',
-        error:   '<i class="fas fa-exclamation-circle"></i>',
-        info:    '<i class="fas fa-info-circle"></i>',
-    };
+    const icons = { success:'<i class="fas fa-check-circle"></i>', error:'<i class="fas fa-exclamation-circle"></i>', info:'<i class="fas fa-info-circle"></i>' };
     document.getElementById('toastIcon').innerHTML = icons[type] || icons.info;
     document.getElementById('toastMsg').textContent = msg;
     el.className = 'toast ' + type + ' show';
@@ -1171,7 +567,6 @@ function toast(msg, type = 'info') {
     _toastTimer = setTimeout(() => el.classList.remove('show'), 4500);
 }
 
-// File status
 function setStatus(which, type, msg) {
     const el  = document.getElementById(which + 'Status');
     const ico = document.getElementById(which + 'StatusIcon');
@@ -1183,7 +578,6 @@ function setStatus(which, type, msg) {
     txt.textContent = msg;
 }
 
-// Drop zone
 function wireDropZone(zoneId, inputId, handlerFn) {
     const zone  = document.getElementById(zoneId);
     const input = document.getElementById(inputId);
@@ -1196,100 +590,67 @@ function wireDropZone(zoneId, inputId, handlerFn) {
     input.addEventListener('change', e => { e.stopPropagation(); if (input.files[0]) handlerFn(input.files[0]); });
 }
 
-// Dataset upload
 async function uploadDataset(file) {
     const zone = document.getElementById('datasetDropZone');
     document.getElementById('datasetUploadText').textContent = file.name;
     zone.classList.remove('uploaded');
     setStatus('dataset', 'uploading', 'Uploading ' + file.name + '...');
-
-    const fd = new FormData();
-    fd.append('file', file);
-
+    const fd = new FormData(); fd.append('file', file);
     try {
         const res  = await fetch(API_BASE + '/datasets', { method: 'POST', body: fd });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
-
         S.datasetId = data.dataset_id;
         S.columns   = Array.isArray(data.columns) ? data.columns : [];
-
         zone.classList.add('uploaded');
         setStatus('dataset', 'success', (data.records || 0).toLocaleString() + ' records · ' + S.columns.length + ' columns');
-
-        // Populate both dropdowns from the same column list
-        ['targetVariableSelect', 'predictionVariableSelect'].forEach(selId => {
+        ['targetVariableSelect','predictionVariableSelect'].forEach(selId => {
             const sel = document.getElementById(selId);
             sel.innerHTML = '<option value="">— select a column —</option>';
-            S.columns.forEach(col => {
-                const o = document.createElement('option');
-                o.value = col; o.textContent = col;
-                sel.appendChild(o);
-            });
+            S.columns.forEach(col => { const o = document.createElement('option'); o.value = col; o.textContent = col; sel.appendChild(o); });
         });
         document.getElementById('targetDropdownSection').style.display    = 'block';
         document.getElementById('predictionDropdownSection').style.display = 'block';
         document.getElementById('columnInfoBanner').style.display          = 'block';
-
-        // Auto-suggest prediction column
-        const candidates = ['prediction', 'prediction_score', 'score', 'label', 'output', 'pred'];
+        const candidates = ['prediction','prediction_score','score','label','output','pred'];
         const autoMatch  = S.columns.find(c => candidates.includes(c.toLowerCase()));
         if (autoMatch && !document.getElementById('predictionVariableText').value) {
             document.getElementById('predictionVariableText').value = autoMatch;
             document.getElementById('predictionVariableSelect').value = autoMatch;
             toast('Auto-detected prediction column: "' + autoMatch + '"', 'info');
         }
-
         toast('Dataset ready — ' + (data.records || 0).toLocaleString() + ' rows', 'success');
     } catch (err) {
-        zone.classList.remove('uploaded');
-        S.datasetId = null;
+        zone.classList.remove('uploaded'); S.datasetId = null;
         setStatus('dataset', 'error', err.message);
         toast('Dataset: ' + err.message, 'error');
     }
     refreshSubmitState();
 }
 
-function onTargetSelect() {
-    const sel = document.getElementById('targetVariableSelect');
-    if (sel.value) document.getElementById('targetVariableText').value = sel.value;
-}
-
-function onPredictionSelect() {
-    const sel = document.getElementById('predictionVariableSelect');
-    if (sel.value) document.getElementById('predictionVariableText').value = sel.value;
-}
-
+function onTargetSelect() { const sel = document.getElementById('targetVariableSelect'); if (sel.value) document.getElementById('targetVariableText').value = sel.value; }
+function onPredictionSelect() { const sel = document.getElementById('predictionVariableSelect'); if (sel.value) document.getElementById('predictionVariableText').value = sel.value; }
 function getTargetVariable() { return (document.getElementById('targetVariableText').value || '').trim(); }
 
-// Sample data
 function toggleSampleData() {
     const on = document.getElementById('useSampleData').checked;
-    if (on) {
-        document.getElementById('targetVariableText').value      = 'approved';
-        document.getElementById('predictionVariableText').value  = 'prediction_score';
-        toast('Sample column names pre-filled', 'info');
-    } else {
-        document.getElementById('targetVariableText').value      = '';
-        document.getElementById('predictionVariableText').value  = '';
-    }
+    document.getElementById('targetVariableText').value     = on ? 'approved' : '';
+    document.getElementById('predictionVariableText').value = on ? 'prediction_score' : '';
+    if (on) toast('Sample column names pre-filled', 'info');
     refreshSubmitState();
 }
 
-// Submit state
 function refreshSubmitState() {
     const btn = document.getElementById('submitBtn');
     const eta = document.getElementById('etaText');
     btn.disabled = !S.datasetId;
-    if (!S.datasetId) {
-        eta.textContent = 'Upload a dataset file to continue';
-    } else {
+    if (!S.datasetId) { eta.textContent = 'Upload a dataset file to continue'; }
+    else {
         const all = document.getElementById('generateAllReports').checked;
         eta.textContent = all ? 'Estimated time: ~5–7 minutes' : 'Estimated time: ~2–3 minutes';
     }
 }
 
-// Sensitive attributes
 function toggleOtherAttr() {
     const cb = document.getElementById('attrOtherCb');
     document.getElementById('otherAttrWrap').classList.toggle('visible', cb.checked);
@@ -1297,11 +658,9 @@ function toggleOtherAttr() {
 }
 
 function getSensitiveAttrs() {
-    const standard = Array.from(document.querySelectorAll('input[name="sensitive-attr"]:checked'))
-        .map(cb => cb.value).filter(v => v !== '__other__');
+    const standard = Array.from(document.querySelectorAll('input[name="sensitive-attr"]:checked')).map(cb => cb.value).filter(v => v !== '__other__');
     if (document.getElementById('attrOtherCb').checked) {
-        const extras = (document.getElementById('otherAttrInput').value || '')
-            .split(',').map(s => s.trim()).filter(Boolean);
+        const extras = (document.getElementById('otherAttrInput').value || '').split(',').map(s => s.trim()).filter(Boolean);
         return standard.concat(extras);
     }
     return standard;
@@ -1310,67 +669,34 @@ function getSensitiveAttrs() {
 function updateAttrDisplay() {
     const attrs   = getSensitiveAttrs();
     const display = document.getElementById('selectedAttrsDisplay');
-    if (attrs.length === 0) {
-        display.style.display = 'none';
-    } else {
+    if (attrs.length === 0) { display.style.display = 'none'; }
+    else {
         display.style.display = 'block';
-        document.getElementById('attributeTags').innerHTML =
-            attrs.map(v => '<span class="attr-tag"><i class="fas fa-tag"></i> ' + v + '</span>').join('');
+        document.getElementById('attributeTags').innerHTML = attrs.map(v => '<span class="attr-tag"><i class="fas fa-tag"></i> ' + v + '</span>').join('');
     }
 }
 
-// ── FIXED: auto-detect uses actual uploaded columns from S.columns ──
 function autoDetect() {
     if (!S.columns.length) { toast('Upload a dataset first', 'info'); return; }
-
-    // Keywords for each preset checkbox value — partial substring match on column names
-    const map = {
-        gender:        ['gender', 'sex'],
-        race:          ['race', 'ethnicity', 'nationality'],
-        age:           ['age'],
-        disability:    ['disability', 'disabled'],
-        religion:      ['religion', 'faith'],
-        caste:         ['caste'],
-        marital:       ['marital', 'marriage', 'spouse'],
-        socioeconomic: ['income', 'salary', 'socioeconomic', 'wealth', 'class', 'economic']
-    };
-
+    const map = { gender:['gender','sex'], race:['race','ethnicity','nationality'], age:['age'], disability:['disability','disabled'], religion:['religion','faith'], caste:['caste'], marital:['marital','marriage','spouse'], socioeconomic:['income','salary','socioeconomic','wealth','class','economic'] };
     let n = 0;
     document.querySelectorAll('input[name="sensitive-attr"]:not(#attrOtherCb)').forEach(cb => {
         const kws = map[cb.value] || [cb.value];
-        // Check if any actual column name contains any keyword (case-insensitive substring)
-        const matched = S.columns.some(col =>
-            kws.some(kw => col.toLowerCase().includes(kw))
-        );
-        if (matched) { cb.checked = true; n++; }
+        if (S.columns.some(col => kws.some(kw => col.toLowerCase().includes(kw)))) { cb.checked = true; n++; }
     });
-
-    // Also detect extra sensitive-looking columns not covered by presets
+    const proxyKws = ['zip','postcode','region','location','area','language','nation','proxy'];
     const coveredKws = Object.values(map).flat();
-    const proxyKws   = ['zip', 'postcode', 'region', 'location', 'area', 'language', 'nation', 'proxy'];
-    const extraCols  = S.columns.filter(col => {
-        const c = col.toLowerCase();
-        const alreadyCovered = coveredKws.some(kw => c.includes(kw));
-        const isProxy = proxyKws.some(kw => c.includes(kw));
-        return !alreadyCovered && isProxy;
-    });
-
+    const extraCols = S.columns.filter(col => { const c = col.toLowerCase(); return !coveredKws.some(kw => c.includes(kw)) && proxyKws.some(kw => c.includes(kw)); });
     if (extraCols.length > 0) {
         document.getElementById('attrOtherCb').checked = true;
         document.getElementById('otherAttrWrap').classList.add('visible');
         const existing = document.getElementById('otherAttrInput').value.trim();
-        document.getElementById('otherAttrInput').value =
-            existing ? existing + ', ' + extraCols.join(', ') : extraCols.join(', ');
+        document.getElementById('otherAttrInput').value = existing ? existing + ', ' + extraCols.join(', ') : extraCols.join(', ');
         n += extraCols.length;
     }
-
     updateAttrDisplay();
-    if (n) {
-        document.getElementById('proxyWarning').style.display = 'flex';
-        toast('Auto-detected ' + n + ' attribute(s) from your dataset', 'success');
-    } else {
-        toast('No matching sensitive attributes found in dataset columns', 'info');
-    }
+    if (n) { document.getElementById('proxyWarning').style.display = 'flex'; toast('Auto-detected ' + n + ' attribute(s)', 'success'); }
+    else toast('No matching sensitive attributes found in dataset columns', 'info');
 }
 
 function resetAttrs() {
@@ -1381,11 +707,10 @@ function resetAttrs() {
     updateAttrDisplay();
 }
 
-// Weights
 function updateWeights() {
     let hi = {name:'',val:-Infinity}, lo = {name:'',val:Infinity}, total = 0;
     document.querySelectorAll('.ranking-item').forEach(item => {
-        const v    = parseInt(item.querySelector('.weight-slider').value);
+        const v = parseInt(item.querySelector('.weight-slider').value);
         const name = item.querySelector('.dimension-name').textContent;
         total += v;
         item.querySelector('.weight-value').textContent = v + '%';
@@ -1402,68 +727,39 @@ function updateWeights() {
 
 function getWeights() {
     const w = {};
-    document.querySelectorAll('.ranking-item').forEach(item => {
-        w[item.dataset.value] = parseInt(item.querySelector('.weight-slider').value);
-    });
+    document.querySelectorAll('.ranking-item').forEach(item => { w[item.dataset.value] = parseInt(item.querySelector('.weight-slider').value); });
     return w;
 }
 
 function normalizeWeights() {
-    const sls   = Array.from(document.querySelectorAll('.weight-slider'));
-    const raw   = sls.map(sl => parseInt(sl.value));
-    const total = raw.reduce((s, v) => s + v, 0);
+    const sls = Array.from(document.querySelectorAll('.weight-slider'));
+    const raw = sls.map(sl => parseInt(sl.value));
+    const total = raw.reduce((s,v) => s+v, 0);
     if (!total) return;
-
-    // Step 1: proportional allocation, floored (not rounded) — rounding causes overshoot
     const proportional = raw.map(v => Math.max(5, Math.floor(v / total * 100)));
-
-    // Step 2: how far are we from 100 after flooring?
-    const flooredSum = proportional.reduce((s, v) => s + v, 0);
-    let   remainder  = 100 - flooredSum;
-
-    // Step 3: if sum > 100 (can happen when min-5 floors push values up),
-    // reduce largest items first; if sum < 100, add to items with the
-    // largest fractional parts (standard largest-remainder method).
+    let remainder = 100 - proportional.reduce((s,v) => s+v, 0);
     if (remainder < 0) {
-        const order = proportional
-            .map((v, i) => ({ i, v }))
-            .sort((a, b) => b.v - a.v);
-        for (const { i } of order) {
-            if (remainder === 0) break;
-            const canReduce = proportional[i] - 5;
-            const reduce    = Math.min(canReduce, -remainder);
-            proportional[i] -= reduce;
-            remainder       += reduce;
-        }
+        const order = proportional.map((v,i)=>({i,v})).sort((a,b)=>b.v-a.v);
+        for (const {i} of order) { if (remainder===0) break; const reduce=Math.min(proportional[i]-5,-remainder); proportional[i]-=reduce; remainder+=reduce; }
     } else if (remainder > 0) {
-        const fractions = raw
-            .map((v, i) => ({ i, frac: (v / total * 100) - Math.floor(v / total * 100) }))
-            .sort((a, b) => b.frac - a.frac);
-        for (let k = 0; k < remainder; k++) {
-            proportional[fractions[k % fractions.length].i]++;
-        }
+        const fracs = raw.map((v,i)=>({i,frac:(v/total*100)-Math.floor(v/total*100)})).sort((a,b)=>b.frac-a.frac);
+        for (let k=0;k<remainder;k++) proportional[fracs[k%fracs.length].i]++;
     }
-
-    // Step 4: apply — sum is now guaranteed to be exactly 100
-    sls.forEach((sl, i) => { sl.value = proportional[i]; });
+    sls.forEach((sl,i) => { sl.value = proportional[i]; });
     updateWeights();
     toast('Weights normalized to 100%', 'info');
 }
 
 const DEFAULTS = [25,20,15,12,10,10,8];
-function resetRanking() {
-    document.querySelectorAll('.weight-slider').forEach((sl, i) => sl.value = DEFAULTS[i]);
-    updateWeights();
-    toast('Weights reset', 'info');
-}
+function resetRanking() { document.querySelectorAll('.weight-slider').forEach((sl,i) => sl.value = DEFAULTS[i]); updateWeights(); toast('Weights reset', 'info'); }
 
 // Drag reorder
 (function() {
     let drag = null;
     const list = document.getElementById('rankingList');
     list.addEventListener('dragstart', e => { drag = e.target.closest('.ranking-item'); if (drag) drag.classList.add('dragging'); });
-    list.addEventListener('dragend',   () => { if (drag) drag.classList.remove('dragging'); drag = null; renum(); });
-    list.addEventListener('dragover',  e => {
+    list.addEventListener('dragend', () => { if (drag) drag.classList.remove('dragging'); drag = null; renum(); });
+    list.addEventListener('dragover', e => {
         e.preventDefault();
         const tgt = e.target.closest('.ranking-item');
         if (!tgt || tgt === drag) return;
@@ -1473,28 +769,25 @@ function resetRanking() {
     function renum() { document.querySelectorAll('.ranking-item .rank-number').forEach((el,i) => el.textContent = i+1); }
 })();
 
-// Report selection
 function selectReport(type) {
     S.selectedReport = type;
     document.querySelectorAll('.report-card').forEach(c => c.classList.remove('selected'));
-    const map = {developer:'reportDev', regulator:'reportReg', enduser:'reportUser'};
+    const map = { technical:'reportTech', plain:'reportPlain' };
     if (map[type]) document.getElementById(map[type]).classList.add('selected');
-    document.getElementById('selectedReportName').textContent =
-        ({developer:'Developer Report', regulator:'Regulator Report', enduser:'End-user Report'})[type] || type;
+    document.getElementById('selectedReportName').textContent = type === 'technical' ? 'Technical Report' : 'Plain Report';
     document.getElementById('selectedReportDisplay').style.display = 'block';
     document.getElementById('generateAllReports').checked = false;
     document.getElementById('allReportsWarning').style.display = 'none';
     refreshSubmitState();
 }
 
-// ── FIXED: toggleGenerateAll redirects to allReports.html ──
 function toggleGenerateAll() {
     const on = document.getElementById('generateAllReports').checked;
     document.getElementById('allReportsWarning').style.display = on ? 'flex' : 'none';
     if (on) {
         S.selectedReport = 'all';
         document.querySelectorAll('.report-card').forEach(c => c.classList.add('selected'));
-        document.getElementById('selectedReportName').textContent = 'All Report Types';
+        document.getElementById('selectedReportName').textContent = 'Technical + Plain Report';
         document.getElementById('selectedReportDisplay').style.display = 'block';
     } else {
         S.selectedReport = null;
@@ -1504,30 +797,21 @@ function toggleGenerateAll() {
     refreshSubmitState();
 }
 
-// Main submit
 async function analyzeFairness() {
     if (!S.datasetId) { toast('Please upload a dataset file first', 'error'); return; }
-
     const targetVariable = getTargetVariable();
-
     if (!targetVariable) { toast('Please specify a target variable', 'error'); document.getElementById('targetVariableText').focus(); return; }
-   
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Starting analysis…';
     document.getElementById('globalError').style.display = 'none';
-
     try {
-        // Step 1: Register model
         const modelName    = (document.getElementById('modelName').value.trim()    || 'Uploaded Model');
         const modelVersion = (document.getElementById('modelVersion').value.trim() || '1.0.0');
-
         const modelRes  = await fetch(API_BASE + '/models', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:modelName, version:modelVersion}) });
         const modelData = await modelRes.json();
         if (!modelRes.ok) throw new Error(modelData.error || 'Model registration failed');
         S.modelId = modelData.model_id;
-
-        // Step 2: Evaluate
         const generateAll = document.getElementById('generateAllReports').checked;
         const payload = {
             dataset_id:           S.datasetId,
@@ -1535,34 +819,26 @@ async function analyzeFairness() {
             target_variable:      targetVariable,
             sensitive_attributes: getSensitiveAttrs(),
             fairness_weights:     getWeights(),
-            report_type:          generateAll ? 'all' : (S.selectedReport || 'developer'),
+            report_type:          generateAll ? 'all' : (S.selectedReport || 'technical'),
         };
-
         const evalRes  = await fetch(API_BASE + '/evaluate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
         const evalData = await evalRes.json();
         if (!evalRes.ok) throw new Error(evalData.error || 'Evaluation failed to start');
-
         const evalId = evalData.evaluation_id;
         sessionStorage.setItem('eval_id', evalId);
         sessionStorage.setItem('eval_meta', JSON.stringify(Object.assign({}, payload, {modelId:S.modelId, modelName, modelVersion})));
-        sessionStorage.setItem('report_type', generateAll ? 'all' : (S.selectedReport || 'developer'));
-        // Store destination so processing.html knows where to redirect after completion
+        sessionStorage.setItem('report_type', generateAll ? 'all' : (S.selectedReport || 'technical'));
         sessionStorage.setItem('eval_dest', generateAll ? 'allReports' : 'dashboard');
-
         toast('Analysis started! Redirecting…', 'success');
-
-        // ── FIXED: always go through processing.html so evaluation can complete.
-        // Pass ?dest=allReports when "generate all" is checked so processing.html
-        // can forward to the right destination once done.
         if (generateAll) {
             setTimeout(() => { window.location.href = 'processing.html?eval_id=' + evalId + '&dest=allReports'; }, 700);
         } else {
-            setTimeout(() => { window.location.href = 'processing.html?eval_id=' + evalId; }, 700);
+            const dest = S.selectedReport === 'plain' ? 'plainReport' : 'technicalReport';
+            setTimeout(() => { window.location.href = 'processing.html?eval_id=' + evalId + '&dest=' + dest; }, 700);
         }
-
     } catch (err) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-play-circle"></i> ANALYZE FAIRNESS →';
+        btn.innerHTML = '<i class="fas fa-play-circle"></i> Analyze Fairness →';
         document.getElementById('globalErrorMsg').textContent = err.message;
         document.getElementById('globalError').style.display = 'block';
         toast(err.message, 'error');
@@ -1572,78 +848,30 @@ async function analyzeFairness() {
 document.addEventListener('DOMContentLoaded', () => {
     wireDropZone('datasetDropZone', 'datasetFileInput', uploadDataset);
     refreshSubmitState();
-    
-    window.addEventListener('scroll', function() {
-        const navbar = document.getElementById('navbar');
-        if (window.scrollY > 50) navbar.classList.add('scrolled');
-        else navbar.classList.remove('scrolled');
-    });
 });
 </script>
 
-<!-- ═══ CHATBOT POPUP ════════════════════════════════════════════ -->
-<button class="chat-button" id="chatButton" title="Open chat" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #1A2D4E, #4A90E2); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: 0 10px 30px rgba(26, 45, 78, 0.3); z-index: 999; transition: all 0.3s ease;">
+<!-- CHATBOT POPUP -->
+<button id="chatButton" title="Open chat" style="position:fixed;bottom:30px;right:30px;width:60px;height:60px;background:linear-gradient(135deg,#0C1B33,#2563EB);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;box-shadow:0 10px 30px rgba(12,27,51,0.3);z-index:999;transition:all 0.3s ease;">
     <i class="fas fa-comments"></i>
 </button>
-
-<div class="chat-popup" id="chatPopup" style="position: fixed; bottom: 100px; right: 30px; width: 420px; height: 600px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(26, 45, 78, 0.15); display: flex; flex-direction: column; opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95); transition: all 0.3s ease; z-index: 999; border: 1px solid rgba(235, 178, 85, 0.2);">
-    <div class="chat-header" style="background: linear-gradient(135deg, #1A2D4E, #4A90E2); color: white; padding: 20px; border-radius: 20px 20px 0 0; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 18px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-robot"></i>
-            Chat with us
-        </h3>
-        <button class="chat-close-btn" id="chatCloseBtn" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
-            <i class="fas fa-times"></i>
-        </button>
+<div id="chatPopup" style="position:fixed;bottom:100px;right:30px;width:420px;height:600px;background:white;border-radius:20px;box-shadow:0 20px 60px rgba(12,27,51,0.15);display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(10px) scale(0.95);transition:all 0.3s ease;z-index:999;border:1px solid var(--gold3);">
+    <div style="background:linear-gradient(135deg,#0C1B33,#2563EB);color:white;padding:20px;border-radius:20px 20px 0 0;display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-family:var(--display);font-size:18px;font-weight:700;margin:0;display:flex;align-items:center;gap:10px;"><i class="fas fa-robot"></i> Chat with us</h3>
+        <button id="chatCloseBtn" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;"><i class="fas fa-times"></i></button>
     </div>
-    <div class="chat-body" style="flex: 1; overflow: hidden;">
-        <iframe 
-            src="https://www.chatbase.co/chatbot-iframe/Lxzltbby7fB43tszvcAyl" 
-            width="100%" 
-            height="100%" 
-            frameborder="0">
-        </iframe>
-    </div>
+    <div style="flex:1;overflow:hidden;"><iframe src="https://www.chatbase.co/chatbot-iframe/Lxzltbby7fB43tszvcAyl" width="100%" height="100%" frameborder="0"></iframe></div>
 </div>
-
 <script>
 const chatButton = document.getElementById('chatButton');
-const chatPopup = document.getElementById('chatPopup');
-const chatCloseBtn = document.getElementById('chatCloseBtn');
-
-chatButton.addEventListener('click', () => {
-    chatPopup.classList.toggle('active');
-    chatButton.classList.toggle('active');
-});
-
-chatCloseBtn.addEventListener('click', () => {
-    chatPopup.classList.remove('active');
-    chatButton.classList.remove('active');
-});
-
-document.addEventListener('click', (e) => {
-    if (!chatButton.contains(e.target) && !chatPopup.contains(e.target)) {
-        chatPopup.classList.remove('active');
-        chatButton.classList.remove('active');
-    }
-});
-
-//Add CSS for active state
-const style = document.createElement('style');
-style.textContent = `
-.chat-popup.active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
-}
-.chat-button.active {
-    background: linear-gradient(135deg, #FF5C38, #FFB020) !important;
-}
-.chat-button:hover {
-    transform: scale(1.1);
-}
-`;
-document.head.appendChild(style);
+const chatPopup  = document.getElementById('chatPopup');
+const chatClose  = document.getElementById('chatCloseBtn');
+chatButton.addEventListener('click', () => { chatPopup.classList.toggle('active'); chatButton.classList.toggle('active'); });
+chatClose.addEventListener('click',  () => { chatPopup.classList.remove('active'); chatButton.classList.remove('active'); });
+document.addEventListener('click', e => { if (!chatButton.contains(e.target) && !chatPopup.contains(e.target)) { chatPopup.classList.remove('active'); chatButton.classList.remove('active'); } });
+const cs = document.createElement('style');
+cs.textContent = `.chat-popup.active,.active#chatPopup{opacity:1!important;visibility:visible!important;transform:translateY(0) scale(1)!important} #chatButton.active{background:linear-gradient(135deg,#DC3545,#E08C2A)!important} #chatButton:hover{transform:scale(1.1)}`;
+document.head.appendChild(cs);
 </script>
 </body>
 </html>
