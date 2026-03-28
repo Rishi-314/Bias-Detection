@@ -1,15 +1,22 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 import os
 import uuid
 import pandas as pd
 import tempfile
 import traceback
-import google.generativeai as genai
+
+# ✅ ADD THIS (VERY IMPORTANT)
+from dotenv import load_dotenv
+load_dotenv()
+
+# ✅ THEN import genai
+from google import genai
+
+# ✅ NOW this will work
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     
 from flask import send_file
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key="AIzaSyBy0yxElF8XGifFCjOFX0FO0FbeWzXPdts")
 
 dataset_routes = Blueprint("dataset_routes", __name__)
 
@@ -263,6 +270,7 @@ def download_dataset(dataset_id: str):
         }), 500
         
 @dataset_routes.route("/datasets/<dataset_id>/generate-filter", methods=["POST"])
+@dataset_routes.route("/datasets/<dataset_id>/generate-filter", methods=["POST"])
 def generate_filter(dataset_id: str):
     """
     Generate pandas filter code using Gemini
@@ -278,9 +286,9 @@ def generate_filter(dataset_id: str):
         df = _read_dataframe(path)
         columns = list(df.columns)
 
-        model = genai.GenerativeModel("gemini-2.5-flash")
-
-        response = model.generate_content(f"""
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=f"""
 You are a pandas expert.
 
 Dataset columns:
@@ -291,12 +299,12 @@ User instruction:
 
 Return ONLY one line of code.
 
-Rules:
-- Start with: df_filtered = df[
-- Use ONLY columns from the list
-- Use .str.lower() for strings
-- No explanation
-""")
+STRICT RULES:
+- Format: df_filtered = df[df['column'] == 'value']
+- Use ONLY available columns
+- No explanations
+"""
+        )
 
         code = response.text.strip()
 
